@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vyzi/features/support/support_screen.dart';
 import 'about_us.dart';
-import 'faq_question.dart';
 import 'privacy_policy.dart';
 import 'terms_condition.dart';
 
