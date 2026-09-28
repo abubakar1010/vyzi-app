@@ -104,22 +104,18 @@ class DeepLinkService {
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'Referral Not Available',
-          style: TextStyle(fontWeight: FontWeight.w600),
+        title: Text(
+          'referral.not_available_title'.tr,
+          style: const TextStyle(fontWeight: FontWeight.w600),
         ),
-        content: const Text(
-          'This referral link cannot be applied because you are already '
-          'logged in. Referral rewards are only available for new accounts '
-          'created using a referral link.',
-        ),
+        content: Text('referral.not_available_message'.tr),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
             style: TextButton.styleFrom(
               foregroundColor: AppColors.primaryColor,
             ),
-            child: const Text('OK'),
+            child: Text('common.ok'.tr),
           ),
         ],
       ),

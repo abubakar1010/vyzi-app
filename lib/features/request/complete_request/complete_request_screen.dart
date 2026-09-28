@@ -549,7 +549,7 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
               '${'request.form.payment_method_info'.tr}${offer.paymentMethodDisplay}'),
           SizedBox(height: 7.h),
           _buildInfoRow(Icons.check_circle_outline, AppColors.primary400,
-              '${offer.contractDurationDisplay} · ${offer.target == 'business' ? 'Business' : 'Residenziale'}'),
+              '${offer.contractDurationDisplay} · ${offer.target == 'business' ? 'request.form.target_business'.tr : 'request.form.target_residential'.tr}'),
           SizedBox(height: 12.h),
           _dividerLine(),
           SizedBox(height: 12.h),

@@ -125,7 +125,7 @@ class UploadBillController extends GetxController {
   Future<void> uploadBill(UtilityType utilityType) async {
     final file = selectedFile.value;
     if (file == null) {
-      errorMessage.value = 'No file selected';
+      errorMessage.value = 'upload_bill.no_files_selected'.tr;
       return;
     }
 

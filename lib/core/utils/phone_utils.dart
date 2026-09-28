@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 /// Combines a dial code and national number into E.164 format.
 /// Example: toE164('+39', '333 123 4567') → '+393331234567'
 String toE164(String dialCode, String nationalNumber) {
@@ -177,7 +178,7 @@ String? validatePhone(String? value) {
   if (value == null || value.isEmpty) return null;
   final digits = value.replaceAll(RegExp(r'[^\d]'), '');
   if (digits.length < 6) {
-    return 'Enter a valid phone number';
+    return 'validation.phone_invalid'.tr;
   }
   return null;
 }
@@ -186,11 +187,11 @@ String? validatePhone(String? value) {
 /// Use on screens where phone number is mandatory.
 String? validatePhoneRequired(String? value) {
   if (value == null || value.isEmpty) {
-    return 'Phone number is required';
+    return 'request.form.phone_required'.tr;
   }
   final digits = value.replaceAll(RegExp(r'[^\d]'), '');
   if (digits.length < 6) {
-    return 'Enter a valid phone number';
+    return 'validation.phone_invalid'.tr;
   }
   return null;
 }

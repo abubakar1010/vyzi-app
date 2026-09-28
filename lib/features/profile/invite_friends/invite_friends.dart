@@ -46,7 +46,7 @@ class InviteScreen extends StatelessWidget {
               SizedBox(height: 16.h),
               ElevatedButton(
                 onPressed: () => _controller.fetchReferralData(),
-                child: const Text('Retry'),
+                child: Text('common.retry'.tr),
               ),
             ],
           ),

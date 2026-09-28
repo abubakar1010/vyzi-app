@@ -628,7 +628,7 @@ class CompleteRequestController extends ChangeNotifier {
       // Step 1: Upload all pending identity documents
       final uploadSuccess = await _uploadPendingDocuments();
       if (!uploadSuccess) {
-        throw Exception('Failed to upload one or more identity documents');
+        throw UnknownException('request.form.documents_upload_failed');
       }
 
       // Step 2: Create the case. The tax code the customer gave goes with it
@@ -684,8 +684,8 @@ class CompleteRequestController extends ChangeNotifier {
 
       final caseBody = caseResponse.data as Map<String, dynamic>;
       if (caseBody['success'] != true) {
-        throw Exception(
-            caseBody['message']?.toString() ?? 'Failed to create case');
+        throw ServerException(caseBody['message']?.toString() ?? '',
+            caseBody['statusCode'] as int?);
       }
 
       final caseData = caseBody['data'] as Map<String, dynamic>;

@@ -294,7 +294,7 @@ class _FaqDynamicScreenState extends State<FaqDynamicScreen> {
                 color: AppColors.primaryColor.withValues(alpha: 0.5)),
             SizedBox(height: 8.h),
             Text(
-              'Utility Services',
+              'support.hero_placeholder'.tr,
               style: AppStyles.body2.copyWith(
                 color: AppColors.primaryColor.withValues(alpha: 0.7),
                 fontWeight: FontWeight.w900,

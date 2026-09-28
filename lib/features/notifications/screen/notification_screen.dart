@@ -155,7 +155,7 @@ class _NotificationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final createdAt = DateTime.tryParse(notification.createdAt);
     final timeAgo = createdAt != null
-        ? timeago.format(createdAt, locale: Get.locale?.languageCode ?? 'en')
+        ? timeago.format(createdAt, locale: Get.locale?.languageCode ?? 'it')
         : '';
 
     return InkWell(

@@ -8,6 +8,7 @@ import 'package:vyzi/core/services/storage_service.dart';
 import 'package:vyzi/core/utils/number_format.dart';
 import 'package:vyzi/features/home/model/dashboard_model.dart';
 import 'package:vyzi/features/home/model/user_service_model.dart';
+import 'package:vyzi/core/localization/system_messages.dart';
 
 class HomeController extends GetxController {
   final ApiService _api = ApiService();
@@ -83,7 +84,7 @@ class HomeController extends GetxController {
         activeUtilities.value = model.activeContracts;
       } else {
         dashboardError.value =
-            body['message']?.toString() ?? 'Failed to load dashboard';
+            SystemMessages.resolve(body['message']);
       }
     } catch (e) {
       dashboardError.value = (e is AppException ? e.message : 'system.unexpected'.tr);
@@ -109,7 +110,7 @@ class HomeController extends GetxController {
         serviceList.assignAll(services);
       } else {
         servicesError.value =
-            body['message']?.toString() ?? 'Failed to load services';
+            SystemMessages.resolve(body['message']);
       }
     } catch (e) {
       servicesError.value = (e is AppException ? e.message : 'system.unexpected'.tr);

@@ -168,6 +168,9 @@ class _PhoneTextFieldState extends State<PhoneTextField> {
                   },
                   initialSelection: widget.initialSelection,
                   favorite: const ['+39', 'IT'],
+                  searchDecoration: InputDecoration(
+                    hintText: 'common.search'.tr,
+                  ),
                   showCountryOnly: false,
                   showOnlyCountryWhenClosed: false,
                   alignLeft: false,

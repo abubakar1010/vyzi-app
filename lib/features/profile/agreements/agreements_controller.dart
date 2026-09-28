@@ -50,7 +50,7 @@ class AgreementModel {
     // Build offerDate string
     final offerDate = validUntil != null
         ? '$validFrom – $validUntil'
-        : 'Dal $validFrom';
+        : 'agreements.valid_from'.trParams({'date': validFrom});
 
     // The admin sets the code explicitly. Rows created before the field existed
     // carry it only inside the free-text description, so fall back to scanning

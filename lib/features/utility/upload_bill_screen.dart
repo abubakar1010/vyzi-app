@@ -127,7 +127,7 @@ class _UploadBillScreenState extends State<UploadBillScreen> {
               ),
               SizedBox(height: 16.h),
               Text(
-                'Bill submitted successfully.',
+                'upload_bill.submitted_success'.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16.sp,

@@ -1,6 +1,7 @@
 import 'package:vyzi/core/constants/api_constants.dart';
 import 'package:vyzi/core/utils/number_format.dart';
 import 'package:vyzi/features/support/models/faq_model.dart';
+import 'package:vyzi/core/utils/duration_format.dart';
 
 class UserServiceModel {
   final String id;
@@ -185,8 +186,8 @@ class UserServiceModel {
 
     const daysPerMonth = 30.4375;
     final months = (days / daysPerMonth).round();
-    if (months == 0) return days == 1 ? '1 giorno' : '$days giorni';
-    return months == 1 ? '1 mese' : '$months mesi';
+    if (months == 0) return formatDays(days);
+    return formatMonths(months);
   }
 
   /// The yearly consumption the way a bill quotes it — grouped thousands and

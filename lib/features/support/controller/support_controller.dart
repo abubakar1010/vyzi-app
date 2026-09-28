@@ -4,6 +4,7 @@ import 'package:vyzi/core/services/api_service.dart';
 import 'package:vyzi/features/support/models/support_topic_model.dart';
 import 'package:vyzi/features/support/models/support_ticket_model.dart';
 import 'package:vyzi/features/support/models/ticket_message_model.dart';
+import 'package:get/get.dart';
 
 class SupportController extends ChangeNotifier {
   final ApiService _api = ApiService();
@@ -41,7 +42,7 @@ class SupportController extends ChangeNotifier {
             .toList();
       }
     } catch (e) {
-      error = 'Failed to load topics';
+      error = 'common.failed_to_load'.tr;
       debugPrint('SupportController.fetchTopics error: $e');
     } finally {
       isLoadingTopics = false;
@@ -68,7 +69,7 @@ class SupportController extends ChangeNotifier {
             .toList();
       }
     } catch (e) {
-      error = 'Failed to load tickets';
+      error = 'common.failed_to_load'.tr;
       debugPrint('SupportController.fetchMyTickets error: $e');
     } finally {
       isLoadingTickets = false;
@@ -98,7 +99,7 @@ class SupportController extends ChangeNotifier {
       await _api.post(ApiConstants.supportTickets, data: body);
       return true;
     } catch (e) {
-      error = 'Failed to submit request';
+      error = 'support.form.error'.tr;
       debugPrint('SupportController.createTicket error: $e');
       return false;
     } finally {
@@ -127,7 +128,7 @@ class SupportController extends ChangeNotifier {
             .toList();
       }
     } catch (e) {
-      error = 'Failed to load ticket';
+      error = 'common.failed_to_load'.tr;
       debugPrint('SupportController.fetchTicketDetail error: $e');
     } finally {
       isLoadingDetail = false;

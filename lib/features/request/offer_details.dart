@@ -11,6 +11,7 @@ import 'package:vyzi/features/request/price_calculation_dialog.dart';
 import 'package:vyzi/features/request/price_type_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:vyzi/core/localization/system_messages.dart';
 
 class OfferDetailRow {
   final String label;
@@ -84,7 +85,7 @@ class _OfferDetailsScreenState extends State<OfferDetailsScreen> {
       if (body['success'] == true) {
         _offer = ApiOfferModel.fromJson(body['data'] as Map<String, dynamic>);
       } else {
-        _error = body['message']?.toString() ?? 'Failed to load offer';
+        _error = SystemMessages.resolve(body['message']);
       }
     } catch (e) {
       _error = (e is AppException ? e.message : 'system.unexpected'.tr);

@@ -9,6 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:vyzi/features/support/support_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vyzi/core/utils/date_format.dart';
 
 
 class UtilityDetailsScreen extends StatelessWidget {
@@ -37,7 +38,7 @@ class UtilityDetailsScreen extends StatelessWidget {
 
   String get _energyTypeLabel {
     if (service.energyType == null) return '';
-    if (_isGas) return 'Gas';
+    if (_isGas) return 'bills.type.gas'.tr;
     return 'bills.type.electricity'.tr;
   }
 
@@ -90,12 +91,7 @@ class UtilityDetailsScreen extends StatelessWidget {
   String _formatDate(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return '-';
     try {
-      final dt = DateTime.parse(dateStr);
-      const months = [
-        'Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu',
-        'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic',
-      ];
-      return '${dt.day} ${months[dt.month - 1]} ${dt.year}';
+      return formatShortDate(DateTime.parse(dateStr));
     } catch (_) {
       return dateStr;
     }

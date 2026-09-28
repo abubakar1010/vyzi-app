@@ -11,6 +11,7 @@ import 'package:vyzi/features/home/sign_contract/sign_contract.dart';
 import 'package:vyzi/features/my_utility/service_details_screen.dart';
 import 'package:vyzi/features/request/models/case_model.dart';
 import 'package:vyzi/routes/app_routes.dart';
+import 'package:vyzi/core/localization/system_messages.dart';
 
 /// Secondary and tertiary text on this screen. AppColors flattens every
 /// text token to pure black, which the design calls for greys.
@@ -105,8 +106,7 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
         // Plus the case behind it, on the statuses that have a use for one.
         await _fetchCaseByBill();
       } else {
-        _error = body['message']?.toString() ??
-            'Impossibile caricare la bolletta';
+        _error = SystemMessages.resolve(body['message']);
       }
     } catch (e) {
       _error = (e is AppException ? e.message : 'system.unexpected'.tr);

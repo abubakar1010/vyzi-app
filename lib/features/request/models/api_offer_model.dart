@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:vyzi/core/utils/number_format.dart';
+import 'package:vyzi/core/utils/duration_format.dart';
 
 /// Payment methods a supplier accepts for an offer — mirrors the backend
 /// `OfferPaymentMethod` enum. Unlike the case-level payment method the customer
@@ -194,11 +195,11 @@ class ApiOfferModel {
   String get marketTypeDisplay {
     switch (marketType) {
       case 'fixed':
-        return 'Prezzo fisso';
+        return 'offer.market_fixed'.tr;
       case 'variable':
-        return 'Prezzo variabile';
+        return 'offer.market_variable'.tr;
       case 'indexed':
-        return 'Prezzo indicizzato';
+        return 'offer.market_indexed'.tr;
       default:
         return marketType;
     }
@@ -206,20 +207,16 @@ class ApiOfferModel {
 
   /// Contract duration display — months by default, days if < 30
   String get contractDurationDisplay {
-    if (contractDurationDays <= 0) return 'Durata indeterminata';
-    if (contractDurationDays < 30) {
-      return contractDurationDays == 1 ? '1 giorno' : '$contractDurationDays giorni';
-    }
-    final months = contractDurationDays ~/ 30;
-    return months == 1 ? '1 mese' : '$months mesi';
+    if (contractDurationDays <= 0) return 'offer.duration_indefinite'.tr;
+    if (contractDurationDays < 30) return formatDays(contractDurationDays);
+    return formatMonths(contractDurationDays ~/ 30);
   }
 
   /// Contractual binding display — months by default, days if < 30
   String get bindingDisplay {
-    if (contractDurationDays <= 0) return 'Nessun vincolo';
-    if (contractDurationDays < 30) return '$contractDurationDays giorni';
-    final months = contractDurationDays ~/ 30;
-    return '$months mesi';
+    if (contractDurationDays <= 0) return 'offer.no_binding'.tr;
+    if (contractDurationDays < 30) return formatDays(contractDurationDays);
+    return formatMonths(contractDurationDays ~/ 30);
   }
 }
 

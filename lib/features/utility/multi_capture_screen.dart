@@ -187,14 +187,12 @@ class _MultiCaptureScreenState extends State<MultiCaptureScreen>
 
   String get _flashLabel {
     switch (_flashMode) {
-      case FlashMode.auto:
-        return 'Auto';
       case FlashMode.always:
-        return 'On';
+        return 'upload_bill.flash_on'.tr;
       case FlashMode.off:
-        return 'Off';
+        return 'upload_bill.flash_off'.tr;
       default:
-        return 'Auto';
+        return 'upload_bill.flash_auto'.tr;
     }
   }
 
@@ -341,7 +339,7 @@ class _MultiCaptureScreenState extends State<MultiCaptureScreen>
                   foregroundColor: Colors.white,
                   side: const BorderSide(color: Colors.white54),
                 ),
-                child: Text('Retry', style: TextStyle(fontSize: 14.sp)),
+                child: Text('common.retry'.tr, style: TextStyle(fontSize: 14.sp)),
               ),
             ],
           ),

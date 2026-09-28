@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/utils/app_assets.dart';
 import '../../../core/utils/app_colors.dart';
+import 'package:get/get.dart';
 
 
 class UploadSection extends StatelessWidget {
@@ -55,7 +56,7 @@ class UploadSection extends StatelessWidget {
                     ),
                     SizedBox(height: 12.h),
                      Text(
-                      "Carica la tua Prima\nBolletta",
+                      'home.upload_section.title'.tr,
                       style: TextStyle(
                         color: AppColors.textDark,
                         fontSize: 18.sp,
@@ -65,7 +66,7 @@ class UploadSection extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                      Text(
-                      "Lasciaci analizzare il tuo piano\nattuale e trovare offerte migliori",
+                      'home.upload_section.subtitle'.tr,
                       style: TextStyle(
                         color: AppColors.textPrimary,
                         fontSize: 12.sp,
@@ -86,7 +87,7 @@ class UploadSection extends StatelessWidget {
                           borderRadius: BorderRadius.circular(14.r),
                         ),
                         child: Text(
-                          "Inizia a Risparmiare",
+                          'home.upload_section.button'.tr,
                           style: TextStyle(
                             color: AppColors.background,
                             fontSize: 14.sp,

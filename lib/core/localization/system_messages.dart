@@ -17,6 +17,8 @@ class SystemMessages {
     'Email already registered': 'system.email_registered',
     'Invalid or expired OTP code': 'system.code_expired',
     'Invalid or expired reset token': 'system.code_expired',
+    'Your reset session has expired. Please request a new code.':
+        'system.code_expired',
     'Invalid or expired verification token': 'system.code_expired',
     'Invalid verification token': 'system.code_expired',
     'Too many failed attempts. Please request a new code.':

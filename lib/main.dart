@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'core/services/cache_service.dart';
 import 'core/services/deep_link_service.dart';
@@ -46,6 +47,11 @@ void main() async {
 
   // Register Italian locale for timeago
   timeago.setLocaleMessages('it', timeago.ItMessages());
+
+  // Month and weekday names for dates written with DateFormat, in both
+  // languages the app speaks.
+  await initializeDateFormatting('it');
+  await initializeDateFormatting('en');
 
   // Pre-cache Open Sans font - downloads once and caches for offline use
   GoogleFonts.config.allowRuntimeFetching = true;

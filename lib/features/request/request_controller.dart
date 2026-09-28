@@ -5,6 +5,7 @@ import 'package:vyzi/core/constants/api_constants.dart';
 import 'package:vyzi/core/services/api_service.dart';
 import 'package:vyzi/features/bills/models/bill_model.dart';
 import 'package:vyzi/features/request/models/api_offer_model.dart';
+import 'package:vyzi/core/localization/system_messages.dart';
 
 class RequestController extends ChangeNotifier {
   final ApiService _api = ApiService();
@@ -203,7 +204,7 @@ class RequestController extends ChangeNotifier {
         offers = allOffers;
         totalOffers = allOffers.length;
       } else {
-        offersError = body['message']?.toString() ?? 'Failed to load offers';
+        offersError = SystemMessages.resolve(body['message']);
       }
     } catch (e) {
       offersError = (e is AppException ? e.message : 'system.unexpected'.tr);
@@ -243,7 +244,7 @@ class RequestController extends ChangeNotifier {
             .map((e) => BillModel.fromJson(e as Map<String, dynamic>))
             .toList();
       } else {
-        billsError = body['message']?.toString() ?? 'Failed to load bills';
+        billsError = SystemMessages.resolve(body['message']);
       }
     } catch (e) {
       billsError = (e is AppException ? e.message : 'system.unexpected'.tr);

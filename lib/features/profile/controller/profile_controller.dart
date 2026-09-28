@@ -9,6 +9,7 @@ import 'package:vyzi/core/services/storage_service.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/core/utils/phone_utils.dart';
 import 'package:vyzi/core/utils/tax_id_validator.dart';
+import 'package:vyzi/core/utils/date_format.dart';
 
 class ProfileController extends ChangeNotifier {
   final ApiService _api = ApiService();
@@ -109,11 +110,8 @@ class ProfileController extends ChangeNotifier {
         if (createdAt != null) {
           final dt = DateTime.tryParse(createdAt);
           if (dt != null) {
-            const months = [
-              'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
-              'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
-            ];
-            memberSince = 'Membro dal ${months[dt.month - 1]} ${dt.year}';
+            memberSince =
+                'profile.member_since'.trParams({'date': formatMonthYear(dt)});
           }
         }
 

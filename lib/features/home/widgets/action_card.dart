@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
+import 'package:get/get.dart';
 
 class ActionCard extends StatelessWidget {
   final String title;
@@ -109,7 +110,7 @@ class ActionCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Text(
-                    badgeText ?? 'Nuovo',
+                    badgeText ?? 'common.new'.tr,
                     style: TextStyle(
                       color: AppColors.background,
                       fontSize: 11.sp,

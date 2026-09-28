@@ -4,6 +4,7 @@ import 'package:vyzi/core/constants/api_constants.dart';
 import 'package:vyzi/core/services/api_service.dart';
 import 'package:vyzi/core/services/storage_service.dart';
 import 'package:vyzi/features/support/models/faq_model.dart';
+import 'package:vyzi/core/localization/system_messages.dart';
 
 class FaqController extends GetxController {
   final ApiService _api = ApiService();
@@ -46,7 +47,7 @@ class FaqController extends GetxController {
               .toList(),
         );
       } else {
-        error.value = body['message']?.toString() ?? 'Failed to load FAQs';
+        error.value = SystemMessages.resolve(body['message']);
       }
     } catch (e) {
       error.value = (e is AppException ? e.message : 'system.unexpected'.tr);

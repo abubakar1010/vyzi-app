@@ -4,6 +4,7 @@ import 'package:vyzi/core/constants/api_constants.dart';
 import 'package:vyzi/core/services/api_service.dart';
 import 'package:vyzi/core/services/storage_service.dart';
 import 'package:vyzi/features/profile/settings/models/static_page_model.dart';
+import 'package:vyzi/core/localization/system_messages.dart';
 
 class StaticPageController extends GetxController {
   final ApiService _api = ApiService();
@@ -42,7 +43,7 @@ class StaticPageController extends GetxController {
         page.value = StaticPageModel.fromJson(data);
       } else {
         error.value =
-            body['message']?.toString() ?? 'static_page.error'.tr;
+            SystemMessages.resolve(body['message']);
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {

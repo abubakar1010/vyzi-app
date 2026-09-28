@@ -212,7 +212,7 @@ class _MyRequestsProfileState extends State<MyRequestsProfile> {
                                 size: 12.sp,
                                 color: const Color(0xFF6A1B9A)),
                             SizedBox(width: 3.w),
-                            Text('Via Email',
+                            Text('bills.detail.via_email'.tr,
                                 style: TextStyle(
                                     fontSize: 10.sp,
                                     color: const Color(0xFF6A1B9A),

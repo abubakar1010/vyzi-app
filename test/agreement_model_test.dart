@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get/get.dart';
+import 'package:vyzi/core/localization/app_translations.dart';
 import 'package:vyzi/features/profile/agreements/agreements_controller.dart';
 
 /// The agreement detail screen used to invent three of the values it displayed:
@@ -115,6 +118,10 @@ void main() {
     );
 
     test('formats the offer date with and without an end date', () {
+      Get.addTranslations(AppTranslations().keys);
+      Get.locale = const Locale('it', 'IT');
+      addTearDown(Get.reset);
+
       expect(
         AgreementModel.fromJson(_json({})).offerDate,
         '2026-01-01 – 2026-12-31',
@@ -122,6 +129,12 @@ void main() {
       expect(
         AgreementModel.fromJson(_json({'validUntil': null})).offerDate,
         'Dal 2026-01-01',
+      );
+
+      Get.locale = const Locale('en', 'US');
+      expect(
+        AgreementModel.fromJson(_json({'validUntil': null})).offerDate,
+        'From 2026-01-01',
       );
     });
   });
