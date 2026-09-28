@@ -36,8 +36,8 @@ void main() {
       'email must be an email',
       'firstName should not be empty',
     ], language: 'it');
-    expect(result, contains('email'));
-    expect(result, contains('Controlla i dati inseriti'));
+    expect(result, contains('Il campo «Nome» è obbligatorio'));
+    expect(result, contains('Email'));
     expect(result, isNot(contains('must')));
     expect(result, isNot(contains('firstName')));
   });
@@ -54,7 +54,8 @@ void main() {
       'diagnostic',
       data,
     );
-    expect(error.message, 'Si è verificato un errore. Riprova tra poco.');
+    // Not recognised, so the status speaks for it — never the diagnostic.
+    expect(error.message, 'Non hai accesso a questa operazione.');
     expect(error.rawMessage, 'database query failed');
     expect(error.responseData, same(data));
     expect(error.statusCode, 403);

@@ -111,6 +111,7 @@ class ServerException extends AppException {
   String get message => SystemMessages.resolve(
         responseData?['message'] ?? rawMessage,
         errorCode: responseData?['errorCode'] as String?,
+        statusCode: statusCode,
       );
   /// HTTP status code (e.g., 404, 500)
   final int? statusCode;
