@@ -5,7 +5,12 @@
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<string>it</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>it</string>
+		<string>en</string>
+	</array>
 	<key>CFBundleDisplayName</key>
 	<string>VYZI</string>
 	<key>CFBundleExecutable</key>
@@ -78,9 +83,9 @@
 		<string>fb-messenger-share-api</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>VYZI needs camera access to scan your energy bills</string>
+	<string>VYZI usa la fotocamera per fotografare le tue bollette e i documenti di identità.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>VYZI needs microphone access for camera functionality</string>
+	<string>VYZI richiede il microfono per il funzionamento della fotocamera.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
