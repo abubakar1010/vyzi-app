@@ -313,6 +313,7 @@ class _OfferDetailsScreenState extends State<OfferDetailsScreen> {
         children: [
           Text(
             'offer.max_benefit'.tr,
+            textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white,
               fontSize: 11,
@@ -321,23 +322,27 @@ class _OfferDetailsScreenState extends State<OfferDetailsScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          Text(
-            savingsDisplay,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 56,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -1,
-              height: 1.0,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              savingsDisplay,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 56,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -1,
+                height: 1.0,
+              ),
             ),
           ),
           const SizedBox(height: 6),
           Text(
-            'request.offer.annual_savings'.tr,
+            'offer.savings_comparison'.tr,
+            textAlign: TextAlign.center,
             style: const TextStyle(
-              color: AppColors.green,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

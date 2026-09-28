@@ -1,5 +1,6 @@
 // password_update_success_screen.dart
 import 'package:vyzi/core/widgets/primary_button.dart';
+import 'package:vyzi/core/utils/app_assets.dart';
 import 'package:vyzi/features/auth/signin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,6 +35,8 @@ class PasswordUpdateSuccessScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                Image.asset(AppAssets.logo, height: 64),
+                const SizedBox(height: 16),
                 /// ✅ Logo/Image
                 Image.asset(
                   "assets/images/success.webp", // your tick image

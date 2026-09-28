@@ -1,5 +1,6 @@
 
 import 'package:vyzi/core/utils/app_colors.dart';
+import 'package:vyzi/core/utils/app_assets.dart';
 import 'package:vyzi/core/widgets/otp_input_field.dart';
 import 'package:vyzi/core/widgets/primary_button.dart';
 import 'package:vyzi/features/auth/controller/forgot_otp_controller.dart';
@@ -44,9 +45,21 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
             children: [
+              const SizedBox(height: 24),
+
+              Center(child: Image.asset(AppAssets.logo, height: 64)),
+              const SizedBox(height: 16),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.primary50,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text('auth.forgot_password.otp_sent_success'.tr),
+              ),
               const SizedBox(height: 24),
 
               /// OTP Input Boxes

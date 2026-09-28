@@ -1,3 +1,4 @@
+import 'package:vyzi/core/utils/app_assets.dart';
 
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/core/widgets/custom_text_filled.dart';
@@ -45,10 +46,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         top: false,
         child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: [
             SizedBox(height: size.height * 0.04),
+            Center(child: Image.asset(AppAssets.logo, height: 64)),
+            const SizedBox(height: 24),
 
 
             // ── Password ───────────────────────

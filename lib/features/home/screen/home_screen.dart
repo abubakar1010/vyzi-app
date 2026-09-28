@@ -147,9 +147,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               iconColor: AppColors.primaryColor,
               iconBgColor: AppColors.primaryAlpha10,
               title: 'home.summary.utilities_title'.tr,
-              value: controller.activeUtilities.value
-                  .toString()
-                  .padLeft(2, '0'),
+              value: controller.activeUtilities.value.toString(),
               valueColor: AppColors.primaryColor,
               subtitle: 'home.summary.utilities_subtitle'.tr,
             ),

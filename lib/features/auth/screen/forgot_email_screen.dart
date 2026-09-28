@@ -1,3 +1,4 @@
+import 'package:vyzi/core/utils/app_assets.dart';
 
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/core/widgets/custom_text_filled.dart';
@@ -32,6 +33,7 @@ class ForgotPasswordScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Center(child: Image.asset(AppAssets.logo, height: 64)),
                 const SizedBox(height: 24),
                 // ── Email ──────────────────────────
                 _labeledField(
