@@ -534,6 +534,21 @@ class CompleteRequestController extends ChangeNotifier {
     }
   }
 
+  /// Adds photos taken with the in-app camera (front, back, or both).
+  void addCapturedDocuments(List<String> paths) {
+    final remaining = maxDocuments - uploadedDocuments.length;
+    if (remaining <= 0) return;
+
+    for (final path in paths.take(remaining)) {
+      uploadedDocuments.add(UploadedDocumentInfo(
+        localPath: path,
+        fileName: path.split(RegExp(r'[/\\]')).last,
+        documentType: 'identity_document',
+      ));
+    }
+    notifyListeners();
+  }
+
   /// Uploads all pending local documents to the server.
   /// Returns true if all uploads succeeded.
   Future<bool> _uploadPendingDocuments() async {

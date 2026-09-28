@@ -14,10 +14,14 @@ class MultiCaptureScreen extends StatefulWidget {
   /// Maximum total photos allowed (existing + new).
   final int maxCount;
 
+  /// Top-bar title; defaults to the bill-scanning title.
+  final String? title;
+
   const MultiCaptureScreen({
     super.key,
     required this.existingCount,
     required this.maxCount,
+    this.title,
   });
 
   @override
@@ -266,7 +270,7 @@ class _MultiCaptureScreenState extends State<MultiCaptureScreen>
           ),
           Expanded(
             child: Text(
-              'upload_bill.camera_title'.tr,
+              widget.title ?? 'upload_bill.camera_title'.tr,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,

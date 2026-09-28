@@ -12,6 +12,7 @@ import 'package:vyzi/core/widgets/address_form_fields.dart';
 import 'package:vyzi/core/widgets/phone_filled.dart';
 
 import 'package:vyzi/features/request/models/api_offer_model.dart';
+import 'package:vyzi/features/utility/multi_capture_screen.dart';
 import 'complete_request_controller.dart';
 
 class CompleteRequestScreen extends StatefulWidget {
@@ -1603,12 +1604,28 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
             ),
             SizedBox(height: 10.h),
           ],
-          _buildIdButton(
-            icon: Icons.upload_rounded,
-            label: 'request.form.upload_file_button'.tr,
-            sublabel: 'request.form.upload_formats'.tr,
-            canUpload: _c.uploadedDocuments.length < CompleteRequestController.maxDocuments,
-            onTap: _pickFile,
+          Row(
+            children: [
+              Expanded(
+                child: _buildIdButton(
+                  icon: Icons.photo_camera_rounded,
+                  label: 'request.form.take_photo_button'.tr,
+                  sublabel: 'request.form.take_photo_hint'.tr,
+                  canUpload: _canAddDocument,
+                  onTap: _takePhoto,
+                ),
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: _buildIdButton(
+                  icon: Icons.upload_rounded,
+                  label: 'request.form.upload_file_button'.tr,
+                  sublabel: 'request.form.upload_formats'.tr,
+                  canUpload: _canAddDocument,
+                  onTap: _pickFile,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -1666,8 +1683,29 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
     );
   }
 
+  bool get _canAddDocument =>
+      _c.uploadedDocuments.length < CompleteRequestController.maxDocuments;
+
   Future<void> _pickFile() async {
     await _c.pickDocuments();
+  }
+
+  /// Opens the same multi-shot camera used for bill scanning, so the front
+  /// and back can be taken one after the other in a single session.
+  Future<void> _takePhoto() async {
+    final paths =
+        await Navigator.of(context, rootNavigator: true).push<List<String>>(
+      MaterialPageRoute(
+        builder: (_) => MultiCaptureScreen(
+          existingCount: _c.uploadedDocuments.length,
+          maxCount: CompleteRequestController.maxDocuments,
+          title: 'request.form.id_camera_title'.tr,
+        ),
+      ),
+    );
+    if (paths != null && paths.isNotEmpty) {
+      _c.addCapturedDocuments(paths);
+    }
   }
 
 
