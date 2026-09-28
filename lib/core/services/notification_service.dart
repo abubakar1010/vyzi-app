@@ -9,6 +9,9 @@ import 'package:get/get.dart';
 
 import '../../features/notifications/controller/notification_controller.dart';
 import '../constants/api_constants.dart';
+import '../controllers/language_controller.dart';
+import '../localization/en_us.dart';
+import '../localization/it_it.dart';
 import 'api_service.dart';
 import 'notification_router.dart';
 import 'storage_service.dart';
@@ -25,20 +28,37 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
 
-  static const _androidChannel = AndroidNotificationChannel(
-    'vyzi_default',
-    'VYZI Notifications',
-    description: 'Notifications from VYZI',
-    importance: Importance.high,
-  );
+  /// The Android channel's name and description are shown in the system
+  /// settings, so they follow the app language. The channel is created before
+  /// GetX translations load, which is why the copy is read from the catalogues
+  /// directly; re-creating a channel with the same id only renames it.
+  static AndroidNotificationChannel _channelFor(String languageCode) {
+    final copy = languageCode == 'en' ? enUS : itIT;
+    return AndroidNotificationChannel(
+      'vyzi_default',
+      copy['notifications.channel_name']!,
+      description: copy['notifications.channel_description'],
+      importance: Importance.high,
+    );
+  }
 
-  /// Initialize FCM, local notifications, and request permissions.
-  Future<void> init() async {
-    // Create Android notification channel
+  AndroidNotificationChannel _androidChannel = _channelFor('it');
+
+  /// Renames the Android channel after the user switches language.
+  Future<void> updateChannelLanguage(String languageCode) async {
+    _androidChannel = _channelFor(languageCode);
     await _localNotifications
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_androidChannel);
+  }
+
+  /// Initialize FCM, local notifications, and request permissions.
+  Future<void> init() async {
+    // Create Android notification channel, named in the saved app language.
+    await updateChannelLanguage(
+      Get.find<StorageService>().getString(StorageKeys.selectedLanguage) ?? 'it',
+    );
 
     // Initialize local notifications plugin
     const androidSettings =
@@ -106,6 +126,11 @@ class NotificationService {
       }
     } catch (e) {
       debugPrint('Failed to get/register FCM token: $e');
+    }
+    // Pushes are written server-side in the language stored on the account,
+    // so it is sent whenever the device is registered for them.
+    if (Get.isRegistered<LanguageController>()) {
+      await Get.find<LanguageController>().syncToServer();
     }
   }
 

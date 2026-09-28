@@ -29,6 +29,7 @@ class ApiConstants {
   //Get My Profile
   static const String getMyProfile = '/api/v1/auth/me';
   static const String updateProfile = '/api/v1/users/profile';
+  static const String myPreferences = '/api/v1/users/me/preferences';
 
   // User activated services (utilities)
   static const String myServices = '/api/v1/meters/my-services';
