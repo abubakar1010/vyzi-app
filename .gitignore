@@ -1,0 +1,54 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code. Kept out of version control deliberately: the editor config that
+# was committed here was not this project's — it auto-ran a task on folder
+# open, out of a file disguised as a font. Editor settings are a developer's
+# own, and a repository that carries none cannot smuggle one.
+.vscode/
+
+# Not a web project. `public/` held a FontAwesome drop that nothing in the app
+# referenced, which is what the auto-run task above was pointed at.
+/public/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore

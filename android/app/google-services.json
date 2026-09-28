@@ -1,0 +1,62 @@
+{
+  "project_info": {
+    "project_number": "703974828285",
+    "project_id": "vyzi-4bccc",
+    "storage_bucket": "vyzi-4bccc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:703974828285:android:776fdfa7fd5a30e0a07694",
+        "android_client_info": {
+          "package_name": "com.vyzi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "703974828285-g2uv6paqvddjps4v4qid8ljo7vb9isd2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vyzi",
+            "certificate_hash": "d9adf4d9dd2b8d5487f24a6269c03bfe8eae315e"
+          }
+        },
+        {
+          "client_id": "703974828285-lgv4t5dbnksh1una1q5g50dve84i2ber.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vyzi",
+            "certificate_hash": "8f4a87255f7578eabdf417218ec27b5f65ab3c0a"
+          }
+        },
+        {
+          "client_id": "703974828285-2od94eufnf121bgpomqtc2vfagk15t96.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDByT0DwOI140uRKnX93EBcFfHgSzGYSRc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "703974828285-2od94eufnf121bgpomqtc2vfagk15t96.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "703974828285-n3v3gvbvbfl85l5v4mpssq8qoj0dvf35.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vyzi"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

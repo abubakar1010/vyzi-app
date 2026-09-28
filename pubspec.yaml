@@ -1,0 +1,156 @@
+name: vyzi
+description: "VYZI"
+
+publish_to: 'none'
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.0
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  get:
+  dio:
+  flutter_screenutil:
+  hive_flutter:
+  connectivity_plus:
+  path_provider:
+  google_fonts:
+  shared_preferences:
+  flutter_secure_storage:
+  flutter_svg:
+  pin_code_fields:
+  image_picker:
+  camera:
+  file_picker:
+  flutter_html:
+  intl:
+  timeago:
+  country_code_picker:
+  flutter_launcher_icons:
+  # google_mlkit_text_recognition: removed — OCR now handled server-side via OpenAI Vision API
+  # syncfusion_flutter_pdf: removed — PDF text extraction no longer needed on-device
+  # Renders contract PDFs through the OS: android.graphics.pdf.PdfRenderer on
+  # Android, CGPDFPage on iOS. Nothing native ships with it. flutter_pdfview
+  # was here before and bundled PDFium, which cost 5,876,784 bytes per ABI.
+  pdfx: ^2.11.0
+  flutter_cache_manager:
+  url_launcher:
+  share_plus:
+  app_links: ^6.4.0
+
+  # Firebase
+  firebase_core:
+  firebase_auth:
+  firebase_messaging:
+  flutter_local_notifications:
+
+  # Social sign-in providers
+  google_sign_in:
+  sign_in_with_apple:
+  flutter_facebook_auth:
+  crypto:
+  pretty_dio_logger: ^1.4.0
+
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints:
+  flutter_launcher_icons:
+
+flutter_launcher_icons:
+    android: true
+    ios: true
+    remove_alpha_ios: true
+    image_path: "assets/images/VYZI.png"
+
+flutter:
+  uses-material-design: true
+
+  # Listed file by file on purpose. Registering `assets/icons/` and
+  # `assets/images/` as directories shipped every file in them whether or not
+  # any code named one -- that is how 70 unreferenced images came to be in the
+  # APK. Adding a new asset now means adding a line here.
+  assets:
+    - assets/icons/1.webp
+    - assets/icons/2.webp
+    - assets/icons/3.webp
+    - assets/icons/4.webp
+    - assets/icons/5.webp
+    - assets/icons/6.webp
+    - assets/icons/8.webp
+    - assets/icons/about.webp
+    - assets/icons/apple.webp
+    - assets/icons/arrow.webp
+    - assets/icons/arrows_right.webp
+    - assets/icons/business.webp
+    - assets/icons/chart.webp
+    - assets/icons/check.webp
+    - assets/icons/delete.webp
+    - assets/icons/facebook.webp
+    - assets/icons/flash.webp
+    - assets/icons/gas.webp
+    - assets/icons/gogle.webp
+    - assets/icons/location.webp
+    - assets/icons/logo.webp
+    - assets/icons/mail.webp
+    - assets/icons/mainlogo.webp
+    - assets/icons/more.webp
+    - assets/icons/open_ticket.webp
+    - assets/icons/privacy.webp
+    - assets/icons/profile_001.webp
+    - assets/icons/profile_002.webp
+    - assets/icons/scan.webp
+    - assets/icons/scannn.webp
+    - assets/icons/send_email.webp
+    - assets/icons/switch.webp
+    - assets/icons/terms.webp
+    - assets/icons/upload.webp
+    - assets/icons/user.webp
+    - assets/icons/website.webp
+    - assets/images/VYZI.png
+    - assets/images/about.webp
+    - assets/images/cir.webp
+    - assets/images/circle.webp
+    - assets/images/down.webp
+    - assets/images/f_01.webp
+    - assets/images/f_04.webp
+    - assets/images/f_05.webp
+    - assets/images/filter.webp
+    - assets/images/flash.webp
+    - assets/images/h_1.webp
+    - assets/images/h_2.webp
+    - assets/images/h_3.webp
+    - assets/images/h_4.webp
+    - assets/images/home.webp
+    - assets/images/home_act.webp
+    - assets/images/home_bg.webp
+    - assets/images/home_logo.webp
+    - assets/images/home_new.webp
+    - assets/images/home_regular_bg.webp
+    - assets/images/logo.webp
+    - assets/images/notification.webp
+    - assets/images/on1.webp
+    - assets/images/on2.webp
+    - assets/images/on3.webp
+    - assets/images/priceType.webp
+    - assets/images/price_calculate.webp
+    - assets/images/profil.webp
+    - assets/images/profil_act.webp
+    - assets/images/rich.webp
+    - assets/images/rich_act.webp
+    - assets/images/send_mail.webp
+    - assets/images/success.webp
+    - assets/images/switch.webp
+    - assets/images/terms.webp
+    - assets/images/user.webp
+    - assets/images/utili.webp
+    - assets/images/utili_act.webp
