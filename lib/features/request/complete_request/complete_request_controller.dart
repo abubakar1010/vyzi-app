@@ -468,17 +468,11 @@ class CompleteRequestController extends ChangeNotifier {
 
   /// Whether that tax ID is one the supplier will accept.
   ///
-  /// The account's own kind of code when the account is the holder — a Partita
-  /// IVA for a company, a Codice Fiscale for a private customer — because that
-  /// is the identifier the mandate is filed under, and the API holds the case
-  /// to the same rule. A third party is neither account, and may be a person or
-  /// a company, so both forms pass there. An account that never recorded a code
-  /// is no more filable than a third party whose code was mistyped.
-  bool get isHolderTaxCodeValid => ibanSameAsContract
-      ? (isBusiness
-          ? isValidPartitaIva(effectiveHolderTaxCode)
-          : isValidCodiceFiscale(effectiveHolderTaxCode))
-      : isValidItalianTaxId(effectiveHolderTaxCode);
+  /// Either a Codice Fiscale or a Partita IVA, on either kind of account and
+  /// whoever holds the IBAN — only formal validity is checked, as the API
+  /// does. An account that never recorded a code is no more filable than a
+  /// third party whose code was mistyped.
+  bool get isHolderTaxCodeValid => isValidItalianTaxId(effectiveHolderTaxCode);
 
   bool get _isPaymentValid {
     if (selectedPayment != PaymentMethod.directDebit) return true;

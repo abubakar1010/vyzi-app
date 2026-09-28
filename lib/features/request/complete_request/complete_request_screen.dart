@@ -96,6 +96,7 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
   /// customer has no other place on this journey to give it.
   final TextEditingController _contractTaxCtrl = TextEditingController();
   String? _contractTaxError;
+  bool _contractTaxEditable = false;
 
   final TextEditingController _holderFirstCtrl = TextEditingController();
   final TextEditingController _holderLastCtrl = TextEditingController();
@@ -316,16 +317,14 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
                 (_c.holderFirstName.trim().isEmpty ||
                     _c.holderLastName.trim().isEmpty)))) {
       setState(() {
-        // The same message the field itself would have shown, so a VAT number
-        // typed here is named as the wrong code at submit time too rather than
-        // being called invalid.
+        // The same message the field itself would have shown, so a code that
+        // fails only on its check character is named as such at submit time too.
         final taxError = _c.isHolderTaxCodeValid
             ? null
             : (_holderTaxIdError(_c.effectiveHolderTaxCode) ??
-                (_c.isBusiness
-                    ? 'request.form.vat_error'.tr
-                    : 'request.form.tax_code_error'.tr));
+                'request.form.holder_tax_id_error'.tr);
         if (_c.ibanSameAsContract) {
+          _contractTaxEditable = true;
           _contractTaxError = taxError;
         } else {
           // Sending the customer to fields they cannot type in helps nobody —
@@ -1086,12 +1085,6 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _sectionTitle('request.form.delivery_address'.tr),
-          SizedBox(height: 2.h),
-          Text('request.form.readonly_summary'.tr,
-              style: TextStyle(
-                  fontSize: 12.sp,
-                  color: AppColors.textPrimary,
-                  height: 1.22)),
           SizedBox(height: 12.h),
 
           // ── Address box ──
@@ -1727,47 +1720,9 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
                   fontSize: 12.sp,
                   color: AppColors.textPrimary,
                   height: 1.22)),
-          SizedBox(height: 12.h),
-
-          // Who the contract is in the name of, and the code it is filed
-          // under. A company contracts as itself: the mandate's IBAN has to be
-          // registered to the ragione sociale, not to the person signing, so
-          // that is the name this row confirms.
-          _personalRow(
-            (_c.isBusiness
-                    ? 'request.form.company_name_field'
-                    : 'request.form.full_name_label')
-                .tr,
-            _c.contractHolderName,
-          ),
-          // A direct debit is filed against the holder's tax ID, and plenty of
-          // accounts never recorded one — so for SDD this stops being a
-          // read-only confirmation and becomes the field that collects it. It
-          // stays a field for the whole session rather than only while blank,
-          // so it does not turn read-only under the customer mid-correction.
-          if (isDirectDebit) ...[
-            SizedBox(height: 12.h),
-            _buildEditField(
-              _accountTaxLabel,
-              _contractTaxCtrl,
-              errorText: _contractTaxError,
-              maxLength: _accountTaxMaxLength,
-              textCapitalization: TextCapitalization.characters,
-              onChanged: (value) {
-                _c.taxCode = value.trim();
-                // Keeps the holder card's pre-fill current, for a customer who
-                // corrects this and then unticks the box.
-                if (_c.ibanSameAsContract) {
-                  _holderTaxCtrl.text = _c.taxCode;
-                  _c.holderTaxCode = _c.taxCode;
-                }
-                setState(() => _contractTaxError = _accountTaxIdError(value));
-              },
-            ),
-          ] else ...[
-            _dividerLine(),
-            _personalRow(_accountTaxLabel, _c.taxCode),
-          ],
+          // Whose name and tax code the mandate carries is only asked once the
+          // customer has said whose account the IBAN is — see the holder block
+          // under the IBAN. A postal order needs neither.
           SizedBox(height: 14.h),
 
           // ── Payment options ──
@@ -1905,11 +1860,15 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
             setState(() {
               _ibanSameAsContract = !_ibanSameAsContract;
               _c.ibanSameAsContract = _ibanSameAsContract;
-              // Both answers open on the account's own name and tax code. The
-              // block is a form, not a question already answered: it is left
-              // unsaved and editable, so a third-party mandate is typed over
-              // the pre-fill rather than into three empty fields.
-              _prefillHolderFromAccount();
+              // Same holder: the mandate carries the account's own name and
+              // tax code, filled in from what the account already holds.
+              // Different holder: a new person or company, so the fields open
+              // empty rather than on the account's data.
+              if (_ibanSameAsContract) {
+                _prefillHolderFromAccount();
+              } else {
+                _clearHolderFields();
+              }
               // The holder card is hidden while the box is ticked, and unticking
               // it reveals fields the customer has not touched yet — either way
               // there is no error left worth showing against them, and nothing
@@ -1970,25 +1929,96 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
           ),
         ),
 
-        // ── Holder Information card — hidden when checkbox ticked ──
+        // ── Holder details: the account's own when ticked, new fields when not ──
         AnimatedSize(
           duration: const Duration(milliseconds: 260),
           curve: Curves.easeInOut,
-          child: _ibanSameAsContract
-              ? const SizedBox.shrink()
-              : Padding(
+          child: Padding(
             padding: EdgeInsets.only(top: 12.h),
-            child: _buildHolderInfoCard(),
+            child: _ibanSameAsContract
+                ? _buildContractHolderSummary()
+                : _buildHolderInfoCard(),
           ),
         ),
       ],
     );
   }
 
+  /// The account's own holder details, filled in automatically, for a mandate
+  /// on the contract holder's own IBAN.
+  ///
+  /// The tax code is only a field when the account has no usable one — a
+  /// direct debit cannot be filed without it, and this is the one place the
+  /// journey asks for it. Once it has been a field it stays one for the
+  /// session, so it does not turn read-only under the customer mid-correction.
+  Widget _buildContractHolderSummary() {
+    if (!_isAccountTaxValid) _contractTaxEditable = true;
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.divider, width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // A company contracts as itself: the IBAN has to be registered to
+          // the ragione sociale, not to the person signing.
+          if (_c.isBusiness) ...[
+            _personalRow(
+                'request.form.company_name_field'.tr, _c.contractHolderName),
+          ] else ...[
+            _personalRow('request.form.first_name'.tr, _c.firstName),
+            _dividerLine(),
+            _personalRow('request.form.last_name'.tr, _c.lastName),
+          ],
+          if (_contractTaxEditable) ...[
+            SizedBox(height: 6.h),
+            _buildEditField(
+              'request.form.holder_tax_id_label'.tr,
+              _contractTaxCtrl,
+              errorText: _contractTaxError,
+              // Either form on either kind of account, so the longer of the
+              // two is what the field has to allow.
+              maxLength: 16,
+              textCapitalization: TextCapitalization.characters,
+              onChanged: (value) {
+                _c.taxCode = value.trim();
+                _holderTaxCtrl.text = _c.taxCode;
+                _c.holderTaxCode = _c.taxCode;
+                setState(() => _contractTaxError = _holderTaxIdError(value));
+              },
+            ),
+            SizedBox(height: 8.h),
+          ] else ...[
+            _dividerLine(),
+            _personalRow(
+                isValidPartitaIva(_c.taxCode)
+                    ? 'request.form.vat_label'.tr
+                    : 'request.form.tax_code_label'.tr,
+                _c.taxCode),
+          ],
+        ],
+      ),
+    );
+  }
+
+  bool get _isAccountTaxValid => isValidItalianTaxId(_c.taxCode);
+
+  void _clearHolderFields() {
+    _holderFirstCtrl.clear();
+    _holderLastCtrl.clear();
+    _holderTaxCtrl.clear();
+    _c.holderFirstName = '';
+    _c.holderLastName = '';
+    _c.holderTaxCode = '';
+  }
+
   /// Fills the holder block with whatever the account already holds: the
-  /// customer's name and their tax code — the Codice Fiscale, whether the
-  /// account is personal or business, because that is the only identifier this
-  /// block asks for. Fields the account has nothing for are left blank.
+  /// customer's name and the account's tax ID. Fields the account has nothing
+  /// for are left blank.
   void _prefillHolderFromAccount() {
     _holderFirstCtrl.text = _c.firstName;
     _holderLastCtrl.text = _c.lastName;
@@ -2044,14 +2074,12 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
               }),
           SizedBox(height: 10.h),
           _buildEditField(
-              _c.ibanSameAsContract
-                  ? _accountTaxLabel
-                  : 'request.form.holder_tax_id_label'.tr,
+              'request.form.holder_tax_id_label'.tr,
               _holderTaxCtrl,
               errorText: _holderTaxError,
               // A third-party holder may be a person or a company, so the
               // longer of the two forms is what the field has to allow.
-              maxLength: _c.ibanSameAsContract ? _accountTaxMaxLength : 16,
+              maxLength: 16,
               readOnly: _holderInfoSaved,
               textCapitalization: TextCapitalization.characters,
               onChanged: (v) {
@@ -2135,11 +2163,7 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
     final taxError = _c.isHolderTaxCodeValid
         ? null
         : (_holderTaxIdError(taxCode) ??
-            (_c.ibanSameAsContract
-                ? (_c.isBusiness
-                    ? 'request.form.vat_error'.tr
-                    : 'request.form.tax_code_error'.tr)
-                : 'request.form.holder_tax_id_error'.tr));
+            'request.form.holder_tax_id_error'.tr);
 
     setState(() {
       _holderFirstError = firstError;
@@ -2186,8 +2210,7 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
   /// What to say about a Partita IVA a supplier would refuse, or null when
   /// there is nothing to say yet.
   ///
-  /// Separate from [_accountTaxIdError], which picks a rule by account kind.
-  /// Here both codes are on screen at once — the company's VAT number and its
+  /// Separate from [_holderTaxIdError], which takes either code. Here both codes are on screen at once — the company's VAT number and its
   /// owner's Codice Fiscale, one row apart — so each field is held to its own
   /// rule and names the other code as the other code rather than as invalid.
   String? _partitaIvaError(String value) {
@@ -2226,70 +2249,24 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
           ? null
           : 'request.form.pec_invalid'.tr;
 
-  /// What the account's own tax ID is called, and what a field asking for it
-  /// accepts.
-  ///
-  /// One account, one identifier: a private customer is identified by their
-  /// Codice Fiscale and a company by its Partita IVA, so only one of the two is
-  /// ever on screen and the wrong one is refused by name.
-  String get _accountTaxLabel => _c.isBusiness
-      ? 'request.form.vat_label'.tr
-      : 'request.form.tax_code_label'.tr;
-
-  /// Sixteen characters for a Codice Fiscale, eleven digits for a Partita IVA.
-  int get _accountTaxMaxLength => _c.isBusiness ? 11 : 16;
-
-  /// What to say about a tax ID the supplier would refuse, or null when there
-  /// is nothing to say yet.
+  /// What to say about the direct debit holder's tax ID, or null when there is
+  /// nothing to say yet.
   ///
   /// An untouched field is left alone — the customer has not finished with it,
   /// and the summary above the Activate button already says it is needed. This
   /// is the same restraint the IBAN field shows.
   ///
-  /// The account's own rule, not the looser "either Italian tax ID" one: the
-  /// mandate is filed against the account, and an account holds one identifier.
-  /// The other code is named as the other code rather than called invalid — a
-  /// customer who reaches for the wrong one has typed something real.
-  String? _accountTaxIdError(String value) {
-    if (_c.isBusiness) {
-      switch (partitaIvaProblem(value)) {
-        case null:
-          return null;
-        case PartitaIvaProblem.codiceFiscale:
-          return 'request.form.vat_tax_code_not_accepted'.tr;
-        case PartitaIvaProblem.checkDigit:
-        case PartitaIvaProblem.shape:
-          return 'request.form.vat_error'.tr;
-      }
-    }
-    switch (codiceFiscaleProblem(value)) {
-      case null:
-        return null;
-      case CodiceFiscaleProblem.vatNumber:
-        return 'request.form.tax_code_vat_not_accepted'.tr;
-      case CodiceFiscaleProblem.checkCharacter:
-        // Fifteen of the sixteen characters are already right. Saying only
-        // "invalid" sends the customer back to retype a code that was very
-        // nearly correct; naming the last character points at the typo.
-        final expected = codiceFiscaleCheckCharacter(value);
-        return 'request.form.tax_code_error_check'.trParams({'char': expected ?? ''});
-      case CodiceFiscaleProblem.shape:
-        return 'request.form.tax_code_error'.tr;
-    }
-  }
-
-  /// The same, for the field in the holder card.
-  ///
-  /// While the account is the holder it is the account's rule. Once the
-  /// customer says the account belongs to someone else, that someone may be a
-  /// person or a company and both forms are accepted — a third-party holder is
-  /// neither of this account's two identities.
+  /// Either form on either kind of account, whether or not the account is the
+  /// holder: a Codice Fiscale or a Partita IVA, checked only for formal
+  /// validity.
   String? _holderTaxIdError(String value) {
-    if (_c.ibanSameAsContract) return _accountTaxIdError(value);
     switch (taxIdProblem(value)) {
       case null:
         return null;
       case TaxIdProblem.checkCharacter:
+        // Fifteen of the sixteen characters are already right. Saying only
+        // "invalid" sends the customer back to retype a code that was very
+        // nearly correct; naming the last character points at the typo.
         final expected = codiceFiscaleCheckCharacter(value);
         return 'request.form.tax_code_error_check'.trParams({'char': expected ?? ''});
       case TaxIdProblem.checkDigit:
@@ -3116,6 +3093,7 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
             height: 1.22));
   }
 }
+
 
 /// The boxed Save / Edit button at the foot of the holder block.
 ///
