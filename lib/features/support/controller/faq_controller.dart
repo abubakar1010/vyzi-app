@@ -1,3 +1,4 @@
+import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'package:get/get.dart';
 import 'package:vyzi/core/constants/api_constants.dart';
 import 'package:vyzi/core/services/api_service.dart';
@@ -48,7 +49,7 @@ class FaqController extends GetxController {
         error.value = body['message']?.toString() ?? 'Failed to load FAQs';
       }
     } catch (e) {
-      error.value = e.toString();
+      error.value = (e is AppException ? e.message : 'system.unexpected'.tr);
     } finally {
       isLoading.value = false;
     }

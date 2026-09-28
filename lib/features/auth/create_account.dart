@@ -411,7 +411,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         });
                       } catch (e) {
                         String errorMessage = 'auth.signup.registration_failed_default'.tr;
-                        final rawError = auth.error.value;
+                        final rawError = e is AppException ? e.rawMessage : auth.error.value;
                         if (rawError.contains('Email already registered')) {
                           errorMessage = 'auth.signup.error.email_exists'.tr;
                         } else if (rawError.contains('Partita IVA')) {

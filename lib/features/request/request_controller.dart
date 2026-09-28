@@ -1,4 +1,6 @@
+import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:vyzi/core/constants/api_constants.dart';
 import 'package:vyzi/core/services/api_service.dart';
 import 'package:vyzi/features/bills/models/bill_model.dart';
@@ -204,7 +206,7 @@ class RequestController extends ChangeNotifier {
         offersError = body['message']?.toString() ?? 'Failed to load offers';
       }
     } catch (e) {
-      offersError = e.toString();
+      offersError = (e is AppException ? e.message : 'system.unexpected'.tr);
     } finally {
       isLoadingOffers = false;
       notifyListeners();
@@ -244,7 +246,7 @@ class RequestController extends ChangeNotifier {
         billsError = body['message']?.toString() ?? 'Failed to load bills';
       }
     } catch (e) {
-      billsError = e.toString();
+      billsError = (e is AppException ? e.message : 'system.unexpected'.tr);
     } finally {
       isLoadingBills = false;
       notifyListeners();

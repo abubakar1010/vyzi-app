@@ -1,3 +1,4 @@
+import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'package:get/get.dart';
 import 'package:vyzi/core/constants/api_constants.dart';
 import 'package:vyzi/core/services/api_service.dart';
@@ -83,7 +84,7 @@ class BillsController extends GetxController {
             body['message']?.toString() ?? 'Impossibile caricare le bollette';
       }
     } catch (e) {
-      billsError.value = e.toString();
+      billsError.value = (e is AppException ? e.message : 'system.unexpected'.tr);
     } finally {
       isLoadingBills.value = false;
     }
@@ -109,7 +110,7 @@ class BillsController extends GetxController {
             body['message']?.toString() ?? 'Impossibile caricare la bolletta';
       }
     } catch (e) {
-      detailError.value = e.toString();
+      detailError.value = (e is AppException ? e.message : 'system.unexpected'.tr);
     } finally {
       isLoadingDetail.value = false;
     }

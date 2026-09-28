@@ -1,3 +1,4 @@
+import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
@@ -22,7 +23,7 @@ class InviteController extends GetxController {
 
   // ── Earnings ──
   final totalEarnings = 0.0.obs;
-  final String earningsType = 'Buoni Amazon';
+  String get earningsType => 'profile.invite.earnings_type'.tr;
   final earningsStatus = ''.obs;
   final progressAmount = formatMoney(0).obs;
 
@@ -53,7 +54,7 @@ class InviteController extends GetxController {
           totalEarnings.value > 0 ? 'profile.invite.earnings_status'.tr : '';
       progressAmount.value = formatMoney(totalEarnings.value);
     } catch (e) {
-      errorMessage.value = e.toString();
+      errorMessage.value = (e is AppException ? e.message : 'system.unexpected'.tr);
     } finally {
       isLoading.value = false;
     }

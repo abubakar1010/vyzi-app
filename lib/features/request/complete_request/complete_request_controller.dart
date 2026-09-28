@@ -525,8 +525,8 @@ class CompleteRequestController extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       Get.snackbar(
-        'File Selection Error',
-        e.toString(),
+        'upload_bill.file_validation_title'.tr,
+        (e is AppException ? e.message : 'system.unexpected'.tr),
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.shade600,
         colorText: Colors.white,
@@ -702,9 +702,9 @@ class CompleteRequestController extends ChangeNotifier {
       NavHelper.pushReplacement(
           RequestSuccessScreen(billId: createdCase.billId));
     } catch (e) {
-      error = e.toString();
+      error = (e is AppException ? e.message : 'system.unexpected'.tr);
       Get.snackbar(
-        'Error',
+        'auth.validation.error'.tr,
         error!,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.shade600,

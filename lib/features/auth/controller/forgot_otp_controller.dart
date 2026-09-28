@@ -116,7 +116,7 @@ class ForgotPasswordOtpController extends GetxController {
     isResending.value = true;
 
     try {
-      final response = await _auth.resendOtp(
+      await _auth.resendOtp(
         email: email.value,
         type: 'password_reset',
       );
@@ -130,10 +130,7 @@ class ForgotPasswordOtpController extends GetxController {
       // Same conditional wording as the email screen — the API cannot say
       // whether anything was actually sent without giving away who has an
       // account here.
-      final data = response['data'];
-      final message = (data is Map && data['message'] is String)
-          ? data['message'] as String
-          : 'auth.otp.resend_message'.tr;
+      final message = 'auth.forgot_password.otp_sent_success'.tr;
       Get.snackbar('auth.otp.resend_title'.tr, message);
     } on AppException catch (e) {
       Get.snackbar('auth.validation.error'.tr, e.message);

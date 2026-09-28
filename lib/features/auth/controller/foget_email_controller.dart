@@ -22,7 +22,7 @@ class ForgotPasswordController extends GetxController {
 
     isLoading.value = true;
     try {
-      final response = await _auth.forgotPassword(email: email);
+      await _auth.forgotPassword(email: email);
 
       // The API answers identically for a registered address, an unknown one
       // and one still inside its cooldown — on purpose, so this screen cannot
@@ -30,10 +30,7 @@ class ForgotPasswordController extends GetxController {
       // conditional: the old copy here promised "OTP sent to your email" even
       // when nothing had been sent, which is exactly the lie it reads as when
       // the address was mistyped.
-      final data = response['data'];
-      final message = (data is Map && data['message'] is String)
-          ? data['message'] as String
-          : 'auth.forgot_password.otp_sent_success'.tr;
+      final message = 'auth.forgot_password.otp_sent_success'.tr;
 
       Get.to(() => ForgotPasswordOtpScreen(), arguments: {'email': email});
       Get.snackbar('auth.validation.success'.tr, message);

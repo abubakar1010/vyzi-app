@@ -4,6 +4,7 @@ import 'package:vyzi/features/home/email/email_bill_screen.dart';
 import 'package:vyzi/features/utility/controller/select_utility_controller.dart';
 import 'package:vyzi/features/utility/controller/upload_bill_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:vyzi/core/constants/contact_constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -783,7 +784,7 @@ class _UploadBillScreenState extends State<UploadBillScreen> {
                       ),
                       SizedBox(height: 3.h),
                       Text(
-                        'upload_bill.send_email_address'.tr,
+                        'upload_bill.send_email_address'.trParams({'email': ContactConstants.billInbox}),
                         style: TextStyle(
                           fontSize: 12.sp,
                           color: Colors.black,

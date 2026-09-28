@@ -47,10 +47,20 @@ class EmailBillScreen extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                             Image.asset(
-                              'assets/images/send_mail.webp',
-                              fit: BoxFit.contain,
-                            ),
+                          const SizedBox(height: 20),
+                          const CircleAvatar(
+                            radius: 28,
+                            backgroundColor: Color(0xFFF3EDFF),
+                            child: Icon(Icons.mail_outline, size: 30, color: Color(0xFF5A1ABE)),
+                          ),
+                          const SizedBox(height: 12),
+                          Text('home.email_bill.hero_title'.tr,
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
+                            child: Text('home.email_bill.hero_subtitle'.tr,
+                                textAlign: TextAlign.center),
+                          ),
                         ],
                       ),
                     ),

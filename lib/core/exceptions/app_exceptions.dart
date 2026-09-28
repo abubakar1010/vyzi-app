@@ -1,3 +1,5 @@
+import '../localization/system_messages.dart';
+
 /// Base exception class for all application exceptions.
 ///
 /// All custom exceptions in the app should extend this class to provide
@@ -19,13 +21,14 @@
 /// ```
 abstract class AppException implements Exception {
   /// User-friendly error message
-  final String message;
+  final String rawMessage;
+  String get message => SystemMessages.resolve(rawMessage);
 
   /// Optional technical details for debugging
   final String? details;
 
   /// Creates an [AppException] with a [message] and optional [details].
-  AppException(this.message, [this.details]);
+  AppException(String message, [this.details]) : rawMessage = message;
 
   @override
   String toString() {
@@ -104,6 +107,11 @@ class TimeoutException extends AppException {
 /// }
 /// ```
 class ServerException extends AppException {
+  @override
+  String get message => SystemMessages.resolve(
+        responseData?['message'] ?? rawMessage,
+        errorCode: responseData?['errorCode'] as String?,
+      );
   /// HTTP status code (e.g., 404, 500)
   final int? statusCode;
 
@@ -232,4 +240,3 @@ class UnknownException extends AppException {
   UnknownException([String? details])
       : super('An unknown error occurred', details);
 }
-

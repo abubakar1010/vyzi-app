@@ -114,8 +114,8 @@ class _MyUtilitiesScreenState extends State<MyUtilitiesScreen> {
                   size: 40, color: AppColors.primaryColor),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Nessuna utenza attiva',
+            Text(
+              'my_utility.no_utilities'.tr,
               style: TextStyle(
                 color: AppColors.textDark,
                 fontSize: 18,
@@ -123,8 +123,8 @@ class _MyUtilitiesScreenState extends State<MyUtilitiesScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Carica una bolletta per confrontare le offerte e attivare un nuovo servizio.',
+            Text(
+              'my_utility.empty_desc'.tr,
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: AppColors.textPrimary, fontSize: 14, height: 1.5),

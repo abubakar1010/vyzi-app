@@ -1,3 +1,4 @@
+import 'package:vyzi/core/exceptions/app_exceptions.dart';
 // HOME CONTROLLER
 
 import 'package:get/get.dart';
@@ -85,7 +86,7 @@ class HomeController extends GetxController {
             body['message']?.toString() ?? 'Failed to load dashboard';
       }
     } catch (e) {
-      dashboardError.value = e.toString();
+      dashboardError.value = (e is AppException ? e.message : 'system.unexpected'.tr);
     } finally {
       isLoadingDashboard.value = false;
     }
@@ -111,7 +112,7 @@ class HomeController extends GetxController {
             body['message']?.toString() ?? 'Failed to load services';
       }
     } catch (e) {
-      servicesError.value = e.toString();
+      servicesError.value = (e is AppException ? e.message : 'system.unexpected'.tr);
     } finally {
       isLoadingServices.value = false;
     }

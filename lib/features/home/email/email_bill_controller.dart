@@ -1,4 +1,5 @@
 import 'package:vyzi/core/constants/api_constants.dart';
+import 'package:vyzi/core/constants/contact_constants.dart';
 import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/core/services/api_service.dart';
@@ -8,17 +9,17 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class EmailBillController extends GetxController {
-  var email = "bills@utility-analyzer.com".obs;
+  final email = ContactConstants.billInbox.obs;
   var isCreating = false.obs;
 
   String billType = 'electricity';
 
   /// Copy Email
-  void copyEmail() {
-    Clipboard.setData(ClipboardData(text: email.value));
+  Future<void> copyEmail() async {
+    await Clipboard.setData(ClipboardData(text: email.value));
     Get.snackbar(
-      "Copied",
-      "Email copied to clipboard",
+      'common.copied'.tr,
+      'home.email_bill.copied'.tr,
       snackPosition: SnackPosition.BOTTOM,
       backgroundColor: Colors.black,
       colorText: Colors.white,
@@ -36,10 +37,9 @@ class EmailBillController extends GetxController {
       if (response.data['success'] == true) {
         NavHelper.push(EmailBillReceivedScreen());
       } else {
-        final msg = response.data['message']?.toString() ?? 'Failed to create request';
         Get.snackbar(
-          'Error',
-          msg,
+          'auth.validation.error'.tr,
+          'home.email_bill.failed'.tr,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -47,7 +47,7 @@ class EmailBillController extends GetxController {
       }
     } on AppException catch (e) {
       Get.snackbar(
-        'Error',
+        'auth.validation.error'.tr,
         e.message,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -55,8 +55,8 @@ class EmailBillController extends GetxController {
       );
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to create email bill request',
+        'auth.validation.error'.tr,
+        'home.email_bill.failed'.tr,
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,

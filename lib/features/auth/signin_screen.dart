@@ -152,20 +152,14 @@ class _SignInScreenState extends State<SignInScreen> {
                         // Navigate to navbar only if login is successful
                         Get.offNamed(AppRoutes.navbarScreen);
                       } on ServerException catch (e) {
-                        if (e.statusCode == 403 && e.message.contains('not verified')) {
+                        if (e.statusCode == 403 && e.rawMessage.contains('not verified')) {
                           Get.snackbar('auth.validation.info'.tr, 'auth.login.error.not_verified'.tr);
                           Get.toNamed(
                             AppRoutes.createAccountOtpScreen,
                             arguments: {'email': _emailController.text.trim()},
                           );
                         } else {
-                          String errorMessage = 'auth.login.error.failed'.tr;
-                          final rawError = auth.error.value;
-                          if (rawError.contains('Invalid email or password')) {
-                            errorMessage = 'auth.login.error.invalid_credentials'.tr;
-                          } else if (rawError.contains('suspended')) {
-                            errorMessage = 'auth.login.error.suspended'.tr;
-                          }
+                          final errorMessage = e.message;
                           Get.snackbar('auth.validation.error'.tr, errorMessage);
                         }
                       } catch (e) {
@@ -341,4 +335,3 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 }
-

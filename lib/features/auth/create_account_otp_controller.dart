@@ -1,3 +1,4 @@
+import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -135,7 +136,7 @@ class CreateAccountOtpController extends GetxController {
 
       Get.snackbar('auth.otp.resend_title'.tr, 'auth.otp.resend_message'.tr);
     } catch (e) {
-      final message = e.toString();
+      final message = (e is AppException ? e.message : 'system.unexpected'.tr);
       Get.snackbar('auth.validation.error'.tr, message);
     } finally {
       isResending.value = false;

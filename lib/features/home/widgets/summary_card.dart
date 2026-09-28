@@ -67,7 +67,7 @@ class SummaryCard extends StatelessWidget {
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w700,
                   ),
-                  overflow: TextOverflow.ellipsis,
+                  softWrap: true,
                 ),
               ),
             ],

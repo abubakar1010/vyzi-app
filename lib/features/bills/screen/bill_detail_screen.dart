@@ -1,3 +1,4 @@
+import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -108,7 +109,7 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
             'Impossibile caricare la bolletta';
       }
     } catch (e) {
-      _error = e.toString();
+      _error = (e is AppException ? e.message : 'system.unexpected'.tr);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -419,12 +420,12 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
         color: const Color(0xFFF3E5F5),
         borderRadius: BorderRadius.circular(4.r),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.email_outlined, size: 11, color: Color(0xFF6A1B9A)),
           SizedBox(width: 3),
-          Text('Via Email',
+          Text('bills.detail.via_email'.tr,
               style: TextStyle(
                   fontSize: 10,
                   color: Color(0xFF6A1B9A),

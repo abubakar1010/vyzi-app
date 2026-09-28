@@ -1,3 +1,4 @@
+import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/core/constants/api_constants.dart';
 import 'package:vyzi/core/services/api_service.dart';
@@ -86,7 +87,7 @@ class _OfferDetailsScreenState extends State<OfferDetailsScreen> {
         _error = body['message']?.toString() ?? 'Failed to load offer';
       }
     } catch (e) {
-      _error = e.toString();
+      _error = (e is AppException ? e.message : 'system.unexpected'.tr);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
