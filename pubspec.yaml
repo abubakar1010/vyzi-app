@@ -13,6 +13,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Italian (and English) copy for Flutter's own widgets: date pickers, the
+  # text selection toolbar, tooltips — and the intl date symbols they load.
+  flutter_localizations:
+    sdk: flutter
 
   get:
   dio:

@@ -51,7 +51,7 @@ void main() {
   });
 
   testWidgets('boots to the splash screen without throwing', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await _pumpApp(tester);
     await tester.pump();
 
     expect(tester.takeException(), isNull);
@@ -65,7 +65,7 @@ void main() {
 
   testWidgets('with no stored session, splash lands on warm onboarding',
       (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await _pumpApp(tester);
     await tester.pump();
 
     // SplashScreen waits 3s before deciding where to go.
@@ -145,6 +145,22 @@ void main() {
 
 const MethodChannel _secureStorageChannel =
     MethodChannel('plugins.it_nomads.com/flutter_secure_storage');
+
+/// Pumps the app with its localization delegates able to finish loading.
+///
+/// The country picker's delegate reads its translations from the asset
+/// bundle, which completes on the real clock; until it does, `Localizations`
+/// builds nothing and the splash timer never starts. Reading the file first
+/// leaves it in `rootBundle`'s cache, and one real-clock turn after the pump
+/// delivers it to the delegate.
+Future<void> _pumpApp(WidgetTester tester) async {
+  await tester.runAsync(
+    () => rootBundle.loadString('packages/country_code_picker/src/i18n/it.json'),
+  );
+  await tester.pumpWidget(const MyApp());
+  await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+  await tester.pump();
+}
 
 /// Answers as an empty keystore: no token is stored, every write succeeds.
 void _setSecureStorageMock({required bool enabled}) {
