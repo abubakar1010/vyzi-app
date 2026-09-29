@@ -10,6 +10,7 @@ import 'package:vyzi/features/bills/models/bill_model.dart';
 import 'package:vyzi/features/home/sign_contract/sign_contract.dart';
 import 'package:vyzi/features/my_utility/service_details_screen.dart';
 import 'package:vyzi/features/request/models/case_model.dart';
+import 'package:vyzi/features/request/replace_document/replace_document_screen.dart';
 import 'package:vyzi/routes/app_routes.dart';
 import 'package:vyzi/core/localization/system_messages.dart';
 
@@ -228,6 +229,9 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
         // supply it belongs to, above the submission timeline.
         if (bill.status == 'verification_required')
           _verificationRequiredBanner(bill),
+        if (_caseData?.documentsAwaitingReplacement case final rejected?
+            when rejected.isNotEmpty)
+          _documentRejectedBanner(_caseData!.id, rejected),
         if (showContract) ...[
           _contractBanner(bill),
           SizedBox(height: 14.h),
@@ -834,6 +838,34 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
         AppRoutes.billVerificationScreen,
         arguments: bill.id,
       ),
+    );
+  }
+
+  // ── Document Rejected Banner ──
+  // An admin turned down an identity document and needs a new one.
+  Widget _documentRejectedBanner(
+    String caseId,
+    List<CaseDocumentModel> rejected,
+  ) {
+    return _actionRequiredBanner(
+      title: 'case.document.banner.title'.tr,
+      subtitle: rejected.length == 1
+          ? '${rejected.first.rejectionReasonLabel} · ${'case.document.banner.subtitle'.tr}'
+          : 'case.document.banner.subtitle'.tr,
+      icon: Icons.badge_outlined,
+      accent: Colors.red.shade700,
+      background: Colors.red.shade50,
+      border: Colors.red.shade200,
+      iconBackground: Colors.red.shade100,
+      onTap: () async {
+        final sent = await Navigator.of(context).push<bool>(
+          MaterialPageRoute(
+            builder: (_) =>
+                ReplaceDocumentScreen(caseId: caseId, rejected: rejected),
+          ),
+        );
+        if (sent == true && mounted) _fetchBillDetails();
+      },
     );
   }
 

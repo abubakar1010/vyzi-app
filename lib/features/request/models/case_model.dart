@@ -29,6 +29,10 @@ class CaseModel {
   /// Yearly saving quoted on the offer the customer accepted.
   final double? estimatedSavings;
 
+  /// The identity documents on the case, newest first, including any an admin
+  /// rejected and the files uploaded to replace them.
+  final List<CaseDocumentModel> documents;
+
   const CaseModel({
     required this.id,
     required this.status,
@@ -44,6 +48,7 @@ class CaseModel {
     this.activationDate,
     this.expiryDate,
     this.estimatedSavings,
+    this.documents = const [],
   });
 
   factory CaseModel.fromJson(Map<String, dynamic> json) {
@@ -64,7 +69,23 @@ class CaseModel {
       activationDate: json['activationDate'] as String?,
       expiryDate: json['expiryDate'] as String?,
       estimatedSavings: _parseDouble(json['estimatedSavings']),
+      documents: (json['documents'] as List<dynamic>? ?? const [])
+          .whereType<Map<String, dynamic>>()
+          .map(CaseDocumentModel.fromJson)
+          .toList(),
     );
+  }
+
+  /// Documents an admin turned down that the customer has not replaced yet —
+  /// each one is waiting on a new upload before the case can move on.
+  List<CaseDocumentModel> get documentsAwaitingReplacement {
+    final replaced = documents
+        .map((d) => d.replacesDocumentId)
+        .whereType<String>()
+        .toSet();
+    return documents
+        .where((d) => d.isRejected && !replaced.contains(d.id))
+        .toList();
   }
 
   /// The switch is under way but the supplier has not confirmed it yet.
@@ -105,6 +126,63 @@ class CaseModel {
     final value = estimatedSavings;
     if (value == null || value <= 0) return null;
     return formatMoney(value);
+  }
+}
+
+/// A file attached to the case — for now, always part of the identity check.
+class CaseDocumentModel {
+  final String id;
+  final String fileName;
+  final String documentType;
+  final bool verified;
+  final String? rejectedAt;
+
+  /// `expired`, `unreadable`, `incomplete`, `wrong_document` or `other`.
+  final String? rejectionReason;
+
+  /// The admin's own words, shown beside the reason.
+  final String? rejectionNote;
+
+  /// The rejected document this file was uploaded to replace.
+  final String? replacesDocumentId;
+
+  const CaseDocumentModel({
+    required this.id,
+    required this.fileName,
+    required this.documentType,
+    this.verified = false,
+    this.rejectedAt,
+    this.rejectionReason,
+    this.rejectionNote,
+    this.replacesDocumentId,
+  });
+
+  factory CaseDocumentModel.fromJson(Map<String, dynamic> json) {
+    return CaseDocumentModel(
+      id: json['id'] as String? ?? '',
+      fileName: json['fileName'] as String? ?? '',
+      documentType: json['documentType'] as String? ?? '',
+      verified: json['verified'] as bool? ?? false,
+      rejectedAt: json['rejectedAt'] as String?,
+      rejectionReason: json['rejectionReason'] as String?,
+      rejectionNote: json['rejectionNote'] as String?,
+      replacesDocumentId: json['replacesDocumentId'] as String?,
+    );
+  }
+
+  bool get isRejected => rejectedAt != null;
+
+  /// Why it was turned down, in the customer's language.
+  String get rejectionReasonLabel {
+    switch (rejectionReason) {
+      case 'expired':
+      case 'unreadable':
+      case 'incomplete':
+      case 'wrong_document':
+        return 'case.document.rejection.$rejectionReason'.tr;
+      default:
+        return 'case.document.rejection.other'.tr;
+    }
   }
 }
 
