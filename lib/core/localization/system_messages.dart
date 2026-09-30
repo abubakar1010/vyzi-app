@@ -124,6 +124,7 @@ class SystemMessages {
     if (statusCode != null && statusCode >= 500) {
       return _apiCopy('server', lang, const {});
     }
+    if (statusCode == 413) return _apiCopy('file_too_large', lang, const {});
     final byStatus = _statusKey(statusCode);
     return translated(byStatus ?? 'system.unexpected');
   }

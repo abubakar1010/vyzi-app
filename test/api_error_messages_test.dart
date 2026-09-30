@@ -74,6 +74,27 @@ void main() {
     expect(error(500).message, isNot(contains('diagnostic')));
   });
 
+  test('messages written by libraries are covered too', () {
+    for (final raw in [
+      'File too large',
+      'Too many files',
+      'Validation failed (uuid is expected)',
+      'Cannot transition from pending to rewarded',
+      'Cannot delete this offer: it has 2 active case(s) in progress. Cancel or complete them first.',
+      'A fixed gas offer requires a per-unit price: pricePerSmc is missing.',
+    ]) {
+      final copy = SystemMessages.resolve(raw, language: 'it');
+      expect(copy, isNot(generic), reason: raw);
+      expect(copy, isNot(raw), reason: raw);
+    }
+    expect(
+      SystemMessages.resolve('File too large', language: 'it'),
+      'Il file è troppo grande. La dimensione massima è 10 MB.',
+    );
+    expect(ServerException('Payload Too Large', 413).message,
+        contains('troppo grande'));
+  });
+
   test('error codes win over the wording', () {
     expect(
       SystemMessages.resolve('whatever',
