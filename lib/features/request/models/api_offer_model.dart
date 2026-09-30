@@ -168,6 +168,34 @@ class ApiOfferModel {
     return formatUnitPrice(price, unit: unit);
   }
 
+  /// The energy price row on the offer list card, worded by offer type:
+  ///
+  ///   fixed              `Prezzo Energia (Fisso): €0,14/kWh`
+  ///   variable/indexed   `Prezzo Energia: PUN + 0,025 €/kWh`
+  ///                      `Prezzo Energia: PUN + Spread` (no spread on record)
+  ///
+  /// Prices drop their trailing zeros here, unlike [energyPriceDisplay] — the
+  /// spec for this row asks for it. A missing spread names the term instead of
+  /// printing a zero: the list is not the place to claim a spread of nothing.
+  String get energyPriceRow {
+    if (isIndexedPrice) {
+      return 'request.offers.energy_price_indexed'.trParams({
+        'index': energyType == 'gas' ? 'PSV' : 'PUN',
+        'spread': spread == null
+            ? 'request.offers.energy_price_spread'.tr
+            : '${formatUnitPriceCompactValue(spread)} €/$energyUnitLabel',
+      });
+    }
+
+    final price = pricePerKwh ?? pricePerSmc;
+    final unit = pricePerKwh != null ? 'kWh' : 'Sm³';
+    return 'request.offers.energy_price_fixed'.trParams({
+      'price': price == null
+          ? kMissingValue
+          : '€${formatUnitPriceCompactValue(price)}/$unit',
+    });
+  }
+
   /// Whether the supplier accepts direct debit (SDD) for this offer.
   bool get supportsDirectDebit =>
       paymentMethod == OfferPaymentMethod.directDebit ||

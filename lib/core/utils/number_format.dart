@@ -104,6 +104,24 @@ String formatUnitPriceValue(Object? value, {String fallback = kMissingValue}) {
   return _decimals(price, kUnitPriceDecimals);
 }
 
+/// A unit price with its trailing zeros dropped, e.g. `0,14` for 0.140 and
+/// `0,134` for 0.134 — never fewer than two decimals, never more than the
+/// unit-price scale.
+///
+/// Only for the offer list's energy price row, which the product spec wants
+/// compact. Everywhere else prices stay at [kUnitPriceDecimals] so columns
+/// line up; do not reach for this to "tidy" another screen.
+String formatUnitPriceCompactValue(
+  Object? value, {
+  String fallback = kMissingValue,
+}) {
+  final price = _toDouble(value);
+  if (price == null) return fallback;
+  final optional = '#' * (kUnitPriceDecimals - kMoneyDecimals);
+  return NumberFormat('0.${'0' * kMoneyDecimals}$optional', _locale)
+      .format(price);
+}
+
 /// A consumption figure, e.g. `2.800,00 kWh`. Pass [unit] to append it.
 String formatQuantity(
   Object? value, {

@@ -543,7 +543,7 @@ class _RequestScreenState extends State<RequestScreen>
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: Text(
-                '${'request.offers.energy_price_label'.tr} : ${offer.energyPriceDisplay}',
+                offer.energyPriceRow,
                 style: AppStyles.body4.copyWith(color: AppColors.primaryColor, fontWeight: FontWeight.w800),
               ),
             ),
