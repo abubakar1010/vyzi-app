@@ -91,13 +91,6 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
   final TextEditingController _ibanCtrl = TextEditingController();
   String? _ibanError;
 
-  /// The contract holder's own tax ID. Editable rather than displayed, because
-  /// an account that never recorded one cannot set up a direct debit and the
-  /// customer has no other place on this journey to give it.
-  final TextEditingController _contractTaxCtrl = TextEditingController();
-  String? _contractTaxError;
-  bool _contractTaxEditable = false;
-
   final TextEditingController _holderFirstCtrl = TextEditingController();
   final TextEditingController _holderLastCtrl = TextEditingController();
   final TextEditingController _holderTaxCtrl = TextEditingController();
@@ -185,13 +178,16 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
       // the same value the API fills in when the field is left out entirely.
       _invoiceEmailCtrl.text = _c.defaultInvoiceEmail;
       _prefillHolderFromAccount();
-      _contractTaxCtrl.text = _c.taxCode;
     }
-    // The bill can supply a tax code the account was missing, and it arrives
-    // after the profile does — seed the field then, but never overwrite what
-    // the customer has already typed into it.
-    if (_contractTaxCtrl.text.isEmpty && _c.taxCode.isNotEmpty) {
-      _contractTaxCtrl.text = _c.taxCode;
+    // The bill can supply a Codice Fiscale a private account was missing, and
+    // it arrives after the profile does — seed the personal card's field then,
+    // so saving the card files it on the profile, but never overwrite what the
+    // customer has already typed. A company's field is its owner's code, which
+    // the bill does not carry.
+    if (!_c.isBusiness &&
+        _ownerTaxCodeCtrl.text.isEmpty &&
+        _c.taxCode.isNotEmpty) {
+      _ownerTaxCodeCtrl.text = _c.taxCode;
     }
     // The holder block is pre-filled from the same account data, so it takes
     // the late arrival too — an empty field there is one the customer would
@@ -316,6 +312,12 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
             (!_c.ibanSameAsContract &&
                 (_c.holderFirstName.trim().isEmpty ||
                     _c.holderLastName.trim().isEmpty)))) {
+      // The holder is the account, so the code belongs to the account: it is
+      // given in the personal card, not typed into the mandate.
+      if (_c.ibanSameAsContract) {
+        _openAccountTaxIdField();
+        return;
+      }
       setState(() {
         // The same message the field itself would have shown, so a code that
         // fails only on its check character is named as such at submit time too.
@@ -323,23 +325,18 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
             ? null
             : (_holderTaxIdError(_c.effectiveHolderTaxCode) ??
                 'request.form.holder_tax_id_error'.tr);
-        if (_c.ibanSameAsContract) {
-          _contractTaxEditable = true;
-          _contractTaxError = taxError;
-        } else {
-          // Sending the customer to fields they cannot type in helps nobody —
-          // if the holder block is at fault it is reopened, whatever Save said
-          // earlier.
-          _holderInfoSaved = false;
-          _holderInfoDirty = true;
-          _holderTaxError = taxError;
-          _holderFirstError = _c.holderFirstName.trim().isEmpty
-              ? 'request.form.holder_first_name_required'.tr
-              : null;
-          _holderLastError = _c.holderLastName.trim().isEmpty
-              ? 'request.form.holder_last_name_required'.tr
-              : null;
-        }
+        // Sending the customer to fields they cannot type in helps nobody —
+        // if the holder block is at fault it is reopened, whatever Save said
+        // earlier.
+        _holderInfoSaved = false;
+        _holderInfoDirty = true;
+        _holderTaxError = taxError;
+        _holderFirstError = _c.holderFirstName.trim().isEmpty
+            ? 'request.form.holder_first_name_required'.tr
+            : null;
+        _holderLastError = _c.holderLastName.trim().isEmpty
+            ? 'request.form.holder_last_name_required'.tr
+            : null;
       });
       _scrollToKey(_paymentKey);
       return;
@@ -390,7 +387,6 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
     _ownerTaxCodeCtrl.dispose();
     _pecCtrl.dispose();
     _ibanCtrl.dispose();
-    _contractTaxCtrl.dispose();
     _holderFirstCtrl.dispose();
     _holderLastCtrl.dispose();
     _holderTaxCtrl.dispose();
@@ -716,6 +712,20 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
               onChanged: (_) => setState(() => _lastNameError = null)),
         ),
         SizedBox(height: 10.h),
+        // The customer's own code, kept on the profile: it is what a direct
+        // debit on their own IBAN is filed against, and the payment section
+        // reads it from here instead of asking for it a second time.
+        Container(
+          key: _ownerTaxCodeKey,
+          child: _buildEditField(
+              'request.form.tax_code_label'.tr, _ownerTaxCodeCtrl,
+              errorText: _ownerTaxCodeError,
+              maxLength: 16,
+              textCapitalization: TextCapitalization.characters,
+              onChanged: (value) => setState(
+                  () => _ownerTaxCodeError = _codiceFiscaleError(value))),
+        ),
+        SizedBox(height: 10.h),
         _buildEditField('request.form.email_field'.tr, _emailCtrl,
             keyboardType: TextInputType.emailAddress,
             readOnly: true),
@@ -733,6 +743,7 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
   List<Widget> _personalReadRows() => [
         _personalRow('request.form.first_name_field'.tr, _c.firstName),
         _personalRow('request.form.last_name_field'.tr, _c.lastName),
+        _personalRow('request.form.tax_code_label'.tr, _c.taxCode),
         _personalRow('request.form.email_field'.tr, _c.email),
         _personalRow('request.form.phone_field'.tr, _c.phone),
         _personalRow('request.form.pod_number_field'.tr, _c.podNumber),
@@ -901,6 +912,13 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
           : null;
       _podError = pod.isEmpty ? 'request.form.pod_number_required'.tr : null;
       _phoneError = phone.isEmpty ? 'request.form.phone_required'.tr : null;
+      if (!isBusiness) {
+        // Optional in general, but a direct debit on the customer's own IBAN
+        // is filed against it — with that chosen, a blank code is an error.
+        _ownerTaxCodeError = ownerTaxCode.isEmpty && _needsAccountTaxId
+            ? 'request.form.tax_code_required_hint'.tr
+            : _codiceFiscaleError(ownerTaxCode);
+      }
       if (isBusiness) {
         // Required: the company row cannot be written without it, and it is
         // the name the contract and the IBAN are registered to.
@@ -925,7 +943,7 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
       if (isBusiness) (_vatError, _vatKey),
       (_firstNameError, _firstNameKey),
       (_lastNameError, _lastNameKey),
-      if (isBusiness) (_ownerTaxCodeError, _ownerTaxCodeKey),
+      (_ownerTaxCodeError, _ownerTaxCodeKey),
       if (isBusiness) (_pecError, _pecKey),
       if (isBusiness) (_phoneError, _phoneKey),
       (_podError, _podKey),
@@ -944,7 +962,7 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
       podNumber: pod,
       companyName: isBusiness ? company : null,
       partitaIva: isBusiness ? vat : null,
-      codiceFiscale: isBusiness ? ownerTaxCode : null,
+      codiceFiscale: ownerTaxCode,
       pecEmail: isBusiness ? pec : null,
     );
 
@@ -959,7 +977,9 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
     if (_c.ibanSameAsContract) {
       _holderFirstCtrl.text = _c.holderFirstName;
       _holderLastCtrl.text = _c.holderLastName;
+      _holderTaxCtrl.text = _c.taxCode;
     }
+    _ownerTaxCodeCtrl.text = _c.codiceFiscale;
     if (isBusiness) {
       // Show what the server stored, here and everywhere else the same values
       // appear. The Partita IVA is on this screen twice — here, and again in
@@ -968,10 +988,7 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
       // disagree and nothing tells the customer which was used.
       _companyNameCtrl.text = _c.companyName;
       _vatCtrl.text = _c.partitaIva;
-      _ownerTaxCodeCtrl.text = _c.codiceFiscale;
       _pecCtrl.text = _c.pecEmail;
-      _contractTaxCtrl.text = _c.taxCode;
-      if (_c.ibanSameAsContract) _holderTaxCtrl.text = _c.taxCode;
       // The invoice field defaults to the PEC, which may have just been given
       // for the first time — but never type over an address the customer has
       // already put there themselves.
@@ -1945,14 +1962,18 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
   }
 
   /// The account's own holder details, filled in automatically, for a mandate
-  /// on the contract holder's own IBAN.
+  /// on the contract holder's own IBAN: name and Codice Fiscale for a private
+  /// customer, ragione sociale and Partita IVA for a company.
   ///
-  /// The tax code is only a field when the account has no usable one — a
-  /// direct debit cannot be filed without it, and this is the one place the
-  /// journey asks for it. Once it has been a field it stays one for the
-  /// session, so it does not turn read-only under the customer mid-correction.
+  /// Read-only, always. The holder here is the account, so its details come
+  /// from the profile; manual holder data is asked for only when the IBAN
+  /// belongs to someone else. An account with no usable tax ID is sent to the
+  /// personal information card to give it, rather than handed an empty field
+  /// here to type something the profile should already hold.
   Widget _buildContractHolderSummary() {
-    if (!_isAccountTaxValid) _contractTaxEditable = true;
+    final taxLabel = _c.isBusiness
+        ? 'request.form.vat_label'.tr
+        : 'request.form.tax_code_label'.tr;
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
@@ -1974,38 +1995,105 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
             _dividerLine(),
             _personalRow('request.form.last_name'.tr, _c.lastName),
           ],
-          if (_contractTaxEditable) ...[
-            SizedBox(height: 6.h),
-            _buildEditField(
-              'request.form.holder_tax_id_label'.tr,
-              _contractTaxCtrl,
-              errorText: _contractTaxError,
-              // Either form on either kind of account, so the longer of the
-              // two is what the field has to allow.
-              maxLength: 16,
-              textCapitalization: TextCapitalization.characters,
-              onChanged: (value) {
-                _c.taxCode = value.trim();
-                _holderTaxCtrl.text = _c.taxCode;
-                _c.holderTaxCode = _c.taxCode;
-                setState(() => _contractTaxError = _holderTaxIdError(value));
-              },
-            ),
-            SizedBox(height: 8.h),
-          ] else ...[
-            _dividerLine(),
-            _personalRow(
-                isValidPartitaIva(_c.taxCode)
-                    ? 'request.form.vat_label'.tr
-                    : 'request.form.tax_code_label'.tr,
-                _c.taxCode),
-          ],
+          _dividerLine(),
+          if (_isAccountTaxValid)
+            _personalRow(taxLabel, _c.taxCode)
+          else
+            _missingAccountTaxIdRow(taxLabel),
         ],
       ),
     );
   }
 
   bool get _isAccountTaxValid => isValidItalianTaxId(_c.taxCode);
+
+  /// Whether the account's own tax ID is needed for this request: a direct
+  /// debit on the contract holder's own IBAN is filed against it.
+  bool get _needsAccountTaxId =>
+      _c.selectedPayment == PaymentMethod.directDebit && _c.ibanSameAsContract;
+
+  /// The tax-ID line of the holder summary when the account has no usable one:
+  /// says so, and takes the customer to the one field that fills it.
+  Widget _missingAccountTaxIdRow(String label) {
+    final missing = _c.taxCode.trim().isEmpty;
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 9.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(label,
+                    style: TextStyle(
+                        fontSize: 13.sp,
+                        color: AppColors.textPrimary,
+                        height: 1.22)),
+              ),
+              Icon(Icons.error_outline_rounded,
+                  size: 16.sp, color: AppColors.error),
+              SizedBox(width: 4.w),
+              Text(
+                (missing
+                        ? 'request.form.holder_tax_id_missing'
+                        : 'request.form.holder_tax_id_invalid')
+                    .tr,
+                style: TextStyle(
+                    fontSize: 12.sp,
+                    color: AppColors.error,
+                    fontWeight: FontWeight.w500,
+                    height: 1.22),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: _openAccountTaxIdField,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  (missing
+                          ? 'request.form.holder_tax_id_add'
+                          : 'request.form.holder_tax_id_fix')
+                      .tr,
+                  style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.w600,
+                      height: 1.22),
+                ),
+                SizedBox(width: 2.w),
+                Icon(Icons.arrow_upward_rounded,
+                    size: 14.sp, color: AppColors.primaryColor),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Opens the personal information card on the account's tax ID — the
+  /// Partita IVA for a company, the Codice Fiscale for a private customer —
+  /// with the reason it is needed, and scrolls to it.
+  void _openAccountTaxIdField() {
+    FocusScope.of(context).unfocus();
+    setState(() {
+      _editingPersonalInfo = true;
+      if (_c.isBusiness) {
+        _vatError = _vatCtrl.text.trim().isEmpty
+            ? 'request.form.vat_required'.tr
+            : _partitaIvaError(_vatCtrl.text);
+      } else {
+        _ownerTaxCodeError = _ownerTaxCodeCtrl.text.trim().isEmpty
+            ? 'request.form.tax_code_required_hint'.tr
+            : _codiceFiscaleError(_ownerTaxCodeCtrl.text);
+      }
+    });
+    _scrollToKey(_c.isBusiness ? _vatKey : _ownerTaxCodeKey);
+  }
 
   void _clearHolderFields() {
     _holderFirstCtrl.clear();

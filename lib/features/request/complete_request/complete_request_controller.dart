@@ -104,9 +104,10 @@ class CompleteRequestController extends ChangeNotifier {
   /// identifier, and this field holds whichever it is — the mandate is filed
   /// against the holder, and the holder here is the account.
   ///
-  /// Pre-filled from the account when it has one, but it belongs to this
-  /// request alone: a code given here travels with the case and is never
-  /// written back to the profile.
+  /// Read from the account — or, when the account has none yet, off the bill —
+  /// and never typed in the payment section: a direct debit on the holder's
+  /// own IBAN only shows it. An account missing one gives it in the personal
+  /// information card, which writes it to the profile like the rest of the card.
   String taxCode = '';
   PaymentMethod? selectedPayment;
   String iban = '';
@@ -238,10 +239,10 @@ class CompleteRequestController extends ChangeNotifier {
     required String lastName,
     required String phone,
     required String podNumber,
-    // Business only — a personal card does not collect these and passes none,
-    // so the payload it sends is byte-for-byte what it always sent.
+    // Business only — a personal card does not collect these and passes none.
     String? companyName,
     String? partitaIva,
+    // The owner's code on a business card, the customer's own on a personal one.
     String? codiceFiscale,
     String? pecEmail,
   }) async {
@@ -255,6 +256,10 @@ class CompleteRequestController extends ChangeNotifier {
           'firstName': firstName,
           'lastName': lastName,
           if (phone.isNotEmpty) 'phone': phone,
+          // A private customer's only tax identifier, and the one their direct
+          // debit is filed against. Omitted when blank, as below.
+          if (!isBusiness && (codiceFiscale ?? '').trim().isNotEmpty)
+            'codiceFiscale': normalizeTaxId(codiceFiscale!),
           if (isBusiness) ...<String, dynamic>{
             // Omitted when blank rather than sent empty: the API's optional
             // rules skip a missing field but still check an empty string, so
@@ -297,8 +302,11 @@ class CompleteRequestController extends ChangeNotifier {
       // and the holder block both read `taxCode`, and leaving it on the old
       // value files the direct debit against a number the customer has just
       // told us was wrong — on the same screen, a few sections further down.
-      if (isBusiness && this.partitaIva.trim().isNotEmpty) {
-        taxCode = this.partitaIva.trim();
+      //
+      // The same holds for a private customer's Codice Fiscale, which is the
+      // code their own mandate is filed against.
+      if (accountTaxId.trim().isNotEmpty) {
+        taxCode = accountTaxId.trim();
         if (ibanSameAsContract) holderTaxCode = taxCode;
       }
 
