@@ -410,11 +410,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           'type': 'email_verification'
                         });
                       } catch (e) {
-                        String errorMessage = 'auth.signup.registration_failed_default'.tr;
+                        // The sign-up form's own wording for the three
+                        // refusals it knows best; otherwise the server's
+                        // reason, translated, rather than a bare "failed".
+                        String errorMessage = e is AppException
+                            ? e.message
+                            : 'auth.signup.registration_failed_default'.tr;
                         final rawError = e is AppException ? e.rawMessage : auth.error.value;
                         if (rawError.contains('Email already registered')) {
                           errorMessage = 'auth.signup.error.email_exists'.tr;
-                        } else if (rawError.contains('Partita IVA')) {
+                        } else if (rawError.contains('Partita IVA is already registered')) {
                           errorMessage = 'auth.signup.error.vat_exists'.tr;
                         } else if (rawError.contains('Password must contain')) {
                           errorMessage = 'auth.signup.password_requirements_unmet'.tr;

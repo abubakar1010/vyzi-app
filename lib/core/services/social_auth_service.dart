@@ -237,7 +237,9 @@ class SocialAuthService {
       case 'network-request-failed':
         return 'auth.social.error.network'.tr;
       default:
-        return e.message ?? 'auth.social.error.generic'.tr;
+        // Firebase's own text is English and technical; it goes in the
+        // diagnostic, never on screen.
+        return 'auth.social.error.generic'.tr;
     }
   }
 
