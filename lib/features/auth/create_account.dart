@@ -509,12 +509,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _handleSocialLogin(SocialProvider provider) async {
+    // The consent checkbox binds the social buttons as much as the email form:
+    // the backend records it at sign-up, so a Google or Apple user is not
+    // stopped by the acceptance prompt as soon as they are inside the app.
+    if (!_agreeToTerms) {
+      Get.snackbar(
+        'auth.validation.warning'.tr,
+        'auth.signup.terms_required'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
     final auth = Get.put(AuthController());
     try {
       // The account type chosen on the onboarding screen applies to social
       // sign-up too: without it every "Continue with Google" produced a
       // personal account, whatever the user had picked there.
-      await auth.socialLogin(provider, role: selectedRole);
+      await auth.socialLogin(
+        provider,
+        role: selectedRole,
+        acceptedTerms: true,
+      );
       Get.offAllNamed(AppRoutes.navbarScreen);
       // A business account created this way has no company row yet — the
       // provider hands back a name, an email and a picture, and nothing a

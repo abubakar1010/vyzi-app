@@ -116,15 +116,21 @@ class AuthService {
   /// sign-in screen sends it, because the account type is chosen at sign-up
   /// and never changes, and an account created from a screen with no such
   /// choice would be stuck on the personal default for good.
+  ///
+  /// [acceptedTerms] true tells the backend the user was shown the privacy and
+  /// terms consent line, so it records the current versions as accepted and
+  /// the acceptance prompt does not stop the user right after signing in.
   Future<Map<String, dynamic>> socialLogin({
     required String idToken,
     String? role,
     bool allowSignUp = true,
+    bool acceptedTerms = false,
   }) async {
     final body = <String, dynamic>{
       'idToken': idToken,
       if (role != null && role.isNotEmpty) 'role': role,
       if (!allowSignUp) 'allowSignUp': false,
+      if (acceptedTerms) 'acceptedTerms': true,
     };
     try {
       final resp = await _api.post(ApiConstants.authSocialLogin, data: body);

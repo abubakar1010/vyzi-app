@@ -127,6 +127,10 @@ class AuthController extends GetxController {
   /// changes afterwards — an account created from a screen that cannot ask the
   /// question would be stuck on the personal default for good.
   ///
+  /// [acceptedTerms] is true when the screen showed the privacy and terms
+  /// consent line; the backend then records the acceptance, and the user is
+  /// not stopped by the acceptance prompt once inside the app.
+  ///
   /// Throws [SocialAuthCancelledException] when the user backs out of the
   /// provider sheet — callers must treat that as "do nothing" and must not
   /// navigate. Any other failure throws with a localized [error] message set.
@@ -134,6 +138,7 @@ class AuthController extends GetxController {
     SocialProvider provider, {
     String? role,
     bool allowSignUp = true,
+    bool acceptedTerms = false,
   }) async {
     // A second tap while the provider sheet is still open starts a competing
     // request, which on Android cancels the one already in flight. Reject the
@@ -157,6 +162,7 @@ class AuthController extends GetxController {
           idToken: idToken,
           role: role,
           allowSignUp: allowSignUp,
+          acceptedTerms: acceptedTerms,
         );
       } catch (_) {
         // The provider leg succeeded, so the device is now signed in to

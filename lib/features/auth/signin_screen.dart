@@ -13,6 +13,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'package:vyzi/features/auth/controller/auth_controller.dart';
+import 'package:vyzi/features/profile/settings/privacy_policy.dart';
+import 'package:vyzi/features/profile/settings/terms_condition.dart';
 
 
 class SignInScreen extends StatefulWidget {
@@ -27,11 +29,71 @@ class _SignInScreenState extends State<SignInScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
+  /// Fields rather than built inline: a TextSpan recognizer created during
+  /// build is never disposed.
+  final _privacyRecognizer = TapGestureRecognizer();
+  final _termsRecognizer = TapGestureRecognizer();
+
+  @override
+  void initState() {
+    super.initState();
+    _privacyRecognizer.onTap = () => _openDocument(const PrivacyPolicyScreen());
+    _termsRecognizer.onTap = () => _openDocument(const TermsCondition());
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _privacyRecognizer.dispose();
+    _termsRecognizer.dispose();
     super.dispose();
+  }
+
+  /// Pushed over the form so whatever was typed survives being read.
+  void _openDocument(Widget screen) {
+    Navigator.of(context, rootNavigator: true)
+        .push(MaterialPageRoute(builder: (_) => screen));
+  }
+
+  /// "By continuing, you declare that you have read the Privacy Policy and
+  /// accept the Terms of Service", with both documents tappable.
+  ///
+  /// Tapping a social button under this line is the consent the backend
+  /// records, which is what spares a Google or Apple user the full-screen
+  /// acceptance prompt after signing in. Both documents are named because both
+  /// are recorded — accepting a document you were never shown is not consent.
+  Widget _socialConsentLine() {
+    final linkStyle = AppStyles.caption.copyWith(
+      color: AppColors.primaryColor,
+      fontWeight: FontWeight.w600,
+      decoration: TextDecoration.underline,
+      decorationColor: AppColors.primaryColor,
+    );
+
+    return Center(
+      child: Text.rich(
+        TextSpan(
+          style: AppStyles.caption.copyWith(height: 1.5),
+          children: [
+            TextSpan(text: 'auth.login.social_consent_prefix'.tr),
+            TextSpan(
+              text: 'auth.signup.privacy_link'.tr,
+              style: linkStyle,
+              recognizer: _privacyRecognizer,
+            ),
+            TextSpan(text: 'auth.login.social_consent_middle'.tr),
+            TextSpan(
+              text: 'auth.signup.terms_link'.tr,
+              style: linkStyle,
+              recognizer: _termsRecognizer,
+            ),
+            TextSpan(text: 'auth.login.social_consent_suffix'.tr),
+          ],
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
   }
 
   @override
@@ -204,6 +266,11 @@ class _SignInScreenState extends State<SignInScreen> {
                   onPress: () => _handleSocialLogin(SocialProvider.google),
                 ),
 
+                SizedBox(height: 12.h),
+
+                // ── Social consent ─────────────────
+                _socialConsentLine(),
+
                 SizedBox(height: 20.h),
 
                 // ── Create Account Link ─────────────────────
@@ -254,7 +321,15 @@ class _SignInScreenState extends State<SignInScreen> {
       // company that arrived by this door would be stuck on a consumer account
       // for good. Refused, the user is sent to sign up, where the question is
       // actually asked.
-      await auth.socialLogin(provider, allowSignUp: false);
+      //
+      // `acceptedTerms` — the consent line under the buttons was on screen, so
+      // the backend records it and the app opens without the acceptance
+      // prompt in the way.
+      await auth.socialLogin(
+        provider,
+        allowSignUp: false,
+        acceptedTerms: true,
+      );
       Get.offAllNamed(AppRoutes.navbarScreen);
     } on SocialAuthCancelledException {
       // The user dismissed the provider sheet — nothing to report.
