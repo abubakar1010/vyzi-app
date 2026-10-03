@@ -258,9 +258,6 @@ Never examined before this audit, and proportionally worse than Android.
 | Pod | Size | Pulled in by | Used? |
 |---|---:|---|---|
 | `GoogleMaps` | 89 MB | `google_maps_flutter` | **No** |
-| `FBSDKCoreKit` | 83 MB | `flutter_facebook_auth` | Yes |
-| `FBSDKLoginKit` | 25 MB | `flutter_facebook_auth` | Yes |
-| `FBAEMKit` | 12 MB | `flutter_facebook_auth` | Yes |
 | `SDWebImage` | 1.5 MB | `file_picker` → `DKImagePickerController` | Yes (transitive) |
 | `Google-Maps-iOS-Utils` | 529 KB | `google_maps_flutter` | **No** |
 
@@ -319,7 +316,7 @@ buildTypes {
 }
 ```
 
-R8 strips code by reachability, and reflection is invisible to it. Create `proguard-rules.pro` with keep rules for this app's reflective consumers: Firebase Auth and Messaging model classes, `flutter_local_notifications`, and the Google / Facebook / Apple sign-in SDKs.
+R8 strips code by reachability, and reflection is invisible to it. Create `proguard-rules.pro` with keep rules for this app's reflective consumers: Firebase Auth and Messaging model classes, `flutter_local_notifications`, and the Google / Apple sign-in SDKs.
 
 Getting this wrong produces a build that compiles and then crashes at runtime, so this phase **must be exercised on a real device**. See §7 for the exact test list.
 
@@ -387,16 +384,16 @@ The blast radius is narrower than it sounds.
 
 **Your own Android code is a non-issue too.** `MainActivity.kt` is four lines and declares no platform channels, so there is nothing app-specific for R8 to strip incorrectly.
 
-The exposure is confined to third-party Java/Kotlin SDKs that resolve classes reflectively at runtime — where the class is never mentioned by name in code R8 can see, so it looks unreachable and gets deleted. Here that means Firebase Auth and Messaging, the Facebook SDK, `flutter_local_notifications`, and the Google and Apple sign-in libraries. A missing keep rule produces a build that compiles cleanly and then throws `ClassNotFoundException` at runtime.
+The exposure is confined to third-party Java/Kotlin SDKs that resolve classes reflectively at runtime — where the class is never mentioned by name in code R8 can see, so it looks unreachable and gets deleted. Here that means Firebase Auth and Messaging, `flutter_local_notifications`, and the Google and Apple sign-in libraries. A missing keep rule produces a build that compiles cleanly and then throws `ClassNotFoundException` at runtime.
 
 **Required test pass after phase 2, on a physical device:**
 
-1. Sign in with Google, Facebook, and Apple — each separately.
+1. Sign in with Google and Apple — each separately.
 2. Receive a push notification and tap through it to the correct screen.
 3. Open a referral deep link (`https://api.vyzi.app/r/...`).
 4. Open a contract PDF (if `flutter_pdfview` is retained).
 
-Those four paths cover essentially the whole reflective surface. Note also that `isShrinkResources` can drop resources referenced only by name at runtime — the `facebook_app_id` and `facebook_client_token` string resources referenced from `AndroidManifest.xml` are the ones to watch.
+Those four paths cover essentially the whole reflective surface. Note also that `isShrinkResources` can drop resources referenced only by name at runtime — the `notification_sound` raw resource, named only from Dart and FCM payloads, is the one to watch (kept by `res/raw/keep.xml`).
 
 ### Two workflow changes worth planning for
 
@@ -649,7 +646,7 @@ against a clean one when the dex pipeline itself has changed.
 - **The R8 device test pass in §7 has not been run.** R8 removes code by
   reachability and reflection is invisible to it. `proguard-rules.pro` names
   the reflective consumers, but a missing keep rule does not fail the build —
-  it throws at runtime. Before any release: Google, Facebook and Apple sign-in
+  it throws at runtime. Before any release: Google and Apple sign-in
   each separately, a push notification tapped through to its screen, a
   referral deep link, and a contract PDF.
 - **`flutter_pdfview` was replaced, not kept** — see §10. The product trade-off

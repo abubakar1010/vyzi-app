@@ -95,7 +95,7 @@ lib/
 4. Add route constant to `AppRoutes` and `GetPage` entry to `AppRoutes.page`
 5. Register dependencies (either in route binding or via `Get.lazyPut`)
 
-## Social Sign-In (Google / Facebook / Apple)
+## Social Sign-In (Google / Apple)
 
 `core/services/social_auth_service.dart` runs the provider flow, then exchanges
 the Firebase ID token at `POST /api/v1/auth/social-login`.
