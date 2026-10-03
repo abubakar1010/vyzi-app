@@ -11,7 +11,6 @@ final Map<String, String> itIT = {
   'auth.login.reset_now': 'Reimposta ora',
   'auth.login.button': 'Accedi',
   'auth.login.divider': 'Oppure accedi con',
-  'auth.login.facebook': 'Accedi con Facebook',
   'auth.login.apple': 'Accedi con Apple',
   'auth.login.google': 'Accedi con Google',
   'auth.login.no_account': 'Non hai un account?',
@@ -24,7 +23,7 @@ final Map<String, String> itIT = {
   'auth.login.error.no_social_account':
       'Nessun account per questo profilo. Scegli il tipo di account per registrarti.',
 
-  // Social sign-in (Google / Facebook / Apple)
+  // Social sign-in (Google / Apple)
   'auth.social.error.cancelled': 'Accesso annullato.',
   'auth.social.error.generic': 'Accesso social fallito. Riprova.',
   'auth.social.error.interrupted': 'Accesso interrotto. Riprova.',

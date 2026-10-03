@@ -11,7 +11,6 @@ final Map<String, String> enUS = {
   'auth.login.reset_now': 'Reset now',
   'auth.login.button': 'Sign in',
   'auth.login.divider': 'Or sign in with',
-  'auth.login.facebook': 'Sign in with Facebook',
   'auth.login.apple': 'Sign in with Apple',
   'auth.login.google': 'Sign in with Google',
   'auth.login.no_account': 'Don\'t have an account?',
@@ -24,7 +23,7 @@ final Map<String, String> enUS = {
   'auth.login.error.no_social_account':
       'No account yet for this profile. Choose your account type to sign up.',
 
-  // Social sign-in (Google / Facebook / Apple)
+  // Social sign-in (Google / Apple)
   'auth.social.error.cancelled': 'Sign-in cancelled.',
   'auth.social.error.generic': 'Social login failed. Please try again.',
   'auth.social.error.interrupted': 'Sign-in was interrupted. Please try again.',

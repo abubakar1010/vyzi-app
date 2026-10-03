@@ -2,16 +2,10 @@
 <!--
   Resources isShrinkResources must not remove.
 
-  The two Facebook strings are already reachable through @string/ references in
-  AndroidManifest.xml, which the shrinker tracks, so this file is insurance
-  rather than a fix. It is here because the failure mode is silent: the build
-  succeeds and the Facebook SDK then fails to initialise at runtime, which is
-  far more expensive to diagnose than this file is to keep.
-
-  notification_sound is different: only Dart code and FCM payloads name it, as
+  notification_sound is only named by Dart code and FCM payloads, as
   strings the shrinker cannot see, so without this entry it is removed and
   every notification falls back to the system sound.
 -->
 <resources xmlns:tools="http://schemas.android.com/tools"
-    tools:keep="@string/facebook_app_id,@string/facebook_client_token,@raw/notification_sound"
+    tools:keep="@raw/notification_sound"
     tools:shrinkMode="safe" />

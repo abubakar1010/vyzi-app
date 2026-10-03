@@ -57,7 +57,6 @@ dependencies:
   # Social sign-in providers
   google_sign_in:
   sign_in_with_apple:
-  flutter_facebook_auth:
   crypto:
   pretty_dio_logger: ^1.4.0
 
@@ -99,7 +98,6 @@ flutter:
     - assets/icons/chart.webp
     - assets/icons/check.webp
     - assets/icons/delete.webp
-    - assets/icons/facebook.webp
     - assets/icons/flash.webp
     - assets/icons/gas.webp
     - assets/icons/gogle.webp

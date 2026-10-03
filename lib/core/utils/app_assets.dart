@@ -19,7 +19,6 @@ class AppAssets {
   static const String mainLogo = '$_iconPath/mainlogo.webp';
 
   // ─── Social Icons ──────────────────────────────────────────────────────────
-  static const String facebook = '$_iconPath/facebook.webp';
   static const String google = '$_iconPath/gogle.webp';
   static const String apple = '$_iconPath/apple.webp';
   static const String business = '$_iconPath/business.webp';

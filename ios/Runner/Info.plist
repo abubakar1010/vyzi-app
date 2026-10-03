@@ -61,26 +61,6 @@
 				<string>com.googleusercontent.apps.703974828285-n3v3gvbvbfl85l5v4mpssq8qoj0dvf35</string>
 			</array>
 		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<!-- Replace YOUR_FACEBOOK_APP_ID with your actual Facebook App ID -->
-				<string>fb975105012246907</string>
-			</array>
-		</dict>
-	</array>
-	<key>FacebookAppID</key>
-	<string>975105012246907</string>
-	<key>FacebookClientToken</key>
-	<string>35c2fab9bfb6a7ba6123e3611a01f59d</string>
-	<key>f80fe91f0322c1430c251f0a1bf082af</key>
-	<string>VYZI</string>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>fbapi</string>
-		<string>fb-messenger-share-api</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>VYZI usa la fotocamera per fotografare le tue bollette e i documenti di identità.</string>

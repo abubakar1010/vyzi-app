@@ -55,13 +55,6 @@
 -keep class com.google.android.gms.auth.** { *; }
 -keep class com.google.android.gms.common.** { *; }
 
-# Facebook. The SDK reads facebook_app_id / facebook_client_token from string
-# resources named in AndroidManifest.xml, and resolves several classes
-# reflectively during login.
--keep class com.facebook.** { *; }
--keepclassmembers class com.facebook.** { *; }
--dontwarn com.facebook.**
-
 # Sign in with Apple -- Custom Tabs callback is resolved from the manifest.
 -keep class com.aboutyou.dart_packages.sign_in_with_apple.** { *; }
 -keep class androidx.browser.customtabs.** { *; }

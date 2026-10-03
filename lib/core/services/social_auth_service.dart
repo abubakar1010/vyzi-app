@@ -4,7 +4,6 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -12,7 +11,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../exceptions/app_exceptions.dart';
 
 /// Supported social authentication providers.
-enum SocialProvider { google, facebook, apple }
+enum SocialProvider { google, apple }
 
 /// Handles provider-specific sign-in flows via Firebase Auth.
 /// Returns the Firebase ID token string on success.
@@ -48,8 +47,6 @@ class SocialAuthService {
       switch (provider) {
         case SocialProvider.google:
           credential = await _signInWithGoogle();
-        case SocialProvider.facebook:
-          credential = await _signInWithFacebook();
         case SocialProvider.apple:
           credential = await _signInWithApple();
       }
@@ -88,11 +85,6 @@ class SocialAuthService {
       } catch (e) {
         _log('Google signOut failed (ignored): $e');
       }
-    }
-    try {
-      await FacebookAuth.instance.logOut();
-    } catch (e) {
-      _log('Facebook logOut failed (ignored): $e');
     }
     try {
       await _firebaseAuth.signOut();
@@ -241,34 +233,6 @@ class SocialAuthService {
         // diagnostic, never on screen.
         return 'auth.social.error.generic'.tr;
     }
-  }
-
-  // ── Facebook ────────────────────────────────────────────
-
-  Future<UserCredential> _signInWithFacebook() async {
-    final result = await FacebookAuth.instance.login(
-      permissions: ['email', 'public_profile'],
-    );
-
-    if (result.status == LoginStatus.cancelled) {
-      throw SocialAuthCancelledException(
-        'auth.social.error.cancelled'.tr,
-        'facebook:cancelled',
-      );
-    }
-    if (result.status != LoginStatus.success || result.accessToken == null) {
-      _log('Facebook login failed: status=${result.status} '
-          'message=${result.message}');
-      throw SocialAuthException(
-        'auth.social.error.generic'.tr,
-        'facebook:${result.status.name}: ${result.message ?? ''}',
-      );
-    }
-
-    final credential = FacebookAuthProvider.credential(
-      result.accessToken!.tokenString,
-    );
-    return _firebaseAuth.signInWithCredential(credential);
   }
 
   // ── Apple ───────────────────────────────────────────────
