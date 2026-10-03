@@ -188,15 +188,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
                 SizedBox(height: 16.h),
 
-                // ── Facebook ───────────────────────
-                SocialButton(
-                  label: 'auth.login.facebook'.tr,
-                  logo: _facebookLogo(),
-                  onPress: () => _handleSocialLogin(SocialProvider.facebook),
-                ),
-
-                SizedBox(height: 10.h),
-
                 // ── Apple ──────────────────────────
                 SocialButton(
                   label: 'auth.login.apple'.tr,
@@ -311,14 +302,6 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   // ── Brand Logos ────────────────────────────
-  Widget _facebookLogo() {
-    return Image.asset(
-      AppAssets.facebook,
-      width: 24.w,
-      height: 24.h,
-    );
-  }
-
   Widget _appleLogo() {
     return Image.asset(
       AppAssets.apple,

@@ -452,15 +452,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 SizedBox(height: 16.h),
 
-                // ── Facebook ───────────────────────
-                SocialButton(
-                  label: 'auth.login.facebook'.tr,
-                  logo: _facebookLogo(),
-                  onPress: () => _handleSocialLogin(SocialProvider.facebook),
-                ),
-
-                SizedBox(height: 10.h),
-
                 // ── Apple ──────────────────────────
                 SocialButton(
                   label: 'auth.login.apple'.tr,
@@ -594,14 +585,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   // ── Brand Logos ────────────────────────────
-  Widget _facebookLogo() {
-    return Image.asset(
-      'assets/icons/facebook.webp',
-      width: 24.w,
-      height: 24.h,
-    );
-  }
-
   Widget _appleLogo() {
     return Image.asset(
       'assets/icons/apple.webp',
