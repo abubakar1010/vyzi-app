@@ -28,6 +28,18 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
 
+  /// The app's notification sound: `res/raw/notification_sound.mp3` on
+  /// Android, `Runner/notification_sound.wav` in the iOS bundle. The server
+  /// names the same files in its FCM payload for pushes the OS shows itself.
+  static const _androidSound =
+      RawResourceAndroidNotificationSound('notification_sound');
+  static const _iosSound = 'notification_sound.wav';
+
+  /// Android fixes a channel's sound when the channel is first created, so
+  /// adding the custom sound needed a new id. Installs that predate it still
+  /// have this one, which is deleted on start-up.
+  static const _legacyChannelId = 'vyzi_default';
+
   /// The Android channel's name and description are shown in the system
   /// settings, so they follow the app language. The channel is created before
   /// GetX translations load, which is why the copy is read from the catalogues
@@ -35,10 +47,12 @@ class NotificationService {
   static AndroidNotificationChannel _channelFor(String languageCode) {
     final copy = languageCode == 'en' ? enUS : itIT;
     return AndroidNotificationChannel(
-      'vyzi_default',
+      'vyzi_alerts',
       copy['notifications.channel_name']!,
       description: copy['notifications.channel_description'],
       importance: Importance.high,
+      playSound: true,
+      sound: _androidSound,
     );
   }
 
@@ -55,6 +69,11 @@ class NotificationService {
 
   /// Initialize FCM, local notifications, and request permissions.
   Future<void> init() async {
+    await _localNotifications
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.deleteNotificationChannel(channelId: _legacyChannelId);
+
     // Create Android notification channel, named in the saved app language.
     await updateChannelLanguage(
       Get.find<StorageService>().getString(StorageKeys.selectedLanguage) ?? 'it',
@@ -192,11 +211,14 @@ class NotificationService {
           importance: Importance.high,
           priority: Priority.high,
           icon: '@mipmap/ic_launcher',
+          playSound: true,
+          sound: _androidSound,
         ),
         iOS: const DarwinNotificationDetails(
           presentAlert: true,
           presentBadge: true,
           presentSound: true,
+          sound: _iosSound,
         ),
       ),
       payload: jsonEncode(message.data),
