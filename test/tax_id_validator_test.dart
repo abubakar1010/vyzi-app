@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vyzi/core/utils/tax_id_validator.dart';
 
 /// These are the same cases the API is held to in
-/// `vyzi_backend/src/common/validators/is-italian-tax-id.validator.spec.ts`.
+/// `vyzi-backend/src/common/validators/is-italian-tax-id.validator.spec.ts`.
 /// They are duplicated deliberately: the two implementations only stay in step
 /// if both are pinned to one table, and a divergence shows up here as a failing
 /// test rather than as a customer stuck on the request form with a code the app

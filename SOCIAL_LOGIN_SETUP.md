@@ -27,7 +27,7 @@ Complete step-by-step guide to configure Google and Apple Sign-In for the VYZI m
 7. Place it at:
 
 ```
-vyzi_app/android/app/google-services.json
+vyzi-app/android/app/google-services.json
 ```
 
 ### Step 3: Add SHA-1 Fingerprint (Required for Google Sign-In on Android)
@@ -35,7 +35,7 @@ vyzi_app/android/app/google-services.json
 Run this in the terminal to get your debug SHA-1:
 
 ```bash
-cd vyzi_app/android && ./gradlew signingReport
+cd vyzi-app/android && ./gradlew signingReport
 ```
 
 Look for the **SHA1** line under `Variant: debug`. Then:
@@ -57,7 +57,7 @@ Look for the **SHA1** line under `Variant: debug`. Then:
 6. Place it at:
 
 ```
-vyzi_app/ios/Runner/GoogleService-Info.plist
+vyzi-app/ios/Runner/GoogleService-Info.plist
 ```
 
 ### Step 5: Enable Authentication Providers in Firebase
@@ -114,7 +114,7 @@ cd ios && pod install && cd ..
 
 ### Step 10: Update Backend `.env`
 
-In `vyzi_backend/.env`, set:
+In `vyzi-backend/.env`, set:
 
 ```env
 FIREBASE_PROJECT_ID=your-actual-project-id
@@ -125,7 +125,7 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEv...your-key-here...\n---
 Then restart the backend server:
 
 ```bash
-cd vyzi_backend && npm run start:dev
+cd vyzi-backend && npm run start:dev
 ```
 
 ---
@@ -143,7 +143,7 @@ cd vyzi_backend && npm run start:dev
 | Apple Sign-In capability in Xcode | Xcode → Runner → Signing & Capabilities | |
 | CocoaPods installed | `ios/Podfile.lock` exists | |
 | Firebase Auth providers enabled | Firebase Console (Google, Apple) | |
-| Backend `.env` Firebase credentials set | `vyzi_backend/.env` | |
+| Backend `.env` Firebase credentials set | `vyzi-backend/.env` | |
 | Backend server restarted | Running with new Firebase config | |
 
 ### Run the App

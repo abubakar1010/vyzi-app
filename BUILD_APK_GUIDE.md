@@ -21,7 +21,7 @@ See `APP_SIZE_AUDIT.md` for the full breakdown.
 ## Step 1 — Clean and fetch dependencies
 
 ```bash
-cd vyzi_app
+cd vyzi-app
 flutter clean
 flutter pub get
 ```
@@ -125,7 +125,7 @@ unminified copy of the classes alongside the R8 output.
 
 Release builds are signed with the key described in `android/key.properties`
 (git-ignored). See the comment block at the top of
-`vyzi_app/android/app/build.gradle.kts` for its format.
+`vyzi-app/android/app/build.gradle.kts` for its format.
 
 Without that file the build **falls back to the debug key** and prints a
 warning. That still installs, but Google Sign-In only works if the debug SHA-1

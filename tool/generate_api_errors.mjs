@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const app = path.resolve(here, '..');
-const dashboard = path.resolve(app, '../vyzi_dashboard');
+const dashboard = path.resolve(app, '../vyzi-dashboard');
 const ts = createRequire(path.join(dashboard, 'package.json'))('typescript');
 
 const source = fs.readFileSync(path.join(dashboard, 'src/utils/apiError.ts'), 'utf8');
