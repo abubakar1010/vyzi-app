@@ -17,7 +17,7 @@ flutter run
 The app calls the VYZI backend. Point it at a server with `BASE_URL`:
 
 ```bash
-flutter run --dart-define=BASE_URL=https://api.vyzi.app
+flutter run --dart-define=BASE_URL=https://api.vyzi.it
 ```
 
 ## Commands

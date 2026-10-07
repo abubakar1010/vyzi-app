@@ -8,7 +8,7 @@
 	</array>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:api.vyzi.app</string>
+		<string>applinks:api.vyzi.it</string>
 	</array>
 	<key>aps-environment</key>
 	<string>development</string>

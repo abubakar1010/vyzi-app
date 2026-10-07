@@ -653,7 +653,7 @@ class _SupportFormScreenState extends State<SupportFormScreen> {
                         fontWeight: FontWeight.w900)),
                 const SizedBox(height: 16),
                 _contactRow('support.contact.email_label'.tr,
-                    'supporto@vyzi.app', _T.darkBtn),
+                    'supporto@vyzi.it', _T.darkBtn),
                 const SizedBox(height: 14),
                 _contactRow('support.contact.hours_label'.tr,
                     'support.contact.hours_value'.tr, _T.textDark),

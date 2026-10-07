@@ -390,7 +390,7 @@ The exposure is confined to third-party Java/Kotlin SDKs that resolve classes re
 
 1. Sign in with Google and Apple — each separately.
 2. Receive a push notification and tap through it to the correct screen.
-3. Open a referral deep link (`https://api.vyzi.app/r/...`).
+3. Open a referral deep link (`https://api.vyzi.it/r/...`).
 4. Open a contract PDF (if `flutter_pdfview` is retained).
 
 Those four paths cover essentially the whole reflective surface. Note also that `isShrinkResources` can drop resources referenced only by name at runtime — the `notification_sound` raw resource, named only from Dart and FCM payloads, is the one to watch (kept by `res/raw/keep.xml`).
