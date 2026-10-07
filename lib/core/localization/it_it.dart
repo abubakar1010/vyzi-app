@@ -1063,7 +1063,7 @@ final Map<String, String> itIT = {
   'legal.accept_and_next': 'Accetta e continua',
   'legal.logout': 'Esci',
   'legal.decline_title': 'Continuare senza accettare?',
-  'legal.decline_body': 'Per continuare a usare EasyRisparmio devi accettare i documenti aggiornati. Verrai disconnesso e potrai accettarli al prossimo accesso.',
+  'legal.decline_body': 'Per continuare a usare VYZI devi accettare i documenti aggiornati. Verrai disconnesso e potrai accettarli al prossimo accesso.',
   'legal.decline_cancel': 'Torna indietro',
   'legal.decline_confirm': 'Esci',
   'legal.accept_failed': 'Non è stato possibile registrare la tua accettazione. Riprova.',

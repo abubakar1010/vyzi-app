@@ -1061,7 +1061,7 @@ final Map<String, String> enUS = {
   'legal.accept_and_next': 'Accept and continue',
   'legal.logout': 'Log out',
   'legal.decline_title': 'Continue without accepting?',
-  'legal.decline_body': 'You need to accept the updated documents to keep using EasyRisparmio. You will be signed out and can accept the next time you sign in.',
+  'legal.decline_body': 'You need to accept the updated documents to keep using VYZI. You will be signed out and can accept the next time you sign in.',
   'legal.decline_cancel': 'Go back',
   'legal.decline_confirm': 'Sign out',
   'legal.accept_failed': 'We could not record your acceptance. Please try again.',

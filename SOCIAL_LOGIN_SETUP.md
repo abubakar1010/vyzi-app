@@ -12,7 +12,7 @@ Complete step-by-step guide to configure Google and Apple Sign-In for the VYZI m
 
 1. Go to [console.firebase.google.com](https://console.firebase.google.com)
 2. Click **"Add project"**
-3. Name it (e.g. `EasyRisparmio` or `VYZI`)
+3. Name it (e.g. `VYZI`)
 4. Disable Google Analytics (optional, not needed for auth)
 5. Click **Create project**
 
