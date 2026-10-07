@@ -114,7 +114,7 @@ cd ios && pod install && cd ..
 
 ### Step 10: Update Backend `.env`
 
-In `moreno-server/.env`, set:
+In `vyzi_backend/.env`, set:
 
 ```env
 FIREBASE_PROJECT_ID=your-actual-project-id
@@ -125,7 +125,7 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEv...your-key-here...\n---
 Then restart the backend server:
 
 ```bash
-cd moreno-server && npm run start:dev
+cd vyzi_backend && npm run start:dev
 ```
 
 ---
@@ -143,7 +143,7 @@ cd moreno-server && npm run start:dev
 | Apple Sign-In capability in Xcode | Xcode → Runner → Signing & Capabilities | |
 | CocoaPods installed | `ios/Podfile.lock` exists | |
 | Firebase Auth providers enabled | Firebase Console (Google, Apple) | |
-| Backend `.env` Firebase credentials set | `moreno-server/.env` | |
+| Backend `.env` Firebase credentials set | `vyzi_backend/.env` | |
 | Backend server restarted | Running with new Firebase config | |
 
 ### Run the App
