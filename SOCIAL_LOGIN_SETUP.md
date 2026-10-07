@@ -27,7 +27,7 @@ Complete step-by-step guide to configure Google and Apple Sign-In for the VYZI m
 7. Place it at:
 
 ```
-bill_saving_app/android/app/google-services.json
+vyzi_app/android/app/google-services.json
 ```
 
 ### Step 3: Add SHA-1 Fingerprint (Required for Google Sign-In on Android)
@@ -35,7 +35,7 @@ bill_saving_app/android/app/google-services.json
 Run this in the terminal to get your debug SHA-1:
 
 ```bash
-cd bill_saving_app/android && ./gradlew signingReport
+cd vyzi_app/android && ./gradlew signingReport
 ```
 
 Look for the **SHA1** line under `Variant: debug`. Then:
@@ -57,7 +57,7 @@ Look for the **SHA1** line under `Variant: debug`. Then:
 6. Place it at:
 
 ```
-bill_saving_app/ios/Runner/GoogleService-Info.plist
+vyzi_app/ios/Runner/GoogleService-Info.plist
 ```
 
 ### Step 5: Enable Authentication Providers in Firebase

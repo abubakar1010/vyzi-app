@@ -38,7 +38,7 @@ Neither is Flutter being heavy. Both are configuration and hygiene, and each pha
 Every figure in this document comes from one of these commands. They are reproducible against any build.
 
 ```bash
-cd bill_saving_app
+cd vyzi_app
 
 # APK composition, grouped by area
 unzip -l build/app/outputs/flutter-apk/app-release.apk \
