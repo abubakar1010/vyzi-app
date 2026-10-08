@@ -1,7 +1,7 @@
 class ApiConstants {
   static const String baseUrl = String.fromEnvironment(
     'BASE_URL',
-    defaultValue: 'https://zeron-3000.ssh.bd',
+    defaultValue: 'https://api.vyzi.it',
   );
 
   // General

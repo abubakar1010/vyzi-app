@@ -14,10 +14,10 @@ flutter pub get
 flutter run
 ```
 
-The app calls the VYZI backend. Point it at a server with `BASE_URL`:
+The app calls the production backend at `https://api.vyzi.it` by default. Point it at another server with `BASE_URL`:
 
 ```bash
-flutter run --dart-define=BASE_URL=https://api.vyzi.it
+flutter run --dart-define=BASE_URL=http://10.0.2.2:3000   # local backend from the Android emulator
 ```
 
 ## Commands
