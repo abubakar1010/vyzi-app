@@ -1,12 +1,20 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- Internet permission for API calls -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- Network state permissions for connectivity checking -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!-- Bills are picked through the system photo picker and file picker, which
+         need no permission on Android 13+. Google Play only allows broad photo
+         access (READ_MEDIA_IMAGES) for apps whose core purpose is a gallery, so
+         it is stripped here, including from plugin manifests. -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove" />
+    <!-- The camera plugin asks for the microphone for video; bills are photos
+         taken with enableAudio: false. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
