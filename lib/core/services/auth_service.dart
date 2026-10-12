@@ -222,6 +222,15 @@ class AuthService {
     }
   }
 
+  /// Deletes the signed-in account for good. Email accounts must send their
+  /// password; Google and Apple accounts have none and send an empty body.
+  Future<void> deleteAccount({String? password}) async {
+    await _api.delete(
+      ApiConstants.deleteAccount,
+      data: password == null ? <String, dynamic>{} : {'password': password},
+    );
+  }
+
   /// Refreshes access token using refresh token
   Future<Map<String, dynamic>> refreshToken({required String refreshToken}) async {
     final body = {'refreshToken': refreshToken};

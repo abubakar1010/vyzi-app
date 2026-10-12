@@ -175,9 +175,16 @@ final Map<String, String> itIT = {
   'profile.settings.language_english': 'English',
   'profile.settings.delete_account': 'Elimina Account',
   'profile.settings.delete_confirm_title': 'Elimina Account',
-  'profile.settings.delete_confirm_msg': 'Sei sicuro di voler eliminare il tuo account? Questa azione è irreversibile.',
+  'profile.settings.delete_confirm_msg': 'Il tuo account, le bollette caricate, i documenti e le richieste di assistenza saranno eliminati definitivamente. Le pratiche e i contratti già avviati sono conservati in forma anonima per il periodo previsto dalla legge. L\'eliminazione non annulla eventuali contratti con il fornitore di energia.',
   'profile.settings.delete_confirm_cancel': 'Annulla',
   'profile.settings.delete_confirm_delete': 'Elimina',
+  'profile.settings.delete_password_title': 'Conferma con la password',
+  'profile.settings.delete_password_msg': 'Inserisci la password del tuo account per confermare l\'eliminazione.',
+  'profile.settings.delete_password_hint': 'Password',
+  'profile.settings.delete_password_confirm': 'Elimina account',
+  'profile.settings.delete_success_title': 'Account eliminato',
+  'profile.settings.delete_success_msg': 'Il tuo account è stato eliminato.',
+  'profile.settings.delete_error_title': 'Eliminazione non riuscita',
   'profile.settings.title': 'Impostazioni',
 
   // ==================== SUPPORT SCREEN ====================

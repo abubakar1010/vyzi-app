@@ -28,6 +28,7 @@ class ApiConstants {
 
   //Get My Profile
   static const String getMyProfile = '/api/v1/auth/me';
+  static const String deleteAccount = '/api/v1/auth/me';
   static const String updateProfile = '/api/v1/users/profile';
   static const String myPreferences = '/api/v1/users/me/preferences';
 

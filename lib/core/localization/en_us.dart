@@ -175,9 +175,16 @@ final Map<String, String> enUS = {
   'profile.settings.language_english': 'English',
   'profile.settings.delete_account': 'Delete Account',
   'profile.settings.delete_confirm_title': 'Delete Account',
-  'profile.settings.delete_confirm_msg': 'Are you sure you want to delete your account? This action is irreversible.',
+  'profile.settings.delete_confirm_msg': 'Your account, uploaded bills, documents and support requests will be permanently deleted. Requests and contracts already started are kept in anonymous form for the period required by law. Deleting the account does not cancel any contract with your energy supplier.',
   'profile.settings.delete_confirm_cancel': 'Cancel',
   'profile.settings.delete_confirm_delete': 'Delete',
+  'profile.settings.delete_password_title': 'Confirm with your password',
+  'profile.settings.delete_password_msg': 'Enter your account password to confirm the deletion.',
+  'profile.settings.delete_password_hint': 'Password',
+  'profile.settings.delete_password_confirm': 'Delete account',
+  'profile.settings.delete_success_title': 'Account deleted',
+  'profile.settings.delete_success_msg': 'Your account has been deleted.',
+  'profile.settings.delete_error_title': 'Deletion failed',
   'profile.settings.title': 'Settings',
 
   // ==================== SUPPORT SCREEN ====================

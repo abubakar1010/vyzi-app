@@ -8,6 +8,8 @@ import 'package:vyzi/features/notifications/controller/notification_controller.d
 import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'package:vyzi/routes/app_routes.dart';
 
+enum DeleteAccountResult { deleted, passwordRequired, failed }
+
 class AuthController extends GetxController {
   final AuthService _auth = AuthService();
   final SocialAuthService _socialAuth = SocialAuthService();
@@ -252,6 +254,35 @@ class AuthController extends GetxController {
     if (token != null && token.isNotEmpty) {
       _auth.logoutFromServer(refreshToken: token).ignore();
     }
+
+    await _clearLocalSession();
+  }
+
+  /// Deletes the account on the server, then signs out locally.
+  ///
+  /// Returns [DeleteAccountResult.passwordRequired] when the server asks for
+  /// the password (email accounts), so the caller can prompt and call again.
+  Future<DeleteAccountResult> deleteAccount({String? password}) async {
+    try {
+      await _auth.deleteAccount(password: password);
+    } on ServerException catch (e) {
+      if (e.rawMessage == 'Password is required to delete the account') {
+        return DeleteAccountResult.passwordRequired;
+      }
+      error.value = e.message;
+      return DeleteAccountResult.failed;
+    } on AppException catch (e) {
+      error.value = e.message;
+      return DeleteAccountResult.failed;
+    }
+    // Every session and push token is already gone on the server, so only
+    // the local state is left to clear.
+    await _clearLocalSession();
+    return DeleteAccountResult.deleted;
+  }
+
+  Future<void> _clearLocalSession() async {
+    final storage = Get.find<StorageService>();
 
     await _socialAuth.signOut();
 

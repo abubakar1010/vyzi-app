@@ -125,34 +125,7 @@ class MoreScreen extends StatelessWidget {
                       ),
                       title: 'profile.settings.delete_account'.tr,
                       trailingIcon: const _TrailingArrow(),
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: Text('profile.settings.delete_confirm_title'.tr),
-                            content: Text(
-                              'profile.settings.delete_confirm_msg'.tr,
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(ctx).pop(),
-                                child: Text('profile.settings.delete_confirm_cancel'.tr),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(ctx).pop();
-                                  final auth = Get.put(AuthController());
-                                  auth.logout();
-                                },
-                                child: Text(
-                                  'profile.settings.delete_confirm_delete'.tr,
-                                  style: const TextStyle(color: Colors.red),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                      onTap: () => _confirmDeleteAccount(context),
                     ),
                   ],
                 ),
@@ -164,6 +137,114 @@ class MoreScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _confirmDeleteAccount(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('profile.settings.delete_confirm_title'.tr),
+        content: Text('profile.settings.delete_confirm_msg'.tr),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text('profile.settings.delete_confirm_cancel'.tr),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              _deleteAccount(context);
+            },
+            child: Text(
+              'profile.settings.delete_confirm_delete'.tr,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Google and Apple accounts are deleted straight away; email accounts get
+  /// asked for their password first, because the server says so.
+  Future<void> _deleteAccount(BuildContext context, {String? password}) async {
+    final auth = Get.put(AuthController());
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
+    final result = await auth.deleteAccount(password: password);
+    if (Get.isDialogOpen ?? false) Get.back();
+
+    switch (result) {
+      case DeleteAccountResult.deleted:
+        Get.snackbar(
+          'profile.settings.delete_success_title'.tr,
+          'profile.settings.delete_success_msg'.tr,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: AppColors.primaryColor,
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(12),
+          borderRadius: 8,
+        );
+      case DeleteAccountResult.passwordRequired:
+        if (context.mounted) _askPassword(context);
+      case DeleteAccountResult.failed:
+        Get.snackbar(
+          'profile.settings.delete_error_title'.tr,
+          auth.error.value,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red.shade600,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 4),
+          margin: const EdgeInsets.all(12),
+          borderRadius: 8,
+        );
+    }
+  }
+
+  void _askPassword(BuildContext context) {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('profile.settings.delete_password_title'.tr),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('profile.settings.delete_password_msg'.tr),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              obscureText: true,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: 'profile.settings.delete_password_hint'.tr,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text('profile.settings.delete_confirm_cancel'.tr),
+          ),
+          TextButton(
+            onPressed: () {
+              final password = controller.text;
+              if (password.isEmpty) return;
+              Navigator.of(ctx).pop();
+              _deleteAccount(context, password: password);
+            },
+            child: Text(
+              'profile.settings.delete_password_confirm'.tr,
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    ).whenComplete(controller.dispose);
   }
 
   void _showLanguageSelector(BuildContext context) {
