@@ -17,13 +17,12 @@
 
 # ---------------------------------------------------------------------------
 # Flutter embedding
+#
+# The Flutter Gradle plugin adds the embedding's own rules to every release
+# build, so there is no blanket keep here. Whole-library `-keep { *; }` rules
+# also stop R8 from renaming anything in them, and Google Play flags apps whose
+# code is too little obfuscated (Play Console "DEX code optimization").
 # ---------------------------------------------------------------------------
--keep class io.flutter.app.** { *; }
--keep class io.flutter.plugin.** { *; }
--keep class io.flutter.util.** { *; }
--keep class io.flutter.view.** { *; }
--keep class io.flutter.** { *; }
--keep class io.flutter.plugins.** { *; }
 
 # GeneratedPluginRegistrant instantiates every plugin by name at engine start.
 -keep class io.flutter.plugins.GeneratedPluginRegistrant { *; }
@@ -31,12 +30,10 @@
 # ---------------------------------------------------------------------------
 # Firebase -- Auth, Core, Messaging
 #
-# The Firebase SDKs ship consumer rules, but their model classes are
-# instantiated reflectively from JSON, and FirebaseMessagingService is resolved
-# from the manifest rather than from code.
+# Firebase and Google Play services ship consumer rules that keep exactly what
+# they resolve reflectively. Only the app-side service, which is named in the
+# manifest, needs a rule of ours.
 # ---------------------------------------------------------------------------
--keep class com.google.firebase.** { *; }
--keep class com.google.android.gms.** { *; }
 -dontwarn com.google.firebase.**
 -dontwarn com.google.android.gms.**
 
@@ -52,12 +49,9 @@
 # ---------------------------------------------------------------------------
 
 # Google Sign-In
--keep class com.google.android.gms.auth.** { *; }
--keep class com.google.android.gms.common.** { *; }
 
 # Sign in with Apple -- Custom Tabs callback is resolved from the manifest.
 -keep class com.aboutyou.dart_packages.sign_in_with_apple.** { *; }
--keep class androidx.browser.customtabs.** { *; }
 
 # ---------------------------------------------------------------------------
 # flutter_local_notifications
@@ -77,7 +71,6 @@
 -keepattributes EnclosingMethod
 -keepattributes InnerClasses
 -dontwarn sun.misc.**
--keep class com.google.gson.** { *; }
 -keep class * implements com.google.gson.TypeAdapterFactory
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
@@ -113,15 +106,11 @@
 # ---------------------------------------------------------------------------
 # Media and file plugins -- CameraX, image_picker, file_picker
 # ---------------------------------------------------------------------------
--keep class androidx.camera.** { *; }
--keep class androidx.lifecycle.** { *; }
 -dontwarn androidx.camera.**
 
 # ---------------------------------------------------------------------------
 # flutter_secure_storage -- AndroidX Security / Tink use reflection.
 # ---------------------------------------------------------------------------
--keep class androidx.security.crypto.** { *; }
--keep class com.google.crypto.tink.** { *; }
 -dontwarn com.google.crypto.tink.**
 
 # ---------------------------------------------------------------------------
@@ -131,7 +120,6 @@
 # depend on. Without these, R8 fails the build on missing classes.
 # ---------------------------------------------------------------------------
 -dontwarn com.google.android.play.core.**
--keep class com.google.android.play.core.** { *; }
 
 # ---------------------------------------------------------------------------
 # General Android safety net
