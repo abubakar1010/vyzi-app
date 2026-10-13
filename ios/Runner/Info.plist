@@ -64,6 +64,10 @@
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>VYZI usa la fotocamera per fotografare le tue bollette e i documenti di identità.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>VYZI accede alle foto che scegli per caricare le tue bollette e i documenti richiesti.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>VYZI richiede il microfono per il funzionamento della fotocamera.</string>
 	<key>UIBackgroundModes</key>
