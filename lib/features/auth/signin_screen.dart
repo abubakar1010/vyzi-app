@@ -148,9 +148,13 @@ class _SignInScreenState extends State<SignInScreen> {
                   keyboardType: TextInputType.emailAddress,
                   hintText: 'auth.login.email_hint'.tr,
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'auth.login.email_error'.tr;
-                    final emailRegex = RegExp(r'^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}$');
-                    if (!emailRegex.hasMatch(v)) return 'auth.login.email_error'.tr;
+                    if (v == null || v.trim().isEmpty) return 'auth.login.email_error'.tr;
+                    // Same shape check as the rest of the app; the server
+                    // validates the address properly. A stricter pattern here
+                    // turned away plus-addresses (name+tag@gmail.com) and
+                    // domains such as .energy or .agency.
+                    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+                    if (!emailRegex.hasMatch(v.trim())) return 'auth.login.email_error'.tr;
                     return null;
                   },
                 ),
