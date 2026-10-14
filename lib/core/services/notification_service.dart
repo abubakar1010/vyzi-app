@@ -139,6 +139,11 @@ class NotificationService {
   /// Register FCM token with the backend.
   Future<void> registerToken() async {
     try {
+      // On iOS, FCM can only mint a token once APNs has handed the device its
+      // own, which arrives asynchronously after launch. Asking first throws
+      // `apns-token-not-set` and the device would never be registered, so wait
+      // for it briefly.
+      if (Platform.isIOS) await _waitForApnsToken();
       final token = await _messaging.getToken();
       if (token != null) {
         await _sendTokenToServer(token);
@@ -151,6 +156,17 @@ class NotificationService {
     if (Get.isRegistered<LanguageController>()) {
       await Get.find<LanguageController>().syncToServer();
     }
+  }
+
+  /// Polls for the APNs token for up to about ten seconds. Returns either way:
+  /// if it never comes, `getToken` reports why and [onTokenRefresh] still
+  /// registers the device once it does.
+  Future<void> _waitForApnsToken() async {
+    for (var attempt = 0; attempt < 20; attempt++) {
+      if (await _messaging.getAPNSToken() != null) return;
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+    debugPrint('APNs token not available yet; FCM registration may fail');
   }
 
   /// Send the FCM token to the backend server.
