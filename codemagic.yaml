@@ -22,7 +22,7 @@ workflows:
         bundle_identifier: com.vyzi
       vars:
         # App Store Connect > the app > App Information > Apple ID (digits only).
-        APP_STORE_APP_ID: "REPLACE_ME"
+        APP_STORE_APP_ID: "6822709799"
     scripts:
       - name: Check configuration
         script: |
