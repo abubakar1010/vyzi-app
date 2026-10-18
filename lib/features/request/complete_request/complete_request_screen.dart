@@ -2276,18 +2276,27 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 6.h),
+      // A defined outline and fill so it reads as a button, and a 48-high
+      // minimum so it meets the iOS (44) and Android (48) touch targets.
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 48),
+        padding: EdgeInsets.symmetric(horizontal: 14.w),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.linkGreen.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(color: AppColors.linkGreen, width: 1.5),
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: AppColors.linkGreen, size: 14.sp),
-            SizedBox(width: 3.w),
+            Icon(icon, color: AppColors.linkGreen, size: 16.sp),
+            SizedBox(width: 4.w),
             Text(label,
                 style: TextStyle(
-                    fontSize: 12.sp,
+                    fontSize: 13.sp,
                     color: AppColors.linkGreen,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                     height: 1.22)),
           ],
         ),
