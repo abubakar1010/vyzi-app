@@ -15,7 +15,6 @@ class _T {
   static const textMid = Colors.black;
   static const purple = Color(0xFF5A1ABE);
   static const purpleBg = Color(0xFFEEEAFB);
-  static const green = Color(0xFF00C896);
   static const orange = Color(0xFFE67E22);
   static const orangeBg = Color(0xFFFEF0E6);
   static const teal = Color(0xFF00B4D8);
@@ -119,8 +118,6 @@ class SupportoScreen extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           ..._items.map((item) => _SupportTile(item: item)),
-          const SizedBox(height: 20),
-          _featuredCard(),
         ],
       ),
       ),
@@ -144,62 +141,6 @@ class SupportoScreen extends StatelessWidget {
         'support.title'.tr,
         style: const TextStyle(
             color: _T.textDark, fontSize: 17, fontWeight: FontWeight.w900),
-      ),
-    );
-  }
-
-  Widget _featuredCard() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(18),
-      child: Stack(
-        children: [
-          Container(
-            height: 140,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: const Color(0xFFE8E8E8), width: 1.22),
-              image: const DecorationImage(
-                image: NetworkImage(
-                  'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=600',
-                ),
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(
-                  Color(0x99000000),
-                  BlendMode.darken,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 18,
-            bottom: 18,
-            right: 18,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'support.featured_label'.tr,
-                  style: const TextStyle(
-                    color: _T.green,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  'support.featured_title'.tr,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    height: 1.3,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

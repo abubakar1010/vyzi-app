@@ -463,8 +463,6 @@ final Map<String, String> itIT = {
   'support.form.success_title': 'Richiesta Inviata!',
   'support.form.success_subtitle': 'Abbiamo ricevuto il tuo messaggio e risponderemo entro 24 ore.',
   'support.form.error': 'Invio della richiesta fallito. Riprova.',
-  'support.featured_label': 'ARTICOLO IN EVIDENZA',
-  'support.featured_title': '5 consigli per ridurre la tua fattura del 20%',
   'support.contact.phone_label': 'Telefono',
   'support.contact.email_label': 'Email',
   'support.contact.hours_label': 'Orari',

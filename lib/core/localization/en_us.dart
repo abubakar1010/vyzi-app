@@ -466,8 +466,6 @@ final Map<String, String> enUS = {
   'support.form.success_title': 'Request Sent!',
   'support.form.success_subtitle': 'We\'ve received your message and will respond within 24 hours.',
   'support.form.error': 'Failed to submit request. Please try again.',
-  'support.featured_label': 'FEATURED ARTICLE',
-  'support.featured_title': '5 tips to reduce your bill by 20%',
   'support.contact.phone_label': 'Phone',
   'support.contact.email_label': 'Email',
   'support.contact.hours_label': 'Hours',
