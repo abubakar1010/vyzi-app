@@ -28,6 +28,8 @@ final Map<String, String> itIT = {
 
   // Social sign-in (Google / Apple)
   'auth.social.error.cancelled': 'Accesso annullato.',
+  'auth.social.error.not_completed':
+      'Accesso non completato. Riprova. Se il problema continua, contatta l\'assistenza.',
   'auth.social.error.generic': 'Accesso social fallito. Riprova.',
   'auth.social.error.interrupted': 'Accesso interrotto. Riprova.',
   'auth.social.error.configuration':
@@ -109,7 +111,8 @@ final Map<String, String> itIT = {
   'auth.success.button': 'Torna al login',
 
   // ==================== HOME SCREEN ====================
-  'home.header.greeting': 'Ciao, là! 👋',
+  'home.header.greeting': 'Ciao! 👋',
+  'home.header.greeting_name': 'Ciao, @name! 👋',
   'home.header.subtitle': 'Pronto a risparmiare sulle tue utenze?',
   'home.header.onboarding_greeting': 'Ciao! 👋',
   'home.header.onboarding_subtitle': 'Prendi il controllo delle tue utenze oggi',

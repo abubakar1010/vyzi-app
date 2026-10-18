@@ -6,6 +6,7 @@ import 'package:vyzi/core/utils/app_assets.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/core/utils/app_styles.dart';
 import 'package:vyzi/core/widgets/notification_icon_button.dart';
+import 'package:vyzi/features/home/controller/home_controller.dart';
 import 'package:vyzi/features/notifications/screen/notification_screen.dart';
 
 /// Collapsing variant of the home banner, for the returning-user layout.
@@ -68,10 +69,16 @@ class HomeSliverHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The greeting carries the user's name, so the extent is re-derived when it
+    // arrives instead of being measured against the generic text.
+    return Obx(() => _buildHeader(context, Get.find<HomeController>().greeting));
+  }
+
+  Widget _buildHeader(BuildContext context, String greeting) {
     final textWidth = MediaQuery.sizeOf(context).width - _padH * 2;
     final greetingHeight = _measureTextHeight(
       context,
-      'home.header.greeting'.tr,
+      greeting,
       _greetingStyle,
       textWidth,
       1,
@@ -192,7 +199,7 @@ class HomeSliverHeader extends StatelessWidget {
                                 children: [
                                   SizedBox(height: _greetingGap),
                                   Text(
-                                    'home.header.greeting'.tr,
+                                    greeting,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: _greetingStyle,
@@ -334,13 +341,13 @@ class HomeHeader extends StatelessWidget {
                   ),
                   SizedBox(height: 12.h),
                   // Greeting
-                  Text(
-                    'home.header.greeting'.tr,
+                  Obx(() => Text(
+                    Get.find<HomeController>().greeting,
                     style: AppStyles.h1.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
                     ),
-                  ),
+                  )),
                   SizedBox(height: 4.h),
                   // Subtitle
                   Text(
@@ -417,14 +424,15 @@ class HomeHeader extends StatelessWidget {
                     ),
                     SizedBox(height: 20.h),
                     // Greeting
-                    Text(
-                      'home.header.onboarding_greeting'.tr,
+                    Obx(() => Text(
+                      Get.find<HomeController>()
+                          .greetingOr('home.header.onboarding_greeting'),
                       style: AppStyles.h1.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
                         fontSize: 26.sp,
                       ),
-                    ),
+                    )),
                     SizedBox(height: 6.h),
                     // Subtitle
                     Text(

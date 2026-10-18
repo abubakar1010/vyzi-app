@@ -28,6 +28,8 @@ final Map<String, String> enUS = {
 
   // Social sign-in (Google / Apple)
   'auth.social.error.cancelled': 'Sign-in cancelled.',
+  'auth.social.error.not_completed':
+      'Sign-in did not complete. Please try again. If the problem continues, contact support.',
   'auth.social.error.generic': 'Social login failed. Please try again.',
   'auth.social.error.interrupted': 'Sign-in was interrupted. Please try again.',
   'auth.social.error.configuration':
@@ -109,9 +111,10 @@ final Map<String, String> enUS = {
   'auth.success.button': 'Back to login',
 
   // ==================== HOME SCREEN ====================
-  'home.header.greeting': 'Hello, there! 👋',
+  'home.header.greeting': 'Hello! 👋',
+  'home.header.greeting_name': 'Hello, @name! 👋',
   'home.header.subtitle': 'Ready to save on your utilities?',
-  'home.header.onboarding_greeting': 'Hello, there! 👋',
+  'home.header.onboarding_greeting': 'Hello! 👋',
   'home.header.onboarding_subtitle': 'Take control of your utilities today',
   'home.upload_section.title': 'Upload Your First\nBill',
   'home.upload_section.subtitle': 'Let us analyze your current plan\nand find better offers',

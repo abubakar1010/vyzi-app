@@ -18,6 +18,22 @@ class HomeController extends GetxController {
   RxString servicesError = ''.obs;
   RxString dashboardError = ''.obs;
 
+  /// The signed-in user's first name for the greeting. Seeded from what login
+  /// stored, then refreshed from the profile — the stored value can be missing
+  /// or stale (e.g. after the name is edited).
+  RxString firstName = ''.obs;
+
+  /// "Ciao, Mario!" — or plain "Ciao!" while there is no name to show.
+  String get greeting => greetingOr('home.header.greeting');
+
+  /// Same, with a different no-name fallback (the first-visit banner).
+  String greetingOr(String fallbackKey) {
+    final name = firstName.value.trim();
+    return name.isEmpty
+        ? fallbackKey.tr
+        : 'home.header.greeting_name'.trParams({'name': name});
+  }
+
   /// True only for a genuinely new user who has no bills.
   RxBool isFirstVisit = false.obs;
 
@@ -34,6 +50,9 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    firstName.value =
+        Get.find<StorageService>().getString(StorageKeys.userName) ?? '';
+    fetchFirstName();
     _resolveFirstVisit();
     fetchDashboard();
     fetchServices();
@@ -63,6 +82,22 @@ class HomeController extends GetxController {
     }
 
     storage.setBool(key, true);
+  }
+
+  Future<void> fetchFirstName() async {
+    try {
+      final response = await _api.get(ApiConstants.getMyProfile);
+      final body = response.data as Map<String, dynamic>;
+      if (body['success'] != true) return;
+      final data = body['data'] as Map<String, dynamic>?;
+      final name = (data?['firstName'] as String? ?? '').trim();
+      if (name.isEmpty) return;
+      firstName.value = name;
+      await Get.find<StorageService>().setString(StorageKeys.userName, name);
+    } catch (_) {
+      // Keep the stored name (or the plain "Ciao!") — the greeting is not
+      // worth an error state.
+    }
   }
 
   /// Fetches user dashboard data (potential savings + active requests)
