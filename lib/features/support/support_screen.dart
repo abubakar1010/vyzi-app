@@ -237,6 +237,13 @@ class _SupportFormScreenState extends State<SupportFormScreen> {
   final _dropdownKey = GlobalKey();
   OverlayEntry? _overlayEntry;
 
+  // Validation shows under the field it belongs to, in the gap the form already
+  // leaves there, so a failed submit neither covers the bottom navigation nor
+  // moves anything.
+  String? _topicError;
+  String? _subjectError;
+  String? _messageError;
+
   @override
   void initState() {
     super.initState();
@@ -298,6 +305,7 @@ class _SupportFormScreenState extends State<SupportFormScreen> {
                 onSelect: (topic) {
                   setState(() {
                     _selectedTopic = topic;
+                    _topicError = null;
                     _dropdownOpen = false;
                   });
                   _removeOverlay();
@@ -313,22 +321,20 @@ class _SupportFormScreenState extends State<SupportFormScreen> {
   }
 
   Future<void> _submitForm() async {
-    if (_selectedTopic == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('support.form.validation.topic'.tr)),
-      );
-      return;
-    }
-    if (_subjectCtrl.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('support.form.validation.subject'.tr)),
-      );
-      return;
-    }
-    if (_messageCtrl.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('support.form.validation.message'.tr)),
-      );
+    final topicError =
+        _selectedTopic == null ? 'support.form.validation.topic'.tr : null;
+    final subjectError = _subjectCtrl.text.trim().isEmpty
+        ? 'support.form.validation.subject'.tr
+        : null;
+    final messageError = _messageCtrl.text.trim().isEmpty
+        ? 'support.form.validation.message'.tr
+        : null;
+    if (topicError != null || subjectError != null || messageError != null) {
+      setState(() {
+        _topicError = topicError;
+        _subjectError = subjectError;
+        _messageError = messageError;
+      });
       return;
     }
 
@@ -415,6 +421,30 @@ class _SupportFormScreenState extends State<SupportFormScreen> {
     }
   }
 
+  /// The gap under a field. Always the same height, with or without a message,
+  /// so showing an error never pushes the fields below it down.
+  Widget _fieldGap(String? error) {
+    return SizedBox(
+      height: 18,
+      child: error == null
+          ? null
+          : Align(
+              alignment: Alignment.bottomLeft,
+              child: Text(
+                error,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Color(0xFFD32F2F),
+                  fontSize: 11.5,
+                  height: 1.2,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -455,7 +485,10 @@ class _SupportFormScreenState extends State<SupportFormScreen> {
                       color: _T.inputBg,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                          color: const Color(0xFFF3F3F5), width: 1.22),
+                          color: _topicError != null
+                              ? const Color(0xFFD32F2F)
+                              : const Color(0xFFF3F3F5),
+                          width: 1.22),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -481,7 +514,7 @@ class _SupportFormScreenState extends State<SupportFormScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 18),
+                _fieldGap(_topicError),
 
                 // ── Subject ──
                 Text('support.form.subject_label'.tr,
@@ -492,6 +525,11 @@ class _SupportFormScreenState extends State<SupportFormScreen> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _subjectCtrl,
+                  onChanged: (_) {
+                    if (_subjectError != null) {
+                      setState(() => _subjectError = null);
+                    }
+                  },
                   style: const TextStyle(
                       color: Colors.black,
                       fontSize: 14,
@@ -515,7 +553,7 @@ class _SupportFormScreenState extends State<SupportFormScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 18),
+                _fieldGap(_subjectError),
 
                 // ── Message ──
                 Text('support.form.message_label'.tr,
@@ -527,6 +565,11 @@ class _SupportFormScreenState extends State<SupportFormScreen> {
                 TextField(
                   controller: _messageCtrl,
                   maxLines: 5,
+                  onChanged: (_) {
+                    if (_messageError != null) {
+                      setState(() => _messageError = null);
+                    }
+                  },
                   style: const TextStyle(
                       color: Colors.black,
                       fontSize: 14,
@@ -551,7 +594,8 @@ class _SupportFormScreenState extends State<SupportFormScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 22),
+                _fieldGap(_messageError),
+                const SizedBox(height: 4),
 
                 // ── Submit Button ──
                 SizedBox(
