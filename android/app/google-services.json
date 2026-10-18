@@ -22,11 +22,27 @@
           }
         },
         {
+          "client_id": "703974828285-kie970rbnvt6hc167u303f7me3euauks.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vyzi",
+            "certificate_hash": "c2fbf0e684ba24d8c949e4ef38439116ec01b61a"
+          }
+        },
+        {
           "client_id": "703974828285-lgv4t5dbnksh1una1q5g50dve84i2ber.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.vyzi",
             "certificate_hash": "8f4a87255f7578eabdf417218ec27b5f65ab3c0a"
+          }
+        },
+        {
+          "client_id": "703974828285-s4vlbc5qscqhpim4smrau89o4iurocbf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vyzi",
+            "certificate_hash": "74f41050281c4ff4bef51ebe38233670065cc3b2"
           }
         },
         {
