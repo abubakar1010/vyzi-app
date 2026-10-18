@@ -38,8 +38,9 @@ class WarmupOnboarding extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _artworkBackground,
+      // The logo sits at the very top of the artwork, so the top inset has to
+      // be kept: without it the Dynamic Island covers the logo.
       body: SafeArea(
-        top: false,
         child: Obx(() {
           final isLastSlide = controller.currentIndex.value == slides.length - 1;
 
