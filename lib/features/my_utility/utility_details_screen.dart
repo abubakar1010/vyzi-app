@@ -214,7 +214,11 @@ class UtilityDetailsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(height: 5.h),
-                                RichText(
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: RichText(
+                                  maxLines: 1,
                                   text: TextSpan(
                                     children: [
                                       TextSpan(
@@ -236,6 +240,7 @@ class UtilityDetailsScreen extends StatelessWidget {
                                         ),
                                       ),
                                     ],
+                                  ),
                                   ),
                                 ),
                               ],
@@ -263,12 +268,17 @@ class UtilityDetailsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(height: 8.h),
-                                Text(
-                                  _formatDate(service.activationDate),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 25.sp,
-                                    fontWeight: FontWeight.w900,
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    _formatDate(service.activationDate),
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 25.sp,
+                                      fontWeight: FontWeight.w900,
+                                    ),
                                   ),
                                 ),
                               ],

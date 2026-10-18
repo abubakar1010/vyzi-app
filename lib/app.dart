@@ -58,6 +58,16 @@ class MyApp extends StatelessWidget {
                 ),
               ),
             ),
+            // The layouts are sized with ScreenUtil; the OS "Larger Text" /
+            // Display Zoom setting on top of that overflows fixed-height cards.
+            builder: (context, child) {
+              final scaler = MediaQuery.textScalerOf(context)
+                  .clamp(minScaleFactor: 0.9, maxScaleFactor: 1.1);
+              return MediaQuery(
+                data: MediaQuery.of(context).copyWith(textScaler: scaler),
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
             initialRoute: AppRoutes.splashScreen,
             getPages: AppRoutes.page,
             // Bindings are handled by DependencyInjection.init() in main.dart
