@@ -59,7 +59,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               child: CustomTextField(
                 controller: controller.passwordController,
                 isPassword: true,
-                hintText: '••••••••••',
+                hintText: 'auth.reset_password.password_hint'.tr,
                 validator: (v) =>
                 v == null || v.length < 6 ? 'auth.reset_password.password_error'.tr : null,
               ),
@@ -73,7 +73,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               child: CustomTextField(
                 controller: controller.confirmPasswordController,
                 isPassword: true,
-                hintText: '••••••••••',
+                hintText: 'auth.reset_password.confirm_hint'.tr,
                 validator: (v) => v != controller.passwordController.text
                     ? 'auth.reset_password.mismatch'.tr
                     : null,
