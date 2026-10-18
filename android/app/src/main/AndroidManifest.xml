@@ -11,7 +11,6 @@
          access (READ_MEDIA_IMAGES) for apps whose core purpose is a gallery, so
          it is stripped here, including from plugin manifests. -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove" />
     <!-- The camera plugin asks for the microphone for video; bills are photos
          taken with enableAudio: false. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove" />
