@@ -546,7 +546,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Get.to(() => const PersonalDataScreen());
       }
     } on SocialAuthCancelledException {
-      // The user dismissed the provider sheet — nothing to report.
+      // Android also reports a misconfigured build as a cancellation, so the
+      // user is always told the sign-in did not finish, never left with nothing.
+      Get.snackbar(
+        'auth.validation.info'.tr,
+        'auth.social.error.not_completed'.tr,
+      );
     } catch (_) {
       final rawError = auth.error.value;
       final errorMessage = rawError.contains('suspended')

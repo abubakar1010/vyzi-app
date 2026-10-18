@@ -336,7 +336,12 @@ class _SignInScreenState extends State<SignInScreen> {
       );
       Get.offAllNamed(AppRoutes.navbarScreen);
     } on SocialAuthCancelledException {
-      // The user dismissed the provider sheet — nothing to report.
+      // Android also reports a misconfigured build as a cancellation, so the
+      // user is always told the sign-in did not finish, never left with nothing.
+      Get.snackbar(
+        'auth.validation.info'.tr,
+        'auth.social.error.not_completed'.tr,
+      );
     } on ServerException catch (e) {
       if (e.statusCode == 404) {
         Get.snackbar(
