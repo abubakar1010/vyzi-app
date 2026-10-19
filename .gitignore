@@ -56,3 +56,7 @@ temp_interactive_push.bat
 # Local tooling and scratch files
 .claude/
 .changed_dims.txt
+
+# Marketing and source artwork, not used by the app build
+appstore-screenshots/
+onboardning-images/
