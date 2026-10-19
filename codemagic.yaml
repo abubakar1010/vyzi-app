@@ -17,7 +17,7 @@ workflows:
       # Pinned so a new Flutter release cannot change the build on its own.
       # Keep in step with .fvmrc, and bump both together on a tested branch.
       flutter: 3.41.9
-      xcode: latest
+      xcode: 26.6
       cocoapods: default
       ios_signing:
         distribution_type: app_store
