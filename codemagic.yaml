@@ -7,6 +7,24 @@
 #   - Team settings > Code signing identities: an Apple Distribution
 #     certificate and an App Store provisioning profile for com.vyzi.
 workflows:
+  # Compile-only check of the pinned toolchain. No signing, no upload, so it is
+  # safe to run on any branch before changing Flutter, Xcode or iOS settings.
+  ios-build-check:
+    name: iOS build check (no upload)
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    environment:
+      flutter: 3.41.9
+      xcode: 26.6
+      cocoapods: default
+    scripts:
+      - name: Get packages
+        script: flutter pub get
+      - name: Install pods
+        script: cd ios && pod install --repo-update
+      - name: Build iOS (unsigned)
+        script: flutter build ios --release --no-codesign
+
   ios-release:
     name: iOS release (TestFlight)
     instance_type: mac_mini_m2
