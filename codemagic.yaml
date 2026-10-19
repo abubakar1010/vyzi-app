@@ -14,7 +14,9 @@ workflows:
     integrations:
       app_store_connect: vyzi_asc_key
     environment:
-      flutter: stable
+      # Pinned so a new Flutter release cannot change the build on its own.
+      # Keep in step with .fvmrc, and bump both together on a tested branch.
+      flutter: 3.41.9
       xcode: latest
       cocoapods: default
       ios_signing:
