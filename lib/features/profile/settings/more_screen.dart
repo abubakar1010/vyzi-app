@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/core/appbar/custom_appbar.dart';
 import 'package:vyzi/core/utils/app_assets.dart';
@@ -27,7 +28,7 @@ class MoreScreen extends StatelessWidget {
 
             // Settings List wrapped in a single card
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: Adaptive.gutters(context, 20),
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(

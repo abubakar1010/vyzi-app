@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/features/profile/agreements/agreements_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -102,7 +103,8 @@ class _AgreementsScreenState extends State<AgreementsScreen> {
     if (_controller.agreements.isEmpty) {
       return ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        padding: Adaptive.page(context,
+            EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h)),
         children: [
           _buildBenefitsBanner(),
           SizedBox(height: 60.h),
@@ -134,7 +136,8 @@ class _AgreementsScreenState extends State<AgreementsScreen> {
     // Normal list
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      padding: Adaptive.page(
+          context, EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -64,7 +65,7 @@ class _AgreementDetailsScreenState extends State<AgreementDetailsScreen> {
           _buildSliverAppBar(),
 
           // ── Body ──
-          SliverToBoxAdapter(
+          SliverReadableWidth(sliver: SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -101,7 +102,7 @@ class _AgreementDetailsScreenState extends State<AgreementDetailsScreen> {
                 ),
               ],
             ),
-          ),
+          )),
         ],
       ),
     );

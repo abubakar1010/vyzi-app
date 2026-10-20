@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/core/utils/app_assets.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
@@ -127,7 +128,7 @@ class UtilityDetailsScreen extends StatelessWidget {
       body: SafeArea(
         top: false,
         child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 14.w),
+        padding: Adaptive.gutters(context, 14.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

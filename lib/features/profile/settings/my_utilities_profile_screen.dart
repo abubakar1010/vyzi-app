@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/features/home/controller/home_controller.dart';
@@ -40,7 +41,11 @@ class MyUtilitiesProfileScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 16.h),
+            padding: Adaptive.page(
+              context,
+              EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 16.h),
+              maxWidth: Adaptive.dashboardWidth,
+            ),
             child: Text(
               'my_utility.subtitle'.tr,
               style: TextStyle(
@@ -60,7 +65,8 @@ class MyUtilitiesProfileScreen extends StatelessWidget {
                 return _emptyState();
               }
 
-              return ListView.builder(
+              return AdaptiveListView.builder(
+                maxWidth: Adaptive.dashboardWidth,
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 itemCount: controller.serviceList.length,
                 itemBuilder: (_, i) =>

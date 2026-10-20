@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/core/utils/app_styles.dart';
@@ -91,7 +92,8 @@ class _MyRequestsProfileState extends State<MyRequestsProfile> {
       return _buildEmptyState();
     }
 
-    return ListView.builder(
+    return AdaptiveListView.builder(
+      maxWidth: Adaptive.dashboardWidth,
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       itemCount: _controller.bills.length,
       itemBuilder: (_, i) => _buildBillCard(_controller.bills[i]),
@@ -259,7 +261,7 @@ class _MyRequestsProfileState extends State<MyRequestsProfile> {
   Widget _buildEmptyState() {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        padding: Adaptive.gutters(context, 24.w, maxWidth: Adaptive.formWidth),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

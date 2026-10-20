@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/navbar/navbar_controller.dart';
 import 'package:vyzi/core/utils/app_assets.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
@@ -133,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildPageHeader(),
               SizedBox(height: 16.h),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                padding: Adaptive.gutters(context, 16.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -171,7 +172,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 12.h),
+            padding: Adaptive.page(
+              context,
+              EdgeInsets.fromLTRB(16.w, 20.h, 16.w, 12.h),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

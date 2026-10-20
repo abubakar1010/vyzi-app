@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
@@ -24,7 +25,8 @@ class AboutUs extends StatelessWidget {
         top: false,
         child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+        padding:
+            Adaptive.page(context, const EdgeInsets.fromLTRB(20, 10, 20, 10)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

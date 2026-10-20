@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/constants/api_constants.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/core/utils/number_format.dart';
@@ -55,7 +56,7 @@ class InviteScreen extends StatelessWidget {
     }
 
     return SingleChildScrollView(
-      child: Column(
+      child: ReadableWidth(child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeroSection(),
@@ -94,7 +95,7 @@ class InviteScreen extends StatelessWidget {
           ),
           SizedBox(height: 30.h),
         ],
-      ),
+      )),
     );
   }
 

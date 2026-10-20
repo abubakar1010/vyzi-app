@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:vyzi/core/appbar/custom_appbar.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
@@ -68,7 +69,7 @@ class _PersonalDataScreenState extends State<PersonalDataScreen> {
         top: false,
         child: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Column(
+        child: ReadableWidth(child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Subtitle ──
@@ -118,7 +119,7 @@ class _PersonalDataScreenState extends State<PersonalDataScreen> {
 
             SizedBox(height: 30.h),
           ],
-        ),
+        )),
       ),
       ),
     );

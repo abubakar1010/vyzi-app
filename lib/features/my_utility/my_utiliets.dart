@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/features/home/controller/home_controller.dart';
@@ -61,12 +62,15 @@ class _MyUtilitiesScreenState extends State<MyUtilitiesScreen> {
                   return _emptyState();
                 }
 
-                return ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 20),
-                  children: [
-                    ..._controller.serviceList
-                        .map((s) => _ServiceTile(service: s)),
-                  ],
+                final services = _controller.serviceList;
+                return AdaptiveListView.builder(
+                  padding: Adaptive.page(
+                    context,
+                    const EdgeInsets.fromLTRB(16, 10, 16, 20),
+                    maxWidth: Adaptive.dashboardWidth,
+                  ),
+                  itemCount: services.length,
+                  itemBuilder: (_, i) => _ServiceTile(service: services[i]),
                 );
               }),
             ),
@@ -78,7 +82,11 @@ class _MyUtilitiesScreenState extends State<MyUtilitiesScreen> {
 
   Widget _header() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(18, 20, 18, 8),
+      padding: Adaptive.page(
+        context,
+        const EdgeInsets.fromLTRB(18, 20, 18, 8),
+        maxWidth: Adaptive.dashboardWidth,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
