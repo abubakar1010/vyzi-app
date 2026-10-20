@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/core/navbar/navbar_controller.dart';
+import 'package:vyzi/core/services/system_ui_service.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/features/home/screen/home_screen.dart';
 import 'package:vyzi/features/legal/legal_gate.dart';
@@ -61,35 +63,135 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
         // 3. Already at Home root — exit app
         SystemNavigator.pop();
       },
-      child: Obx(
-        () {
-          final isKeyboardOpen =
-              MediaQuery.of(context).viewInsets.bottom > 0;
-          return Scaffold(
-            backgroundColor: AppColors.background,
-            body: IndexedStack(
-              index: _controller.selectedIndex,
-              children: List.generate(4, (i) => _buildTabNavigator(i)),
+      child: Obx(() {
+        if (Adaptive.isWide(context)) return _buildWideLayout();
+
+        final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          body: IndexedStack(
+            index: _controller.selectedIndex,
+            children: List.generate(4, (i) => _buildTabNavigator(i)),
+          ),
+          bottomNavigationBar: isKeyboardOpen
+              ? null
+              : _buildBottomNavigationBar(),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: isKeyboardOpen
+              ? null
+              : _buildFloatingActionButton(),
+        );
+      }),
+    );
+  }
+
+  /// A wide window keeps the tabs in a rail down the leading edge, as iPad
+  /// apps do, with the upload action at its head.
+  ///
+  /// The status bar sits on a strip of its own: one status bar style spans the
+  /// rail and the tab's header, and only a plain background suits both.
+  Widget _buildWideLayout() {
+    final statusBarHeight = MediaQuery.paddingOf(context).top;
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: Column(
+        children: [
+          AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiService.styleForBackground(AppColors.background),
+            child: SizedBox(height: statusBarHeight, width: double.infinity),
+          ),
+          Expanded(
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: _buildRailAndTabs(),
             ),
-            bottomNavigationBar:
-                isKeyboardOpen ? null : _buildBottomNavigationBar(),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
-            floatingActionButton:
-                isKeyboardOpen ? null : _buildFloatingActionButton(),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
+
+  Widget _buildRailAndTabs() {
+    return Row(
+      children: [
+        SafeArea(
+          right: false,
+          child: NavigationRail(
+            backgroundColor: AppColors.background,
+            selectedIndex: _controller.selectedIndex,
+            onDestinationSelected: _controller.changeIndex,
+            labelType: NavigationRailLabelType.all,
+            minWidth: 96,
+            groupAlignment: -0.85,
+            indicatorColor: AppColors.primaryAlpha10,
+            selectedIconTheme: const IconThemeData(
+              color: AppColors.primaryColor,
+            ),
+            unselectedIconTheme: const IconThemeData(color: Colors.grey),
+            selectedLabelTextStyle: TextStyle(
+              fontSize: 12.sp,
+              color: AppColors.primaryColor,
+              fontWeight: FontWeight.w600,
+            ),
+            unselectedLabelTextStyle: TextStyle(
+              fontSize: 12.sp,
+              color: Colors.grey,
+            ),
+            leading: Padding(
+              padding: EdgeInsets.only(top: 8.h, bottom: 16.h),
+              child: _buildFloatingActionButton(),
+            ),
+            destinations: [
+              for (final (icon, label) in _tabs)
+                NavigationRailDestination(
+                  icon: Icon(icon),
+                  label: Text(label.tr),
+                ),
+            ],
+          ),
+        ),
+        const VerticalDivider(width: 1, thickness: 1),
+        // The tabs measure the window to lay themselves out, so tell them
+        // the window is the pane beside the rail — whose leading safe area
+        // the rail has already taken.
+        Expanded(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final media = MediaQuery.of(context);
+              return MediaQuery(
+                data: media.copyWith(
+                  size: constraints.biggest,
+                  padding: media.padding.copyWith(left: 0),
+                  viewPadding: media.viewPadding.copyWith(left: 0),
+                ),
+                child: IndexedStack(
+                  index: _controller.selectedIndex,
+                  children: List.generate(4, (i) => _buildTabNavigator(i)),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// The tabs, in [NavTabs] order: icon and translation key.
+  static const _tabs = [
+    (Icons.home_outlined, 'navbar.home'),
+    (Icons.description_outlined, 'navbar.request'),
+    (Icons.flash_on_outlined, 'navbar.utilities'),
+    (Icons.person_outline, 'navbar.profile'),
+  ];
 
   /// Each tab gets its own Navigator so pushes stay within the tab body.
   Widget _buildTabNavigator(int index) {
     return Navigator(
       key: _controller.navigatorKeys[index],
-      onGenerateRoute: (_) => MaterialPageRoute(
-        builder: (_) => _tabRoots[index],
-      ),
+      onGenerateRoute: (_) =>
+          MaterialPageRoute(builder: (_) => _tabRoots[index]),
     );
   }
 
@@ -185,8 +287,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                 style: TextStyle(
                   fontSize: 11.sp,
                   color: color,
-                  fontWeight:
-                      isSelected ? FontWeight.w600 : FontWeight.normal,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
             ],
