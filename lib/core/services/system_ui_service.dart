@@ -30,6 +30,10 @@ class SystemUiService {
     return SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: iconBrightness,
+      // iOS goes by the brightness of what is behind the status bar instead.
+      statusBarBrightness: iconBrightness == Brightness.dark
+          ? Brightness.light
+          : Brightness.dark,
       systemNavigationBarColor: Colors.transparent,
       systemNavigationBarIconBrightness: iconBrightness,
       systemNavigationBarDividerColor: Colors.transparent,
