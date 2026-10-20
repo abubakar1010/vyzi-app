@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vyzi/core/navbar/navbar_controller.dart';
 import 'package:vyzi/core/services/notification_router.dart';
 import 'package:vyzi/core/services/storage_service.dart';
 import 'package:vyzi/features/bills/models/bill_model.dart';
+import 'package:vyzi/features/bills/screen/bill_detail_screen.dart';
+import 'package:vyzi/features/home/sign_contract/sign_contract.dart';
 import 'package:vyzi/features/request/models/api_offer_model.dart';
 import 'package:vyzi/features/request/request_controller.dart';
 import 'package:vyzi/features/request/request_offers_focus.dart';
@@ -96,27 +100,43 @@ void main() {
       final storage = StorageService();
       await storage.init();
       Get.put<StorageService>(storage, permanent: true);
+      Get.put(NavbarController());
     });
 
-    /// The route table the router addresses, behind stub pages. The real
-    /// screens need controllers and a network; what is under test is which
-    /// destination each notification type resolves to.
+    /// The route table the router addresses, behind stub pages, and a shell
+    /// that keeps one navigator per tab as the real one does. What is under
+    /// test is which destination each notification type resolves to.
     Future<void> pumpShell(WidgetTester tester) async {
-      await tester.pumpWidget(GetMaterialApp(
-        initialRoute: AppRoutes.navbarScreen,
-        getPages: <GetPage<dynamic>>[
-          for (final name in <String>[
-            AppRoutes.navbarScreen,
-            AppRoutes.billDetailScreen,
-            AppRoutes.signContractScreen,
-            AppRoutes.ticketDetailScreen,
-            AppRoutes.inviteFriendsScreen,
-            AppRoutes.notificationsScreen,
-          ])
-            GetPage<dynamic>(name: name, page: () => const SizedBox.shrink()),
-        ],
+      await tester.pumpWidget(ScreenUtilInit(
+        designSize: const Size(392, 876),
+        builder: (context, child) => GetMaterialApp(
+          initialRoute: AppRoutes.navbarScreen,
+          getPages: <GetPage<dynamic>>[
+            GetPage<dynamic>(
+              name: AppRoutes.navbarScreen,
+              page: () => const _StubShell(),
+            ),
+            for (final name in <String>[
+              AppRoutes.billDetailScreen,
+              AppRoutes.signContractScreen,
+              AppRoutes.ticketDetailScreen,
+              AppRoutes.inviteFriendsScreen,
+              AppRoutes.notificationsScreen,
+            ])
+              GetPage<dynamic>(name: name, page: () => const SizedBox.shrink()),
+          ],
+        ),
       ));
       await tester.pumpAndSettle();
+    }
+
+    /// The real screen a notification opened, which lands inside the Request
+    /// tab rather than on a route pushed over the whole shell.
+    void expectOpenedInRequestTab(Type screen) {
+      expect(Get.currentRoute, AppRoutes.navbarScreen,
+          reason: 'it opens inside the shell, not over it');
+      expect(Get.find<NavbarController>().selectedIndex, NavTabs.request);
+      expect(find.byType(screen), findsOneWidget);
     }
 
     testWidgets('a tapped push asks the Request tab for that bill',
@@ -194,7 +214,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(Get.currentRoute, AppRoutes.signContractScreen);
+      expectOpenedInRequestTab(SignContractScreen);
       expect(RequestOffersFocus.take(), isNull);
     });
 
@@ -208,7 +228,7 @@ void main() {
       });
       await tester.pumpAndSettle();
 
-      expect(Get.currentRoute, AppRoutes.billDetailScreen);
+      expectOpenedInRequestTab(BillDetailScreen);
     });
 
     testWidgets('a push of an unknown type falls back to the centre',
@@ -361,4 +381,29 @@ void _setSecureStorageMock({required bool enabled}) {
             call.method == 'readAll' ? <String, String>{} : null
         : null,
   );
+}
+
+/// The tab shell cut down to its navigators: one per tab, behind an
+/// [IndexedStack], keyed as [NavbarController] expects.
+class _StubShell extends StatelessWidget {
+  const _StubShell();
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = Get.find<NavbarController>();
+    return Obx(
+      () => IndexedStack(
+        index: controller.selectedIndex,
+        children: [
+          for (final key in controller.navigatorKeys)
+            Navigator(
+              key: key,
+              onGenerateRoute: (_) => MaterialPageRoute<void>(
+                builder: (_) => const SizedBox.shrink(),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 }
