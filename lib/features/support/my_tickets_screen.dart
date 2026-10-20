@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vyzi/features/support/controller/support_controller.dart';
@@ -96,7 +97,8 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
                 )
               : RefreshIndicator(
                   onRefresh: () => _controller.fetchMyTickets(),
-                  child: ListView.builder(
+                  child: AdaptiveListView.builder(
+                    maxWidth: Adaptive.dashboardWidth,
                     padding: const EdgeInsets.fromLTRB(18, 8, 18, 24),
                     itemCount: _controller.tickets.length,
                     itemBuilder: (context, index) {

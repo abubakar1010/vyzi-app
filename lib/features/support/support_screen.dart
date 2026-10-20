@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vyzi/core/utils/app_assets.dart';
@@ -94,7 +95,7 @@ class SupportoScreen extends StatelessWidget {
       body: SafeArea(
         top: false,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(18, 4, 18, 24),
+          padding: Adaptive.page(context, const EdgeInsets.fromLTRB(18, 4, 18, 24)),
           children: [
             const SizedBox(height: 12),
             Text(
@@ -455,7 +456,8 @@ class _SupportFormScreenState extends State<SupportFormScreen> {
         child: _controller.isLoadingTopics
             ? const Center(child: CircularProgressIndicator())
             : ListView(
-                padding: const EdgeInsets.fromLTRB(18, 16, 18, 30),
+                padding: Adaptive.page(
+                    context, const EdgeInsets.fromLTRB(18, 16, 18, 30)),
               children: [
                 Text(
                   'support.form.intro'.tr,

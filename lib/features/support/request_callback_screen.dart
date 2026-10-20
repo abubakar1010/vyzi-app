@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -103,7 +104,11 @@ class _RequestCallBackScreenState extends State<RequestCallBackScreen> {
       backgroundColor: _bg,
       appBar: _buildAppBar(),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+        padding: Adaptive.page(
+          context,
+          const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+          maxWidth: Adaptive.formWidth,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

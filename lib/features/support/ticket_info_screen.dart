@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vyzi/features/support/controller/support_controller.dart';
@@ -142,7 +143,8 @@ class _TicketInfoScreenState extends State<TicketInfoScreen> {
                       _controller.fetchTicketDetail(widget.ticketId),
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(18, 8, 18, 24),
+                    padding: Adaptive.page(
+                        context, const EdgeInsets.fromLTRB(18, 8, 18, 24)),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

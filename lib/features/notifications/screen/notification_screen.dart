@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -86,7 +87,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
         return RefreshIndicator(
           onRefresh: () => controller.refreshAll(),
           child: ListView.separated(
-            padding: EdgeInsets.symmetric(vertical: 8.h),
+            padding:
+                Adaptive.page(context, EdgeInsets.symmetric(vertical: 8.h)),
             itemCount: controller.notifications.length +
                 (controller.currentPage.value < controller.totalPages.value
                     ? 1

@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/features/home/email/email_bill_screen.dart';
@@ -183,8 +184,8 @@ class _UploadBillScreenState extends State<UploadBillScreen> {
         child: Stack(
         children: [
           SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(
-                16.w, 24.h, 16.w, 24.h),
+            padding: Adaptive.page(
+                context, EdgeInsets.fromLTRB(16.w, 24.h, 16.w, 24.h)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vyzi/core/services/storage_service.dart';
@@ -217,8 +218,8 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                           )
                         : ListView.builder(
                             controller: _scrollController,
-                            padding:
-                                const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                            padding: Adaptive.page(
+                                context, const EdgeInsets.fromLTRB(16, 8, 16, 8)),
                             itemCount: _controller.messages.length,
                             itemBuilder: (context, index) {
                               final msg = _controller.messages[index];
@@ -255,13 +256,16 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 // Input bar
                 if (!isClosed)
                   Container(
-                    padding: EdgeInsets.fromLTRB(
-                      16,
-                      12,
-                      16,
-                      MediaQuery.of(context).viewInsets.bottom > 0
-                          ? 12
-                          : 48,
+                    padding: Adaptive.page(
+                      context,
+                      EdgeInsets.fromLTRB(
+                        16,
+                        12,
+                        16,
+                        MediaQuery.of(context).viewInsets.bottom > 0
+                            ? 12
+                            : 48,
+                      ),
                     ),
                     decoration: const BoxDecoration(
                       color: Colors.white,

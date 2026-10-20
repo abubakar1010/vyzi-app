@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/features/utility/controller/select_utility_controller.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class _SelectUtilityScreenState extends State<SelectUtilityScreen> {
       body: SafeArea(
         top: false,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: Adaptive.gutters(context, 16.w),
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
