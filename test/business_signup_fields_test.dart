@@ -50,27 +50,26 @@ void main() {
     expect(find.text('Tax Code *'), findsNothing);
   });
 
-  /// A company is reached at its certified address, so the sign-up form names
-  /// the field for what it wants. Nothing validates the difference — a PEC and
-  /// an ordinary mailbox are the same string — which is exactly why the label
-  /// has to carry it.
+  /// The sign-up email is the address the account logs in with, for a company
+  /// as for a private customer. A company's PEC is where it is reached
+  /// legally, and is asked for later — on the personal-data screen and in the
+  /// switch request — so the sign-up form must not call its mailbox a PEC.
   ///
   /// Two tests rather than one that pumps twice: the role is read from
   /// `Get.arguments`, which only a fresh `Get.reset` between tests clears.
-  testWidgets('a business sign-up asks for the PEC, not an email',
+  testWidgets('a business sign-up asks for the login email, not the PEC',
       (tester) async {
     await _pumpRegister(tester, role: 'business');
 
-    expect(find.text('PEC (certified email) *'), findsOneWidget);
-    expect(find.text('Email Address *'), findsNothing);
+    expect(find.text('Email Address *'), findsOneWidget);
+    expect(find.textContaining('PEC'), findsNothing);
   });
 
-  testWidgets('a personal sign-up still asks for an ordinary email',
-      (tester) async {
+  testWidgets('a personal sign-up asks for the same email', (tester) async {
     await _pumpRegister(tester, role: 'personal');
 
     expect(find.text('Email Address *'), findsOneWidget);
-    expect(find.text('PEC (certified email) *'), findsNothing);
+    expect(find.textContaining('PEC'), findsNothing);
   });
 
   testWidgets('a personal sign-up does not', (tester) async {
@@ -86,7 +85,7 @@ void main() {
 
     // Fill everything except the company block, so those are the only things
     // that can still be wrong.
-    await _fillCommonFields(tester, role: 'business');
+    await _fillCommonFields(tester);
     await _acceptTerms(tester);
     await _submit(tester);
 
@@ -101,7 +100,7 @@ void main() {
       (tester) async {
     await _pumpRegister(tester, role: 'business');
 
-    await _fillCommonFields(tester, role: 'business');
+    await _fillCommonFields(tester);
     await tester.enterText(
         _fieldWithLabel(tester, 'Company Name *'), 'Rossi Srl');
     await tester.enterText(_fieldWithLabel(tester, 'VAT Number *'), '123');
@@ -169,24 +168,13 @@ Future<void> _submit(WidgetTester tester) async {
 }
 
 /// Fills the rows both roles share.
-///
-/// The email row is named for the account kind — a company is reached at its
-/// PEC — so the finder has to follow the role the form was pumped with, or it
-/// looks for a label that is not on screen.
-Future<void> _fillCommonFields(
-  WidgetTester tester, {
-  String role = 'personal',
-}) async {
+Future<void> _fillCommonFields(WidgetTester tester) async {
   await tester.enterText(_fieldWithLabel(tester, 'First Name *'), 'Mario');
   await tester.enterText(_fieldWithLabel(tester, 'Last Name *'), 'Rossi');
   await tester.enterText(
-      _fieldWithLabel(tester, _emailLabelFor(role)), 'mario@email.com');
+      _fieldWithLabel(tester, 'Email Address *'), 'mario@email.com');
   await tester.pumpAndSettle();
 }
-
-/// What the email row is called for a given role.
-String _emailLabelFor(String role) =>
-    role == 'business' ? 'PEC (certified email) *' : 'Email Address *';
 
 Future<void> _pumpRegister(WidgetTester tester, {required String role}) async {
   tester.view

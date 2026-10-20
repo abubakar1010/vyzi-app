@@ -51,9 +51,6 @@ final Map<String, String> enUS = {
   'auth.signup.last_name_hint': 'Enter your last name',
   'auth.signup.email_label': 'Email Address *',
   'auth.signup.email_hint': 'Enter your email address',
-  // A business account is registered with its PEC. Nothing here can tell a
-  // certified address from an ordinary one - the two are identical strings -
-  // so the label is what tells the company which of the two to type.
   'auth.signup.phone_label': 'Phone Number (optional)',
   'auth.signup.company_name_label': 'Company Name *',
   'auth.signup.company_name_hint': 'Enter your company name',
