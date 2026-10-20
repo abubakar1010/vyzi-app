@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -208,7 +209,8 @@ class _SignContractScreenState extends State<SignContractScreen> {
       color: AppColors.primaryColor,
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 28.h),
+        padding: Adaptive.page(
+            context, EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 28.h)),
         children: [
           _buildReadyCard(),
           SizedBox(height: 16.h),

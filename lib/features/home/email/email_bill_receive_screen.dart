@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/features/home/email/email_bill_receive_controller.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class EmailBillReceivedScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF5F5F7),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18),
+          padding: Adaptive.gutters(context, 18, maxWidth: Adaptive.formWidth),
           child: Column(
             children: [
               const SizedBox(height: 30),

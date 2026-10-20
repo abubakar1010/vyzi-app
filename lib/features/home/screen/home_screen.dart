@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/core/navbar/navbar_controller.dart';
 import 'package:vyzi/core/utils/app_assets.dart';
@@ -87,8 +88,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               // ── Content ─────────────────────────────────────────────
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(16.w, 18.h, 16.w, 100.h),
-                  child: Column(
+                  padding: Adaptive.page(
+                    context,
+                    EdgeInsets.fromLTRB(16.w, 18.h, 16.w, 100.h),
+                    maxWidth: Adaptive.dashboardWidth,
+                  ),
+                  child: Adaptive.isWide(context)
+                      ? _buildWideContent(showOnboarding, hasUtilities)
+                      : Column(
                     children: [
                       if (showOnboarding) ...[
                         UploadSection(
@@ -120,6 +127,43 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           );
         },
       ),
+    );
+  }
+
+  // ── Wide window: the sections side by side under the summary ───────────
+  Widget _buildWideContent(bool showOnboarding, bool hasUtilities) {
+    final Widget left;
+    final Widget right;
+    if (showOnboarding) {
+      left = UploadSection(
+        onTap: () => NavHelper.push(const SelectUtilityScreen()),
+      );
+      right = HowItWorksCard();
+    } else if (hasUtilities) {
+      left = UtilitiesSection(services: controller.serviceList);
+      right = ActionSection();
+    } else {
+      return Column(
+        children: [
+          _buildSummaryRow(),
+          SizedBox(height: 18.h),
+          ActionSection(),
+        ],
+      );
+    }
+    return Column(
+      children: [
+        _buildSummaryRow(),
+        SizedBox(height: 18.h),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: left),
+            SizedBox(width: 18.w),
+            Expanded(child: right),
+          ],
+        ),
+      ],
     );
   }
 

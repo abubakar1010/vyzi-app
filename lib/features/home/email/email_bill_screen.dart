@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -28,7 +29,7 @@ class EmailBillScreen extends StatelessWidget {
       body: SafeArea(
         top: false,
         child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: Adaptive.gutters(context, 16),
         child: Column(
           children: [
             Expanded(

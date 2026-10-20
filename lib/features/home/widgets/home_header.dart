@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -74,8 +75,16 @@ class HomeSliverHeader extends StatelessWidget {
     return Obx(() => _buildHeader(context, Get.find<HomeController>().greeting));
   }
 
+  /// Lines the banner's content up with the dashboard beneath it.
+  static EdgeInsets _padding(BuildContext context) => Adaptive.page(
+        context,
+        EdgeInsets.fromLTRB(_padH, _padV, _padH, _padV),
+        maxWidth: Adaptive.dashboardWidth,
+      );
+
   Widget _buildHeader(BuildContext context, String greeting) {
-    final textWidth = MediaQuery.sizeOf(context).width - _padH * 2;
+    final padding = _padding(context);
+    final textWidth = MediaQuery.sizeOf(context).width - padding.horizontal;
     final greetingHeight = _measureTextHeight(
       context,
       greeting,
@@ -132,7 +141,7 @@ class HomeSliverHeader extends StatelessWidget {
               SafeArea(
                 bottom: false,
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(_padH, _padV, _padH, _padV),
+                  padding: padding,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -276,11 +285,11 @@ class HomeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
     return isOnboarding
-        ? _buildOnboardingHeader(topPadding)
-        : _buildRegularHeader(topPadding);
+        ? _buildOnboardingHeader(context, topPadding)
+        : _buildRegularHeader(context, topPadding);
   }
 
-  Widget _buildRegularHeader(double topPadding) {
+  Widget _buildRegularHeader(BuildContext context, double topPadding) {
     return Container(
       // A minimum, not a fixed height: the banner keeps its 162.h look but is
       // still allowed to grow if the text needs more room (large system font
@@ -296,7 +305,11 @@ class HomeHeader extends StatelessWidget {
           SafeArea(
             bottom: false,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              padding: Adaptive.page(
+                context,
+                EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                maxWidth: Adaptive.dashboardWidth,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -367,7 +380,7 @@ class HomeHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildOnboardingHeader(double topPadding) {
+  Widget _buildOnboardingHeader(BuildContext context, double topPadding) {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -380,7 +393,11 @@ class HomeHeader extends StatelessWidget {
             SafeArea(
               bottom: false,
               child: Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 24.h),
+                padding: Adaptive.page(
+                  context,
+                  EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 24.h),
+                  maxWidth: Adaptive.dashboardWidth,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
