@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'dart:async';
 
 import 'package:vyzi/core/constants/api_constants.dart';
@@ -256,9 +257,12 @@ class _RequestScreenState extends State<RequestScreen>
         Expanded(
           child: offers.isEmpty
               ? _buildNoFilterMatches()
-              : ListView.builder(
-                  padding:
-                  EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+              : AdaptiveListView.builder(
+                  padding: Adaptive.page(
+                    context,
+                    EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                    maxWidth: Adaptive.dashboardWidth,
+                  ),
                   itemCount: offers.length,
                   itemBuilder: (context, index) =>
                       _buildOfferCard(offers[index]),
@@ -352,7 +356,11 @@ class _RequestScreenState extends State<RequestScreen>
   Widget _buildFilterSection() {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 12.h),
+      padding: Adaptive.page(
+        context,
+        EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 12.h),
+        maxWidth: Adaptive.dashboardWidth,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -444,7 +452,11 @@ class _RequestScreenState extends State<RequestScreen>
   // ── Offers count header ──
   Widget _buildOffersHeader(int count) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 6.h),
+      padding: Adaptive.page(
+        context,
+        EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 6.h),
+        maxWidth: Adaptive.dashboardWidth,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -733,7 +745,7 @@ class _RequestScreenState extends State<RequestScreen>
   Widget _buildEmptyState() {
     return SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        padding: Adaptive.gutters(context, 24.w, maxWidth: Adaptive.formWidth),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -853,8 +865,12 @@ class _RequestScreenState extends State<RequestScreen>
       return _buildEmptyState();
     }
 
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+    return AdaptiveListView.builder(
+      padding: Adaptive.page(
+        context,
+        EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+        maxWidth: Adaptive.dashboardWidth,
+      ),
       itemCount: _controller.bills.length,
       itemBuilder: (context, index) =>
           _buildBillCard(_controller.bills[index]),

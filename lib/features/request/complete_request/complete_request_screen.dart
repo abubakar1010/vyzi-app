@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -417,7 +418,8 @@ class _CompleteRequestScreenState extends State<CompleteRequestScreen> {
               // behaves this way.
               keyboardDismissBehavior:
                   ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 14.h),
+              padding: Adaptive.page(
+                  context, EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 14.h)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

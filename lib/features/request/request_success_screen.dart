@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'dart:math' as math;
 import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/core/navbar/navbar_controller.dart';
@@ -28,7 +29,11 @@ class RequestSuccessScreen extends StatelessWidget {
 
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(22, 10, 22, 22),
+          padding: Adaptive.page(
+            context,
+            const EdgeInsets.fromLTRB(22, 10, 22, 22),
+            maxWidth: Adaptive.formWidth,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -42,7 +47,7 @@ class RequestSuccessScreen extends StatelessWidget {
 
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 22),
+          padding: Adaptive.gutters(context, 22, maxWidth: Adaptive.formWidth),
           child: Column(
             children: [
               const SizedBox(height: 52),

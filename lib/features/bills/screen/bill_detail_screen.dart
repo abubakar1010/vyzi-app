@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -216,7 +217,8 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
         _caseData != null && _contractStatuses.contains(bill.status);
 
     return ListView(
-      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 24.h),
+      padding: Adaptive.page(
+          context, EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 24.h)),
       children: [
         _processingHeroCard(bill),
         SizedBox(height: 14.h),

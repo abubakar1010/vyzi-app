@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/core/constants/api_constants.dart';
@@ -179,7 +180,7 @@ class _OfferDetailsScreenState extends State<OfferDetailsScreen> {
     final detailRows = _buildDetailRows(offer);
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      padding: Adaptive.page(context, const EdgeInsets.fromLTRB(16, 12, 16, 16)),
       children: [
         _supplierCard(offer),
         const SizedBox(height: 14),

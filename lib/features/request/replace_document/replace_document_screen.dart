@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -181,7 +182,8 @@ class _ReplaceDocumentScreenState extends State<ReplaceDocumentScreen> {
           children: [
             Expanded(
               child: ListView(
-                padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+                padding: Adaptive.page(
+                    context, EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h)),
                 children: [
                   Text(
                     'case.document.replace.intro'.tr,
