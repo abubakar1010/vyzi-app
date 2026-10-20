@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vyzi/core/localization/app_translations.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
+import 'package:vyzi/features/home/controller/home_controller.dart';
 import 'package:vyzi/features/home/widgets/home_header.dart';
 
 /// The collapsing home banner used to overflow part-way through the collapse:
@@ -74,6 +75,37 @@ void main() {
       );
     }
   }
+
+  testWidgets('a long first name in the greeting does not overflow either',
+      (tester) async {
+    tester.view
+      ..physicalSize = const Size(320, 568)
+      ..devicePixelRatio = 1.0
+      ..padding = const FakeViewPadding(top: 47);
+    tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+
+    final scrollController = ScrollController();
+    addTearDown(scrollController.dispose);
+
+    await tester.pumpWidget(
+      _harness(scrollController, firstName: 'Massimilianoalessandro'),
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Massimilianoalessandro'), findsOneWidget);
+    expect(tester.takeException(), isNull, reason: 'initial layout');
+
+    for (double offset = 0; offset <= 300; offset += 2) {
+      scrollController.jumpTo(offset);
+      await tester.pump();
+      expect(
+        tester.takeException(),
+        isNull,
+        reason: 'overflow at scroll offset $offset',
+      );
+    }
+  });
 
   testWidgets('header collapses to the logo row and stays pinned',
       (tester) async {
@@ -205,7 +237,20 @@ void main() {
   });
 }
 
-Widget _harness(ScrollController scrollController) {
+/// The header greets the user through [HomeController]; this one skips the
+/// profile, dashboard and services requests the real one starts on init.
+class _OfflineHomeController extends HomeController {
+  _OfflineHomeController(String name) {
+    firstName.value = name;
+  }
+
+  @override
+  // ignore: must_call_super
+  void onInit() {}
+}
+
+Widget _harness(ScrollController scrollController, {String firstName = ''}) {
+  Get.put<HomeController>(_OfflineHomeController(firstName));
   return DefaultAssetBundle(
     bundle: _FakeAssetBundle(),
     child: ScreenUtilInit(
