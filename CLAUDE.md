@@ -78,6 +78,7 @@ lib/
 - **HTTP**: Dio singleton with auto-token injection and 401 refresh interceptor (`core/services/api_service.dart`)
 - **Local Storage**: Hive for cache (`CacheService`), SharedPreferences for tokens/settings (`StorageService` with `StorageKeys`)
 - **Responsive Sizing**: `flutter_screenutil` with design size 392x876 — use `.w`, `.h`, `.sp`, `.r` extensions
+- **Tablets (iPad)**: `core/layout/adaptive.dart`. A window at least 600pt wide gets one fixed ScreenUtil scale (`AdaptiveScale`) instead of scaling by width, the tab shell swaps the bottom bar for a `NavigationRail`, and screens use the room: give a page's scroll view `Adaptive.page(context, <phone padding>)` / `Adaptive.gutters(...)` so its content centres at `Adaptive.readableWidth` (forms: `formWidth`, dashboards and card lists: `dashboardWidth`), and lists of cards use `AdaptiveListView.builder` for columns. Decisions go by window width, so a narrow Split View pane gets the phone layout. On a phone all of these are no-ops.
 - **Font**: Google Fonts Open Sans (configured in theme)
 
 ## API
@@ -121,5 +122,5 @@ the Firebase ID token at `POST /api/v1/auth/social-login`.
 
 - The `DependencyInjection` class in `core/di/` is fully commented out — services are currently initialized directly in `main.dart`
 - Many routes in `app_routes.dart` are commented out (features in progress)
-- App is portrait-only
+- Phones are portrait-only; iPads turn every way and support Split View / Slide Over
 - Design base for ScreenUtil is 392x876 (not the standard 375x812)

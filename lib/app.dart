@@ -9,7 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'core/utils/app_colors.dart';
 import 'core/localization/app_translations.dart';
 import 'core/controllers/language_controller.dart';
-import 'core/layout/tablet_frame.dart';
+import 'core/layout/adaptive.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return TabletFrame(
+        return AdaptiveScale(
           child: GetMaterialApp(
             title: 'VYZI',
             debugShowCheckedModeBanner: false,
