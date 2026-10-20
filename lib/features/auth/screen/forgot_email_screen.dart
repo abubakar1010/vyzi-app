@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/utils/app_assets.dart';
 
 import 'package:vyzi/core/utils/app_colors.dart';
@@ -27,7 +28,8 @@ class ForgotPasswordScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: Adaptive.gutters(context, 24, maxWidth: Adaptive.formWidth)
+              .copyWith(top: 16, bottom: 16),
 
           child: SingleChildScrollView(
             child: Column(

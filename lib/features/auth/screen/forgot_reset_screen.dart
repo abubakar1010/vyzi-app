@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/utils/app_assets.dart';
 
 import 'package:vyzi/core/utils/app_colors.dart';
@@ -45,7 +46,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       body: SafeArea(
         top: false,
         child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: Adaptive.gutters(context, 20, maxWidth: Adaptive.formWidth),
         child: ListView(
           children: [
             SizedBox(height: size.height * 0.04),

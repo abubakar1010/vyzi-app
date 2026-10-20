@@ -1,4 +1,5 @@
 // password_update_success_screen.dart
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/widgets/primary_button.dart';
 import 'package:vyzi/core/utils/app_assets.dart';
 import 'package:vyzi/features/auth/signin_screen.dart';
@@ -31,7 +32,7 @@ class PasswordUpdateSuccessScreen extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            padding: Adaptive.gutters(context, 24.w, maxWidth: Adaptive.formWidth),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

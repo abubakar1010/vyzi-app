@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/core/utils/app_assets.dart';
 import 'package:vyzi/core/utils/app_styles.dart';
@@ -57,7 +58,11 @@ class WarmupOnboarding extends StatelessWidget {
               ),
 
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
+                padding: Adaptive.page(
+                  context,
+                  const EdgeInsets.fromLTRB(24, 8, 24, 20),
+                  maxWidth: Adaptive.formWidth,
+                ),
                 child: isLastSlide
                     ? PrimaryButton(
                         title: 'onboarding.next'.tr,

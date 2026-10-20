@@ -1,4 +1,5 @@
 
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -49,7 +50,8 @@ class _SelectProfileScreenState extends State<OnboardingScreen> {
           children: [
             Expanded(
               child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 14.w),
+                padding: Adaptive.gutters(context, 14.w,
+                    maxWidth: Adaptive.formWidth),
                 child: Column(
                   children: [
                     SizedBox(height: 18.h),
@@ -288,9 +290,10 @@ class _SelectProfileScreenState extends State<OnboardingScreen> {
 
 
             Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 16.w,
-                vertical: 18.h,
+              padding: Adaptive.page(
+                context,
+                EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+                maxWidth: Adaptive.formWidth,
               ),
               decoration: BoxDecoration(
                 border: const Border(

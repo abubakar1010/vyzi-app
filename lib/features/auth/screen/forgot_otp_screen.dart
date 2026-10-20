@@ -1,4 +1,5 @@
 
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/core/utils/app_assets.dart';
 import 'package:vyzi/core/widgets/otp_input_field.dart';
@@ -44,7 +45,8 @@ class _ForgotPasswordOtpScreenState extends State<ForgotPasswordOtpScreen> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          padding: Adaptive.gutters(context, 24, maxWidth: Adaptive.formWidth)
+              .copyWith(top: 16, bottom: 16),
           child: ListView(
             children: [
               const SizedBox(height: 24),

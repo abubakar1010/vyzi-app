@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -102,7 +103,7 @@ class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
 
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+            padding: Adaptive.page(context, const EdgeInsets.fromLTRB(20, 8, 20, 40)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

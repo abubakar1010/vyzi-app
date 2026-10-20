@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
@@ -186,7 +187,7 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 14, 12, 10),
+      padding: Adaptive.page(context, const EdgeInsets.fromLTRB(20, 14, 12, 10)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -345,7 +346,7 @@ class _DocumentPageState extends State<_DocumentPage> {
               SingleChildScrollView(
                 controller: _scroll,
                 physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(20, 6, 20, 28),
+                padding: Adaptive.page(context, const EdgeInsets.fromLTRB(20, 6, 20, 28)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -594,7 +595,7 @@ class _AcceptBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 14, 20, 16),
+      padding: Adaptive.page(context, const EdgeInsets.fromLTRB(20, 14, 20, 16)),
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: Color(0xFFEDEDF2))),

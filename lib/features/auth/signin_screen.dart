@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/appbar/custom_appbar.dart';
 import 'package:vyzi/core/utils/app_assets.dart';
 import 'package:vyzi/core/utils/app_styles.dart';
@@ -124,7 +125,7 @@ class _SignInScreenState extends State<SignInScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          padding: Adaptive.gutters(context, 24.w, maxWidth: Adaptive.formWidth),
           child: Form(
             key: _formKey,
             child: Column(

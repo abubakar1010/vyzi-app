@@ -1,3 +1,4 @@
+import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:get/get.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
@@ -153,7 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: _buildAppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          padding: Adaptive.gutters(context, 24.w, maxWidth: Adaptive.formWidth),
           child: Form(
             key: _formKey,
             child: Column(
