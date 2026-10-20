@@ -1,4 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'dart:ui';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'core/layout/adaptive.dart';
 import 'core/services/cache_service.dart';
 import 'core/services/deep_link_service.dart';
 import 'core/services/notification_service.dart';
@@ -66,11 +69,15 @@ void main() async {
     debugPrint('Font pre-caching failed: $e');
   }
 
-  // Set preferred orientations
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // Phones are portrait-only; a tablet turns any way, as iPad apps must to
+  // take part in Split View.
+  final view = PlatformDispatcher.instance.implicitView;
+  final isTablet = view != null &&
+      (view.physicalSize / view.devicePixelRatio).shortestSide >=
+          Adaptive.wideBreakpoint;
+  await SystemChrome.setPreferredOrientations(isTablet
+      ? DeviceOrientation.values
+      : [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 
   // Enable edge-to-edge display
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
