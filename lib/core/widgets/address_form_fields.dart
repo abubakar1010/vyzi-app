@@ -58,12 +58,19 @@ class AddressFormFields extends StatelessWidget {
   /// Fired on every edit so the parent can clear errors and re-evaluate.
   final VoidCallback? onChanged;
 
+  /// Overrides for the street and city labels, for a form whose approved copy
+  /// names them differently ("Via / Piazza", "Comune").
+  final String? streetLabel;
+  final String? cityLabel;
+
   const AddressFormFields({
     super.key,
     required this.group,
     this.errors = AddressErrors.none,
     this.readOnly = false,
     this.onChanged,
+    this.streetLabel,
+    this.cityLabel,
   });
 
   @override
@@ -77,7 +84,7 @@ class AddressFormFields extends StatelessWidget {
             Expanded(
               child: _field(
                 context,
-                label: 'request.form.address'.tr,
+                label: streetLabel ?? 'request.form.address'.tr,
                 controller: group.street,
                 hint: 'request.form.street_hint'.tr,
                 error: errors.street,
@@ -105,7 +112,7 @@ class AddressFormFields extends StatelessWidget {
             Expanded(
               child: _field(
                 context,
-                label: 'request.form.city'.tr,
+                label: cityLabel ?? 'request.form.city'.tr,
                 controller: group.city,
                 hint: 'request.form.city_hint'.tr,
                 error: errors.city,
