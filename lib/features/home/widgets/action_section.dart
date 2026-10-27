@@ -2,10 +2,10 @@ import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:vyzi/core/navbar/navbar_controller.dart';
 import 'package:vyzi/core/utils/app_assets.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/core/utils/app_styles.dart';
+import 'package:vyzi/features/activation_request/activation_request_screen.dart';
 import 'package:vyzi/features/utility/select_utility_screen.dart';
 
 import 'action_card.dart';
@@ -85,8 +85,8 @@ class ActionSection extends StatelessWidget {
                 badgeText: item['badgeText'],
                 onTap: () {
                   if (index == 2) {
-                    // Activate Service → switch to My Request tab
-                    Get.find<NavbarController>().changeIndex(1);
+                    // "Attiva una nuova utenza" → the callback request form.
+                    NavHelper.push(const ActivationRequestScreen());
                   } else {
                     // Change Supplier, Transfer of Ownership, Check Invoice → Select Utility
                     NavHelper.push(const SelectUtilityScreen());

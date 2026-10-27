@@ -113,6 +113,14 @@ class ApiConstants {
 
   // Cases
   static const String casesBase = '/api/v1/cases';
+
+  /// "Attiva una nuova utenza": the callback request form.
+  static const String activationRequests = '/api/v1/cases/activation-requests';
+
+  /// The customer's own activation requests — cases that have no bill, so the
+  /// bills list never shows them.
+  static const String myActivationRequests =
+      '/api/v1/cases?caseType=new_activation,takeover&limit=50';
   static String caseDocuments(String caseId) =>
       '/api/v1/cases/$caseId/documents';
   static String getCaseByBill(String billId) =>

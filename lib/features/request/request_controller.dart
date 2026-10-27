@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vyzi/core/constants/api_constants.dart';
 import 'package:vyzi/core/services/api_service.dart';
+import 'package:vyzi/features/activation_request/models/activation_request_model.dart';
 import 'package:vyzi/features/bills/models/bill_model.dart';
 import 'package:vyzi/features/request/models/api_offer_model.dart';
 import 'package:vyzi/core/localization/system_messages.dart';
@@ -214,12 +215,36 @@ class RequestController extends ChangeNotifier {
     }
   }
 
+  /// The customer's "Attiva una nuova utenza" requests. They have no bill, so
+  /// the bills list cannot show them; they are listed above it.
+  List<ActivationRequestModel> activationRequests = [];
+
+  /// Loads the activation requests. A failure leaves the list empty rather
+  /// than failing the tab — the bills are still worth showing.
+  Future<void> _fetchActivationRequests() async {
+    try {
+      final response = await _api.get(ApiConstants.myActivationRequests);
+      final body = response.data as Map<String, dynamic>;
+      if (body['success'] != true) return;
+      final data = body['data'];
+      final rawList = data is Map<String, dynamic>
+          ? (data['data'] as List<dynamic>? ?? const [])
+          : (data is List<dynamic> ? data : const []);
+      activationRequests = rawList
+          .map((e) => ActivationRequestModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      activationRequests = [];
+    }
+  }
+
   /// Fetches user's bills from GET /api/v1/bills
   Future<void> fetchBills() async {
     isLoadingBills = true;
     billsError = '';
     notifyListeners();
 
+    final activation = _fetchActivationRequests();
     try {
       final response = await _api.get(ApiConstants.getMyBills);
       final body = response.data as Map<String, dynamic>;
@@ -249,6 +274,7 @@ class RequestController extends ChangeNotifier {
     } catch (e) {
       billsError = (e is AppException ? e.message : 'system.unexpected'.tr);
     } finally {
+      await activation;
       isLoadingBills = false;
       notifyListeners();
     }

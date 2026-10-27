@@ -189,6 +189,9 @@ class SystemMessages {
         final catalog = lang == 'en' ? enUS : itIT;
         return (status != null ? catalog['bills.status.$status'] : null) ??
             value;
+      case 'activationStatus':
+        final catalog = lang == 'en' ? enUS : itIT;
+        return catalog['activation_request.status.$value'] ?? value;
       case 'list':
         final parts =
             value.split(RegExp(r'\s+and\s+|,\s*')).map(translateValue).toList();
