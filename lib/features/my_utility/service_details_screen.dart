@@ -7,19 +7,21 @@ import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/features/home/model/user_service_model.dart';
 import 'package:vyzi/features/my_utility/utility_details_screen.dart';
 
-/// [UtilityDetailsScreen] reached from a bill instead of from the utilities
-/// list.
+/// [UtilityDetailsScreen] reached from a request instead of from the
+/// utilities list.
 ///
 /// Once a request is activated it is no longer something the customer acts on —
 /// it is a live supply, and everything about it belongs on the service details.
 /// So an activated request opens straight here, skipping both the request
-/// detail and the signing screen. The requests list only ever holds bills, so
-/// the service that switch became is looked up on the way in, matched on the
-/// bill it started from.
+/// detail and the signing screen. The service that request became is looked up
+/// on the way in: matched on the bill a switch started from, or on the case
+/// itself for an activation request, which has no bill.
 class ServiceDetailsScreen extends StatefulWidget {
-  final String billId;
+  final String? billId;
+  final String? caseId;
 
-  const ServiceDetailsScreen({super.key, required this.billId});
+  const ServiceDetailsScreen({super.key, this.billId, this.caseId})
+      : assert(billId != null || caseId != null);
 
   @override
   State<ServiceDetailsScreen> createState() => _ServiceDetailsScreenState();
@@ -70,11 +72,17 @@ class _ServiceDetailsScreenState extends State<ServiceDetailsScreen> {
     }
   }
 
-  /// The service this screen's bill became, or null when the list holds none.
+  /// The service this screen's request became, or null when the list holds
+  /// none.
   UserServiceModel? _matchBill(List<dynamic> data) {
     for (final entry in data) {
       final service = UserServiceModel.fromJson(entry as Map<String, dynamic>);
-      if (service.billId == widget.billId) return service;
+      if (widget.caseId != null && service.caseId == widget.caseId) {
+        return service;
+      }
+      if (widget.billId != null && service.billId == widget.billId) {
+        return service;
+      }
     }
     return null;
   }

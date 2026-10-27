@@ -9,6 +9,7 @@ import 'package:vyzi/core/widgets/primary_button.dart';
 import 'package:vyzi/features/request/models/api_offer_model.dart';
 import 'package:vyzi/features/request/offer_details.dart';
 import 'package:flutter/material.dart';
+import 'package:vyzi/features/activation_request/models/activation_request_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
@@ -861,19 +862,124 @@ class _RequestScreenState extends State<RequestScreen>
       );
     }
 
-    if (_controller.bills.isEmpty) {
+    final activation = _controller.activationRequests;
+    if (_controller.bills.isEmpty && activation.isEmpty) {
       return _buildEmptyState();
     }
 
+    // Activation requests have no bill, so they head the list as a section of
+    // their own; the bills follow as before.
+    final headerCount = activation.isEmpty ? 0 : activation.length + 1;
     return AdaptiveListView.builder(
       padding: Adaptive.page(
         context,
         EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
         maxWidth: Adaptive.dashboardWidth,
       ),
-      itemCount: _controller.bills.length,
-      itemBuilder: (context, index) =>
-          _buildBillCard(_controller.bills[index]),
+      itemCount: headerCount + _controller.bills.length,
+      itemBuilder: (context, index) {
+        if (index < headerCount) {
+          return index == 0
+              ? _buildActivationSectionTitle()
+              : _buildActivationRequestCard(activation[index - 1]);
+        }
+        return _buildBillCard(_controller.bills[index - headerCount]);
+      },
+    );
+  }
+
+  Widget _buildActivationSectionTitle() {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8.h, left: 2.w),
+      child: Text(
+        'activation_request.section_title'.tr,
+        style: AppStyles.h4.copyWith(fontSize: 14.sp),
+      ),
+    );
+  }
+
+  /// A request that has reached activation is the customer's supply, so it
+  /// opens as a utility; before that there is nothing to open — a consultant
+  /// is calling.
+  Future<void> _openActivationRequest(ActivationRequestModel request) async {
+    if (!request.isLive) return;
+    await NavHelper.push(ServiceDetailsScreen(caseId: request.id));
+    if (mounted) _controller.fetchBills();
+  }
+
+  Widget _buildActivationRequestCard(ActivationRequestModel request) {
+    final live = request.isLive;
+    return GestureDetector(
+      key: ValueKey('activation_request.card.${request.id}'),
+      onTap: live ? () => _openActivationRequest(request) : null,
+      child: Container(
+        margin: EdgeInsets.only(bottom: 10.h),
+        padding: EdgeInsets.all(14.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14.r),
+          border: Border.all(color: const Color(0xFF5A1ABE), width: 1.22),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44.w,
+              height: 44.w,
+              decoration: BoxDecoration(
+                color: AppColors.primaryPurple,
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: Icon(
+                request.isGas
+                    ? Icons.local_fire_department_outlined
+                    : Icons.bolt_outlined,
+                color: AppColors.primaryColor,
+                size: 24.sp,
+              ),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    request.title,
+                    style: AppStyles.h4.copyWith(fontSize: 15.sp),
+                  ),
+                  if (request.address.isNotEmpty) ...[
+                    SizedBox(height: 2.h),
+                    Text(
+                      request.address.formatted,
+                      style: AppStyles.body4,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  SizedBox(height: 8.h),
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryPurple,
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Text(
+                      request.statusLabel,
+                      style: AppStyles.body4.copyWith(
+                        color: AppColors.primaryColor,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (live)
+              Icon(Icons.chevron_right, color: AppColors.primaryColor, size: 22.sp),
+          ],
+        ),
+      ),
     );
   }
 
