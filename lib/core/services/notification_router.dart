@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/bills/screen/bill_detail_screen.dart';
 import '../../features/home/sign_contract/sign_contract.dart';
+import '../../features/my_utility/service_details_screen.dart';
 import '../../features/request/request_offers_focus.dart';
 import '../../routes/app_routes.dart';
 import '../navbar/nav_helper.dart';
@@ -50,7 +51,24 @@ class NotificationRouter {
   }) {
     final payload = data ?? const <String, dynamic>{};
     final billId = _string(payload['billId']);
+    final caseId = _string(payload['caseId']);
     final ticketId = _string(payload['ticketId']);
+
+    // An activation request has no bill: its milestones carry only the case.
+    // In activation and activated it is the customer's supply, so it opens as
+    // one; a cancellation lands on the requests that list it.
+    if ((billId == null || billId.isEmpty) && caseId != null && caseId.isNotEmpty) {
+      switch (type) {
+        case 'contract_status':
+        case 'activation_complete':
+          NavHelper.openInTab(NavTabs.request, ServiceDetailsScreen(caseId: caseId));
+          return;
+        case 'case_update':
+          _returnToShell();
+          NavHelper.switchTab(NavTabs.request);
+          return;
+      }
+    }
 
     switch (type) {
       // "New offers recommended for you". The offers themselves are the point

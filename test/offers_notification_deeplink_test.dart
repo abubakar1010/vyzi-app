@@ -10,6 +10,7 @@ import 'package:vyzi/core/services/storage_service.dart';
 import 'package:vyzi/features/bills/models/bill_model.dart';
 import 'package:vyzi/features/bills/screen/bill_detail_screen.dart';
 import 'package:vyzi/features/home/sign_contract/sign_contract.dart';
+import 'package:vyzi/features/my_utility/service_details_screen.dart';
 import 'package:vyzi/features/request/models/api_offer_model.dart';
 import 'package:vyzi/features/request/request_controller.dart';
 import 'package:vyzi/features/request/request_offers_focus.dart';
@@ -225,6 +226,68 @@ void main() {
       NotificationRouter.openFromPush(<String, dynamic>{
         'type': 'bill_verification',
         'billId': 'bill-1',
+      });
+      await tester.pumpAndSettle();
+
+      expectOpenedInRequestTab(BillDetailScreen);
+    });
+
+    // An activation request ("Attiva una nuova utenza") has no bill; its
+    // milestones carry only the case.
+    testWidgets('an activation request in activation opens its utility',
+        (tester) async {
+      await pumpShell(tester);
+
+      NotificationRouter.openFromPush(<String, dynamic>{
+        'type': 'contract_status',
+        'caseId': 'case-1',
+        'entityType': 'case',
+        'entityId': 'case-1',
+      });
+      await tester.pumpAndSettle();
+
+      expectOpenedInRequestTab(ServiceDetailsScreen);
+      final screen =
+          tester.widget<ServiceDetailsScreen>(find.byType(ServiceDetailsScreen));
+      expect(screen.caseId, 'case-1');
+      expect(screen.billId, isNull);
+    });
+
+    testWidgets('an activated activation request opens its utility',
+        (tester) async {
+      await pumpShell(tester);
+
+      NotificationRouter.openFromList(
+        type: 'activation_complete',
+        data: <String, dynamic>{'caseId': 'case-1'},
+      );
+      await tester.pumpAndSettle();
+
+      expectOpenedInRequestTab(ServiceDetailsScreen);
+    });
+
+    testWidgets('a cancelled activation request lands on the requests',
+        (tester) async {
+      await pumpShell(tester);
+
+      NotificationRouter.openFromPush(<String, dynamic>{
+        'type': 'case_update',
+        'caseId': 'case-1',
+      });
+      await tester.pumpAndSettle();
+
+      expect(Get.currentRoute, AppRoutes.navbarScreen);
+      expect(Get.find<NavbarController>().selectedIndex, NavTabs.request);
+    });
+
+    testWidgets('a case notification that also names its bill still opens by bill',
+        (tester) async {
+      await pumpShell(tester);
+
+      NotificationRouter.openFromPush(<String, dynamic>{
+        'type': 'case_update',
+        'billId': 'bill-1',
+        'caseId': 'case-1',
       });
       await tester.pumpAndSettle();
 
