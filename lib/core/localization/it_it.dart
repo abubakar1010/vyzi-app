@@ -1326,7 +1326,6 @@ final Map<String, String> itIT = {
   'activation_request.last_name_required': 'Inserisci il cognome',
   'activation_request.phone_required': 'Inserisci il numero di telefono',
   'activation_request.phone_invalid': 'Inserisci un numero di telefono valido',
-  'activation_request.province_invalid': 'Inserisci la sigla della provincia (es. CA)',
   'activation_request.privacy_required': 'Per essere ricontattato devi accettare l’informativa privacy',
   'activation_request.submit_failed': 'Non è stato possibile inviare la richiesta. Riprova.',
   'activation_request.success_title': 'Richiesta inviata!',

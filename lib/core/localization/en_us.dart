@@ -1321,7 +1321,6 @@ final Map<String, String> enUS = {
   'activation_request.last_name_required': 'Enter your last name',
   'activation_request.phone_required': 'Enter your phone number',
   'activation_request.phone_invalid': 'Enter a valid phone number',
-  'activation_request.province_invalid': 'Enter the province code (e.g. CA)',
   'activation_request.privacy_required': 'You need to accept the privacy notice to be contacted',
   'activation_request.submit_failed': 'The request could not be sent. Please try again.',
   'activation_request.success_title': 'Request sent!',

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vyzi/core/constants/api_constants.dart';
-import 'package:vyzi/core/constants/italian_provinces.dart';
 import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'package:vyzi/core/localization/system_messages.dart';
 import 'package:vyzi/core/models/address_data.dart';
@@ -116,18 +115,7 @@ class ActivationRequestController extends GetxController {
   /// Checks every field; returns true when the form may be sent.
   bool validate() {
     final cleanPhone = phone.text.replaceAll(RegExp(r'[\s.\-()/]'), '');
-    final addressValue = address.value;
-    var addressErrors = addressValue.validate();
-    if (addressValue.province.trim().isNotEmpty &&
-        ItalianProvinces.resolve(addressValue.province) == null) {
-      addressErrors = AddressErrors(
-        street: addressErrors.street,
-        streetNumber: addressErrors.streetNumber,
-        city: addressErrors.city,
-        postalCode: addressErrors.postalCode,
-        province: 'activation_request.province_invalid'.tr,
-      );
-    }
+    final addressErrors = address.value.validate();
 
     errors.value = ActivationContactErrors(
       firstName: firstName.text.trim().isEmpty
@@ -150,16 +138,12 @@ class ActivationRequestController extends GetxController {
   }
 
   ActivationRequestPayload buildPayload() {
-    final value = address.value;
     return ActivationRequestPayload(
       answers: answers.value,
       firstName: firstName.text,
       lastName: lastName.text,
       phone: phone.text,
-      // The API takes the sigla; "Cagliari" typed in full is sent as "CA".
-      address: value.copyWith(
-        province: ItalianProvinces.resolve(value.province) ?? value.province,
-      ),
+      address: address.value,
       privacyAccepted: privacyAccepted.value,
     );
   }

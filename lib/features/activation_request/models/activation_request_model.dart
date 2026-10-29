@@ -112,7 +112,7 @@ class ActivationRequestPayload {
         'streetNumber': address.streetNumber.trim(),
         'postalCode': address.postalCode.trim(),
         'city': address.city.trim(),
-        'province': address.province.trim().toUpperCase(),
+        'province': address.province.trim(),
         'privacyAccepted': privacyAccepted,
       };
 }
