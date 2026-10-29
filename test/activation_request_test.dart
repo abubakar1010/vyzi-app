@@ -123,7 +123,7 @@ void main() {
         'streetNumber': '15',
         'postalCode': '09100',
         'city': 'Cagliari',
-        'province': 'CA',
+        'province': 'ca',
         'privacyAccepted': true,
       });
     });
@@ -189,19 +189,19 @@ void main() {
       expect(c.errors.value.address.postalCode, isNotNull);
     });
 
-    test('accepts the province by name and sends its sigla', () {
+    test('takes the province as free text, like every other address', () {
       final c = filled();
-      c.address.province.text = 'Cagliari';
+      c.address.province.text = ' Cagliari ';
       c.selectService(ActivationService.gas);
       c.setMeterInstalled(false);
 
       expect(c.validate(), isTrue);
-      expect(c.buildPayload().toJson()['province'], 'CA');
+      expect(c.buildPayload().toJson()['province'], 'Cagliari');
     });
 
-    test('refuses a province that is not one', () {
+    test('still requires a province', () {
       final c = filled();
-      c.address.province.text = 'Atlantide';
+      c.address.province.text = '  ';
 
       expect(c.validate(), isFalse);
       expect(c.errors.value.address.province, isNotNull);
