@@ -20,6 +20,7 @@ import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/features/activation_request/activation_request_detail_screen.dart';
 import 'package:vyzi/features/activation_request/activation_request_screen.dart';
 import 'package:vyzi/features/home/sign_contract/sign_contract.dart';
+import 'package:vyzi/features/request/replace_document/replace_document_screen.dart';
 import 'package:vyzi/features/my_utility/utility_details_screen.dart';
 import 'package:vyzi/features/request/document_viewer_screen.dart';
 import 'package:vyzi/app.dart';
@@ -237,6 +238,25 @@ void main() {
     expect(contract.statusCode, 201, reason: '${contract.data}');
     await operator({'status': 'contract_sent'});
 
+    // ── Staff turn down a document the customer sent ──
+    final customerToken = _token(session, 'accessToken');
+    final identity = await _api.post(
+      '/cases/$caseId/documents',
+      data: {
+        'documentType': 'identity_document',
+        'fileUrl': upload.data['data']['url'],
+        'fileName': 'documento.pdf',
+      },
+      options: _auth(customerToken),
+    );
+    expect(identity.statusCode, 201, reason: '${identity.data}');
+    final rejection = await _api.patch(
+      '/cases/$caseId/documents/${identity.data['data']['id']}/reject',
+      data: {'reason': 'other', 'note': 'Illeggibile'},
+      options: _auth(admin),
+    );
+    expect(rejection.statusCode, 200, reason: '${rejection.data}');
+
     // ── The customer sees four steps and the agreed contract, never offers ──
     await _tapVisible(tester, find.text('Le tue offerte'));
     await _tapVisible(tester, find.text('Le tue richieste'));
@@ -245,6 +265,10 @@ void main() {
     await _waitFor(tester, find.byType(ActivationRequestDetailScreen));
     await _waitFor(tester, find.text('Caricamento e analisi'));
     expect(find.text('Offerte'), findsNothing);
+    await _tapVisible(tester, find.byKey(const ValueKey('activation_request.replace_document')));
+    await _waitFor(tester, find.byType(ReplaceDocumentScreen));
+    Navigator.of(tester.element(find.byType(ReplaceDocumentScreen))).pop();
+    await tester.pumpAndSettle();
     await _tapVisible(tester, find.byKey(const ValueKey('activation_request.view_contract')));
     await _waitFor(tester, find.byType(SignContractScreen));
     await _waitFor(tester, find.text(offer['name'] as String));
