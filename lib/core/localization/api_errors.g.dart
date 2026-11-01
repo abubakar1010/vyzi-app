@@ -5,7 +5,7 @@
 
 /// One backend message and the catalogue key it translates to. [params] names
 /// the capture groups whose value is itself translated: `value`, `list`,
-/// `billStatus` or `activationStatus`.
+/// or `billStatus`.
 class ApiErrorRule {
   final String? exact;
   final RegExp? pattern;
