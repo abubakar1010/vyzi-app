@@ -13,15 +13,19 @@ import 'package:vyzi/features/request/models/case_model.dart';
 /// Everything the customer needs in order to sign their contract.
 ///
 /// The signing itself happens with the supplier — by email, on their portal or
-/// on paper — never in this app. So this screen carries no document and no
-/// upload: it names the offer being signed, hands over the supplier's own
-/// instructions, and offers the walkthrough. While the switch is running the
+/// on paper — never in this app. So this screen takes no upload and no
+/// signature: it names the offer being signed, opens the contract when staff
+/// have filed one, hands over the supplier's own instructions, and offers the
+/// walkthrough. While the switch is running the
 /// same screen reports its progress; once the supply is live it steps aside
 /// entirely and hands over to the service details.
 class SignContractScreen extends StatefulWidget {
   final String? billId;
 
-  const SignContractScreen({super.key, this.billId});
+  /// An activation request has no bill, and is read by its case.
+  final String? caseId;
+
+  const SignContractScreen({super.key, this.billId, this.caseId});
 
   @override
   State<SignContractScreen> createState() => _SignContractScreenState();
@@ -67,7 +71,8 @@ class _SignContractScreenState extends State<SignContractScreen> {
 
   Future<void> _fetchCase() async {
     final billId = _billId;
-    if (billId == null) {
+    final caseId = widget.caseId;
+    if (billId == null && caseId == null) {
       setState(() {
         _error = 'sign_contract.error_missing_bill'.tr;
         _isLoading = false;
@@ -81,7 +86,11 @@ class _SignContractScreenState extends State<SignContractScreen> {
     });
 
     try {
-      final response = await _api.get(ApiConstants.getCaseByBill(billId));
+      final response = await _api.get(
+        caseId != null
+            ? ApiConstants.getCaseDetails(caseId)
+            : ApiConstants.getCaseByBill(billId!),
+      );
       final body = response.data as Map<String, dynamic>;
 
       if (body['success'] == true && body['data'] != null) {
@@ -100,7 +109,9 @@ class _SignContractScreenState extends State<SignContractScreen> {
           if (mounted) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (_) => ServiceDetailsScreen(billId: billId),
+                builder: (_) => caseId != null
+                    ? ServiceDetailsScreen(caseId: caseId)
+                    : ServiceDetailsScreen(billId: billId),
               ),
             );
           }
@@ -215,6 +226,10 @@ class _SignContractScreenState extends State<SignContractScreen> {
           _buildReadyCard(),
           SizedBox(height: 16.h),
           _buildSupplierCard(),
+          for (final document in _caseData?.contractDocuments ?? const <CaseDocumentModel>[]) ...[
+            SizedBox(height: 12.h),
+            _buildContractFile(document),
+          ],
           if (supplier?.hasSigningGuideline == true) ...[
             SizedBox(height: 16.h),
             _buildGuidelineCard(supplier!),
@@ -264,7 +279,8 @@ class _SignContractScreenState extends State<SignContractScreen> {
       pillColor = AppColors.primaryColor;
       background = const Color(0xFFFAF5FF);
     } else if (_caseData?.status == 'cancelled' ||
-        _caseData?.status == 'rejected') {
+        _caseData?.status == 'rejected' ||
+        _caseData?.status == 'terminated') {
       pill = _caseData!.statusLabel;
       title = 'sign_contract.closed_title'.tr;
       desc = 'sign_contract.closed_desc'.tr;
@@ -634,6 +650,38 @@ class _SignContractScreenState extends State<SignContractScreen> {
   // ─────────────────────────────────────────────
   //  ACTIONS
   // ─────────────────────────────────────────────
+
+  Widget _buildContractFile(CaseDocumentModel document) {
+    return ListTile(
+      key: ValueKey('sign_contract.file.${document.id}'),
+      shape: RoundedRectangleBorder(
+        side: const BorderSide(color: _cardBorder),
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      leading: const Icon(Icons.description_outlined, color: AppColors.primaryColor),
+      title: Text('sign_contract.open_contract'.tr),
+      subtitle: Text(document.fileName, maxLines: 1, overflow: TextOverflow.ellipsis),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () => _openContractFile(document),
+    );
+  }
+
+  void _openContractFile(CaseDocumentModel document) {
+    final url = document.fileUrl;
+    if (url == null || url.isEmpty) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => DocumentViewerScreen(
+          url: url,
+          title: 'sign_contract.open_contract'.tr,
+          mimeType: document.mimeType,
+          fileName: document.fileName,
+        ),
+      ),
+    );
+  }
 
   void _openGuidelineDocument(CaseSupplierModel supplier) {
     final url = supplier.signingDocumentUrl;

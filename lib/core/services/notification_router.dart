@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
 import '../../features/bills/screen/bill_detail_screen.dart';
+import '../../features/activation_request/activation_request_detail_screen.dart';
 import '../../features/home/sign_contract/sign_contract.dart';
-import '../../features/my_utility/service_details_screen.dart';
 import '../../features/request/request_offers_focus.dart';
 import '../../routes/app_routes.dart';
 import '../navbar/nav_helper.dart';
@@ -55,17 +55,21 @@ class NotificationRouter {
     final ticketId = _string(payload['ticketId']);
 
     // An activation request has no bill: its milestones carry only the case.
-    // In activation and activated it is the customer's supply, so it opens as
-    // one; a cancellation lands on the requests that list it.
+    // A contract milestone opens the contract, which also reports an activation
+    // under way. Everything else opens on the steps: the case may have moved
+    // since the message was sent, and that screen is right in every status and
+    // links on to the utility while there is one.
     if ((billId == null || billId.isEmpty) && caseId != null && caseId.isNotEmpty) {
       switch (type) {
         case 'contract_status':
-        case 'activation_complete':
-          NavHelper.openInTab(NavTabs.request, ServiceDetailsScreen(caseId: caseId));
+          NavHelper.openInTab(NavTabs.request, SignContractScreen(caseId: caseId));
           return;
+        case 'activation_complete':
         case 'case_update':
-          _returnToShell();
-          NavHelper.switchTab(NavTabs.request);
+          NavHelper.openInTab(
+            NavTabs.request,
+            ActivationRequestDetailScreen(caseId: caseId),
+          );
           return;
       }
     }

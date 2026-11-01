@@ -5,7 +5,7 @@
 
 /// One backend message and the catalogue key it translates to. [params] names
 /// the capture groups whose value is itself translated: `value`, `list`,
-/// `billStatus` or `activationStatus`.
+/// or `billStatus`.
 class ApiErrorRule {
   final String? exact;
   final RegExp? pattern;
@@ -115,7 +115,12 @@ final List<ApiErrorRule> apiErrorRules = [
   ApiErrorRule.exact('A switch request already exists for this bill', 'switch_request_exists'),
   ApiErrorRule.exact('An activation request for this supply is already open', 'activation_request_exists'),
   ApiErrorRule.exact('An active supply cannot be activated; request a transfer instead', 'active_supply_not_activatable'),
-  ApiErrorRule.pattern(RegExp(r'^An activation request cannot move from (?<from>\S+) to (?<to>\S+)$'), 'activation_request_invalid_transition', params: {'from': 'activationStatus', 'to': 'activationStatus'}),
+  ApiErrorRule.exact('Assign an offer before sending the contract', 'activation_request_contract_needs_offer'),
+  ApiErrorRule.exact('Only an activation request can be terminated', 'only_activation_request_terminated'),
+  ApiErrorRule.exact('Only an active supply can be terminated', 'only_active_supply_terminated'),
+  ApiErrorRule.exact('A case cannot move between a switch and an activation request', 'case_kind_fixed'),
+  ApiErrorRule.exact('Tax ID is not valid', 'tax_id_invalid'),
+  ApiErrorRule.exact('Email is not valid', 'email_invalid'),
   ApiErrorRule.exact('Assign an offer and the POD/PDR before putting the request in activation', 'activation_request_needs_offer_and_pod'),
   ApiErrorRule.exact('Assign an offer before putting the request in activation', 'activation_request_needs_offer'),
   ApiErrorRule.exact('Assign the POD/PDR before putting the request in activation', 'activation_request_needs_pod'),
@@ -370,7 +375,10 @@ const Map<String, String> apiErrorsIt = {
   'switch_request_exists': 'Esiste già una richiesta di cambio fornitore per questa bolletta',
   'activation_request_exists': 'Esiste già una richiesta di attivazione aperta per questa fornitura',
   'active_supply_not_activatable': 'Una fornitura già attiva non si può attivare: serve una voltura',
-  'activation_request_invalid_transition': 'La richiesta di attivazione non può passare da «@from» a «@to»',
+  'activation_request_contract_needs_offer': 'Assegna un\'offerta prima di inviare il contratto',
+  'only_activation_request_terminated': 'Solo una richiesta di attivazione può essere terminata',
+  'only_active_supply_terminated': 'Solo una fornitura attiva può essere terminata',
+  'case_kind_fixed': 'Una pratica non può passare da cambio fornitore a richiesta di attivazione, o viceversa',
   'activation_request_needs_offer_and_pod': 'Assegna un\'offerta e il POD/PDR prima di mettere la richiesta in attivazione',
   'activation_request_needs_offer': 'Assegna un\'offerta prima di mettere la richiesta in attivazione',
   'activation_request_needs_pod': 'Inserisci il POD/PDR prima di mettere la richiesta in attivazione',
@@ -597,7 +605,10 @@ const Map<String, String> apiErrorsEn = {
   'switch_request_exists': 'A switch request already exists for this bill',
   'activation_request_exists': 'An activation request for this supply is already open',
   'active_supply_not_activatable': 'An active supply cannot be activated: it needs a transfer (voltura)',
-  'activation_request_invalid_transition': 'The activation request cannot move from "@from" to "@to"',
+  'activation_request_contract_needs_offer': 'Assign an offer before sending the contract',
+  'only_activation_request_terminated': 'Only an activation request can be terminated',
+  'only_active_supply_terminated': 'Only an active supply can be terminated',
+  'case_kind_fixed': 'A case cannot move between a switch and an activation request',
   'activation_request_needs_offer_and_pod': 'Assign an offer and the POD/PDR before putting the request in activation',
   'activation_request_needs_offer': 'Assign an offer before putting the request in activation',
   'activation_request_needs_pod': 'Enter the POD/PDR before putting the request in activation',

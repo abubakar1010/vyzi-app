@@ -7,10 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vyzi/core/navbar/navbar_controller.dart';
 import 'package:vyzi/core/services/notification_router.dart';
 import 'package:vyzi/core/services/storage_service.dart';
+import 'package:vyzi/features/activation_request/activation_request_detail_screen.dart';
 import 'package:vyzi/features/bills/models/bill_model.dart';
 import 'package:vyzi/features/bills/screen/bill_detail_screen.dart';
 import 'package:vyzi/features/home/sign_contract/sign_contract.dart';
-import 'package:vyzi/features/my_utility/service_details_screen.dart';
 import 'package:vyzi/features/request/models/api_offer_model.dart';
 import 'package:vyzi/features/request/request_controller.dart';
 import 'package:vyzi/features/request/request_offers_focus.dart';
@@ -234,7 +234,7 @@ void main() {
 
     // An activation request ("Attiva una nuova utenza") has no bill; its
     // milestones carry only the case.
-    testWidgets('an activation request in activation opens its utility',
+    testWidgets('a contract milestone with no bill opens the contract by case',
         (tester) async {
       await pumpShell(tester);
 
@@ -246,14 +246,14 @@ void main() {
       });
       await tester.pumpAndSettle();
 
-      expectOpenedInRequestTab(ServiceDetailsScreen);
+      expectOpenedInRequestTab(SignContractScreen);
       final screen =
-          tester.widget<ServiceDetailsScreen>(find.byType(ServiceDetailsScreen));
+          tester.widget<SignContractScreen>(find.byType(SignContractScreen));
       expect(screen.caseId, 'case-1');
       expect(screen.billId, isNull);
     });
 
-    testWidgets('an activated activation request opens its utility',
+    testWidgets('an activation message opens on the steps, whatever came since',
         (tester) async {
       await pumpShell(tester);
 
@@ -263,10 +263,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expectOpenedInRequestTab(ServiceDetailsScreen);
+      expectOpenedInRequestTab(ActivationRequestDetailScreen);
     });
 
-    testWidgets('a cancelled activation request lands on the requests',
+    testWidgets('a closed activation request opens on its steps',
         (tester) async {
       await pumpShell(tester);
 
@@ -276,8 +276,7 @@ void main() {
       });
       await tester.pumpAndSettle();
 
-      expect(Get.currentRoute, AppRoutes.navbarScreen);
-      expect(Get.find<NavbarController>().selectedIndex, NavTabs.request);
+      expectOpenedInRequestTab(ActivationRequestDetailScreen);
     });
 
     testWidgets('a case notification that also names its bill still opens by bill',

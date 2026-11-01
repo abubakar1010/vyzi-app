@@ -9,6 +9,7 @@ import 'package:vyzi/core/widgets/primary_button.dart';
 import 'package:vyzi/features/request/models/api_offer_model.dart';
 import 'package:vyzi/features/request/offer_details.dart';
 import 'package:flutter/material.dart';
+import 'package:vyzi/features/activation_request/activation_request_detail_screen.dart';
 import 'package:vyzi/features/activation_request/models/activation_request_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -898,20 +899,16 @@ class _RequestScreenState extends State<RequestScreen>
     );
   }
 
-  /// A request that has reached activation is the customer's supply, so it
-  /// opens as a utility; before that there is nothing to open — a consultant
-  /// is calling.
+  /// Every request opens on its steps, whatever status it has reached.
   Future<void> _openActivationRequest(ActivationRequestModel request) async {
-    if (!request.isLive) return;
-    await NavHelper.push(ServiceDetailsScreen(caseId: request.id));
+    await NavHelper.push(ActivationRequestDetailScreen(caseId: request.id));
     if (mounted) _controller.fetchBills();
   }
 
   Widget _buildActivationRequestCard(ActivationRequestModel request) {
-    final live = request.isLive;
     return GestureDetector(
       key: ValueKey('activation_request.card.${request.id}'),
-      onTap: live ? () => _openActivationRequest(request) : null,
+      onTap: () => _openActivationRequest(request),
       child: Container(
         margin: EdgeInsets.only(bottom: 10.h),
         padding: EdgeInsets.all(14.w),
@@ -975,8 +972,7 @@ class _RequestScreenState extends State<RequestScreen>
                 ],
               ),
             ),
-            if (live)
-              Icon(Icons.chevron_right, color: AppColors.primaryColor, size: 22.sp),
+            Icon(Icons.chevron_right, color: AppColors.primaryColor, size: 22.sp),
           ],
         ),
       ),
