@@ -155,6 +155,33 @@ class ActivationRequestModel {
   /// utility rather than as a request.
   bool get isLive => status == 'awaiting_activation' || status == 'activated';
 
+  /// KO, cancelled, or a supply that has ended.
+  bool get isClosed =>
+      status == 'rejected' || status == 'cancelled' || status == 'terminated';
+
+  /// From here on there is an agreed contract for the customer to read.
+  bool get showsContract => status == 'contract_sent' || isLive;
+
+  /// How many of the four steps are behind the request; the next one is where
+  /// it stands. A closed request has no status left to say how far it got, so
+  /// that comes from whether a contract ever went out.
+  int stepsReached({required bool contractSent}) {
+    switch (status) {
+      case 'contract_sent':
+        return 1;
+      case 'awaiting_activation':
+        return 2;
+      case 'activated':
+      case 'terminated':
+        return 4;
+      case 'rejected':
+      case 'cancelled':
+        return contractSent ? 2 : 1;
+      default:
+        return 0;
+    }
+  }
+
   /// `Subentro · Luce`
   String get title {
     final type = caseType == 'takeover'

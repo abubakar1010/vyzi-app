@@ -88,6 +88,10 @@ class CaseModel {
         .toList();
   }
 
+  /// The contract files staff attached for the customer to read.
+  List<CaseDocumentModel> get contractDocuments =>
+      documents.where((d) => d.documentType == 'contract').toList();
+
   /// The switch is under way but the supplier has not confirmed it yet.
   bool get isAwaitingActivation => status == 'awaiting_activation';
 
@@ -116,6 +120,8 @@ class CaseModel {
         return 'case.status.rejected'.tr;
       case 'cancelled':
         return 'case.status.cancelled'.tr;
+      case 'terminated':
+        return 'case.status.terminated'.tr;
       default:
         return status;
     }
@@ -134,6 +140,8 @@ class CaseDocumentModel {
   final String id;
   final String fileName;
   final String documentType;
+  final String? fileUrl;
+  final String? mimeType;
   final bool verified;
   final String? rejectedAt;
 
@@ -150,6 +158,8 @@ class CaseDocumentModel {
     required this.id,
     required this.fileName,
     required this.documentType,
+    this.fileUrl,
+    this.mimeType,
     this.verified = false,
     this.rejectedAt,
     this.rejectionReason,
@@ -162,6 +172,8 @@ class CaseDocumentModel {
       id: json['id'] as String? ?? '',
       fileName: json['fileName'] as String? ?? '',
       documentType: json['documentType'] as String? ?? '',
+      fileUrl: json['fileUrl'] as String?,
+      mimeType: json['mimeType'] as String?,
       verified: json['verified'] as bool? ?? false,
       rejectedAt: json['rejectedAt'] as String?,
       rejectionReason: json['rejectionReason'] as String?,
