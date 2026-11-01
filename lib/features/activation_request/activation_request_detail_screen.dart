@@ -10,6 +10,7 @@ import 'package:vyzi/features/activation_request/models/activation_request_model
 import 'package:vyzi/features/home/sign_contract/sign_contract.dart';
 import 'package:vyzi/features/my_utility/service_details_screen.dart';
 import 'package:vyzi/features/request/models/case_model.dart';
+import 'package:vyzi/features/request/replace_document/replace_document_screen.dart';
 
 enum _StepState { done, current, pending }
 
@@ -123,6 +124,9 @@ class _ActivationRequestDetailScreenState
     final reached = request.stepsReached(
       contractSent: switchCase.contractSentAt != null,
     );
+    final rejected = request.isClosed
+        ? const <CaseDocumentModel>[]
+        : switchCase.documentsAwaitingReplacement;
     return RefreshIndicator(
       onRefresh: _load,
       color: AppColors.primaryColor,
@@ -143,6 +147,10 @@ class _ActivationRequestDetailScreenState
               request.address.formatted,
               style: TextStyle(fontSize: 13.sp, color: _muted),
             ),
+          ],
+          if (rejected.isNotEmpty) ...[
+            SizedBox(height: 16.h),
+            _rejectedDocumentsBanner(request.id, rejected),
           ],
           SizedBox(height: 20.h),
           for (var i = 0; i < _steps.length; i++)
@@ -180,6 +188,57 @@ class _ActivationRequestDetailScreenState
     if (index < reached) return _StepState.done;
     if (request.isClosed || index > reached) return _StepState.pending;
     return _StepState.current;
+  }
+
+  /// Staff turned a document down and need a new one: the message that said so
+  /// lands here, so the upload has to be reachable from here.
+  Widget _rejectedDocumentsBanner(
+    String caseId,
+    List<CaseDocumentModel> rejected,
+  ) {
+    final accent = Colors.red.shade700;
+    return InkWell(
+      key: const ValueKey('activation_request.replace_document'),
+      borderRadius: BorderRadius.circular(14.r),
+      onTap: () => _push(ReplaceDocumentScreen(caseId: caseId, rejected: rejected)),
+      child: Ink(
+        padding: EdgeInsets.all(14.w),
+        decoration: BoxDecoration(
+          color: Colors.red.shade50,
+          borderRadius: BorderRadius.circular(14.r),
+          border: Border.all(color: Colors.red.shade200),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.badge_outlined, color: accent, size: 22.w),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'case.document.banner.title'.tr,
+                    style: TextStyle(
+                      color: accent,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    rejected.length == 1
+                        ? '${rejected.first.rejectionReasonLabel} · ${'case.document.banner.subtitle'.tr}'
+                        : 'case.document.banner.subtitle'.tr,
+                    style: TextStyle(fontSize: 12.sp, color: _muted),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, color: accent, size: 20.w),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _action({

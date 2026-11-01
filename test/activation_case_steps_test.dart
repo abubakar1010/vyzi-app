@@ -80,4 +80,42 @@ void main() {
     expect(switchCase.contractDocuments.map((d) => d.id), ['d2']);
     expect(switchCase.contractDocuments.single.fileUrl, '/uploads/c.pdf');
   });
+
+  test('a rejected file leaves the contract and waits for its replacement', () {
+    Get.locale = const Locale('it', 'IT');
+    final switchCase = CaseModel.fromJson({
+      'id': 'case-1',
+      'status': 'contract_sent',
+      'createdAt': '2026-11-01T10:00:00Z',
+      'documents': [
+        {
+          'id': 'd1',
+          'fileName': 'contratto.pdf',
+          'documentType': 'contract',
+          'rejectedAt': '2026-11-01T11:00:00Z',
+        },
+        {
+          'id': 'd2',
+          'fileName': 'id.pdf',
+          'documentType': 'identity_document',
+          'rejectedAt': '2026-11-01T11:00:00Z',
+        },
+        {
+          'id': 'd3',
+          'fileName': 'id-nuova.pdf',
+          'documentType': 'identity_document',
+          'replacesDocumentId': 'd2',
+        },
+        {
+          'id': 'd4',
+          'fileName': 'cf.pdf',
+          'documentType': 'identity_document',
+          'rejectedAt': '2026-11-01T11:00:00Z',
+        },
+      ],
+    });
+
+    expect(switchCase.contractDocuments, isEmpty);
+    expect(switchCase.documentsAwaitingReplacement.map((d) => d.id), ['d1', 'd4']);
+  });
 }

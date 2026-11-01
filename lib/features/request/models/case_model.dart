@@ -88,9 +88,11 @@ class CaseModel {
         .toList();
   }
 
-  /// The contract files staff attached for the customer to read.
-  List<CaseDocumentModel> get contractDocuments =>
-      documents.where((d) => d.documentType == 'contract').toList();
+  /// The contract files for the customer to read. A rejected one is no longer
+  /// the agreed contract.
+  List<CaseDocumentModel> get contractDocuments => documents
+      .where((d) => d.documentType == 'contract' && !d.isRejected)
+      .toList();
 
   /// The switch is under way but the supplier has not confirmed it yet.
   bool get isAwaitingActivation => status == 'awaiting_activation';
