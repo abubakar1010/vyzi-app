@@ -12,12 +12,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:integration_test/integration_test.dart';
 import 'package:vyzi/core/constants/api_constants.dart';
 import 'package:vyzi/core/services/storage_service.dart';
+import 'package:vyzi/core/navbar/nav_helper.dart';
+import 'package:vyzi/features/activation_request/activation_request_detail_screen.dart';
 import 'package:vyzi/features/activation_request/activation_request_screen.dart';
+import 'package:vyzi/features/home/sign_contract/sign_contract.dart';
 import 'package:vyzi/features/my_utility/utility_details_screen.dart';
+import 'package:vyzi/features/request/document_viewer_screen.dart';
 import 'package:vyzi/app.dart';
 import 'package:vyzi/core/controllers/language_controller.dart';
 import 'package:vyzi/core/services/cache_service.dart';
@@ -98,6 +102,25 @@ void main() {
     // Signed in as the customer before the app starts, so the splash screen
     // goes straight to Home.
     final session = await _login(_customerEmail, _customerPassword);
+
+    // A fresh database asks for the legal documents first; that gate has its
+    // own flow and is not what this test is about.
+    final customerAuth = _auth(_token(session, 'accessToken'));
+    final pending = await _api.get('/legal/pending', options: customerAuth);
+    final legal = (pending.data['data']['documents'] as List).cast<Map<String, dynamic>>();
+    if (legal.isNotEmpty) {
+      final accepted = await _api.post(
+        '/legal/accept',
+        data: {
+          'acceptances': [
+            for (final doc in legal)
+              {'slug': doc['slug'], 'version': doc['version'], 'locale': doc['locale']},
+          ],
+        },
+        options: customerAuth,
+      );
+      expect(accepted.statusCode, anyOf(200, 201), reason: '${accepted.data}');
+    }
     await Firebase.initializeApp();
     await CacheService().init();
     final storage = StorageService();
@@ -180,20 +203,73 @@ void main() {
     final offer = offers.data['data']['data'][0] as Map<String, dynamic>;
     final offerId = offer['id'] as String;
     final supplierName = (offer['supplier'] as Map)['name'] as String;
-    for (final body in [
-      {'status': 'in_progress'},
-      {'selectedOfferId': offerId, 'podPdrNumber': 'IT001E55443322'},
-      {'status': 'awaiting_activation', 'activationDate': '2026-12-01', 'expiryDate': '2027-12-01'},
-    ]) {
+    Future<void> operator(Map<String, Object> body) async {
       final res = await _api.patch('/cases/$caseId', data: body, options: _auth(admin));
       expect(res.statusCode, 200, reason: '${res.data}');
     }
 
-    // ── Back in the app it opens as a utility ──
+    await operator({'status': 'in_progress', 'internalNotes': 'Staff only'});
+    await operator({'selectedOfferId': offerId, 'podPdrNumber': 'IT001E55443322'});
+
+    // ── The contract goes out, with its file ──
+    final pdf = '%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n'
+        '2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n'
+        '3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 200]>>endobj\n'
+        'trailer<</Root 1 0 R>>\n%%EOF\n';
+    final upload = await _api.post(
+      '/upload',
+      data: FormData.fromMap({
+        'file': MultipartFile.fromBytes(pdf.codeUnits,
+            filename: 'contratto.pdf', contentType: DioMediaType('application', 'pdf')),
+      }),
+      options: _auth(admin),
+    );
+    expect(upload.statusCode, anyOf(200, 201), reason: '${upload.data}');
+    final contract = await _api.post(
+      '/cases/$caseId/documents',
+      data: {
+        'documentType': 'contract',
+        'fileUrl': upload.data['data']['url'],
+        'fileName': 'contratto.pdf',
+      },
+      options: _auth(admin),
+    );
+    expect(contract.statusCode, 201, reason: '${contract.data}');
+    await operator({'status': 'contract_sent'});
+
+    // ── The customer sees four steps and the agreed contract, never offers ──
+    await _tapVisible(tester, find.text('Le tue offerte'));
+    await _tapVisible(tester, find.text('Le tue richieste'));
+    await _waitFor(tester, find.text('Contratto da firmare'));
+    await _tapVisible(tester, find.text('$street 7, 09100 Cagliari (CA)'));
+    await _waitFor(tester, find.byType(ActivationRequestDetailScreen));
+    await _waitFor(tester, find.text('Caricamento e analisi'));
+    expect(find.text('Offerte'), findsNothing);
+    await _tapVisible(tester, find.byKey(const ValueKey('activation_request.view_contract')));
+    await _waitFor(tester, find.byType(SignContractScreen));
+    await _waitFor(tester, find.text(offer['name'] as String));
+    await _tapVisible(tester, find.text('Apri il contratto'));
+    await _waitFor(tester, find.byType(DocumentViewerScreen));
+    Navigator.of(tester.element(find.byType(DocumentViewerScreen))).pop();
+    await tester.pumpAndSettle();
+    await _tapVisible(tester, find.byIcon(Icons.chevron_left));
+    expect(find.byType(BackButton), findsOneWidget, reason: 'the steps screen can be left');
+    await tester.tap(find.byType(BackButton));
+    await tester.pumpAndSettle();
+
+    await operator({
+      'status': 'awaiting_activation',
+      'activationDate': '2026-12-01',
+      'expiryDate': '2027-12-01',
+    });
+
+    // ── Back in the app it leads on to the utility ──
     await _tapVisible(tester, find.text('Le tue offerte'));
     await _tapVisible(tester, find.text('Le tue richieste'));
     await _waitFor(tester, find.text('In attivazione'));
     await _tapVisible(tester, find.text('$street 7, 09100 Cagliari (CA)'));
+    await _waitFor(tester, find.byType(ActivationRequestDetailScreen));
+    await _tapVisible(tester, find.byKey(const ValueKey('activation_request.view_utility')));
     await _waitFor(tester, find.byType(UtilityDetailsScreen));
     await _waitFor(tester, find.text('IT001E55443322'));
 
@@ -206,9 +282,23 @@ void main() {
     expect(mine, hasLength(1));
     expect(mine.single['billId'], isNull);
     expect(mine.single['podPdrNumber'], 'IT001E55443322');
-    Get.back();
+
+    // ── Internal notes never reach the customer ──
+    final own = await _api.get('/cases/$caseId', options: _auth(_token(session, 'accessToken')));
+    expect((own.data['data'] as Map).containsKey('internalNotes'), isFalse);
+
+    Navigator.of(tester.element(find.byType(UtilityDetailsScreen))).pop();
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
     await _tapVisible(tester, find.text('Utenze').last);
     await _waitFor(tester, find.text(supplierName));
+
+    // ── A supply that ends shows as closed, with no way on ──
+    await operator({'status': 'activated'});
+    await operator({'status': 'terminated'});
+    NavHelper.push(ActivationRequestDetailScreen(caseId: caseId));
+    await _waitFor(tester, find.text('Terminata'));
+    expect(find.byKey(const ValueKey('activation_request.view_contract')), findsNothing);
   });
 }
