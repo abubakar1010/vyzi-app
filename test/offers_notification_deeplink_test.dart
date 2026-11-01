@@ -11,7 +11,6 @@ import 'package:vyzi/features/activation_request/activation_request_detail_scree
 import 'package:vyzi/features/bills/models/bill_model.dart';
 import 'package:vyzi/features/bills/screen/bill_detail_screen.dart';
 import 'package:vyzi/features/home/sign_contract/sign_contract.dart';
-import 'package:vyzi/features/my_utility/service_details_screen.dart';
 import 'package:vyzi/features/request/models/api_offer_model.dart';
 import 'package:vyzi/features/request/request_controller.dart';
 import 'package:vyzi/features/request/request_offers_focus.dart';
@@ -254,7 +253,7 @@ void main() {
       expect(screen.billId, isNull);
     });
 
-    testWidgets('an activated activation request opens its utility',
+    testWidgets('an activation message opens on the steps, whatever came since',
         (tester) async {
       await pumpShell(tester);
 
@@ -264,7 +263,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expectOpenedInRequestTab(ServiceDetailsScreen);
+      expectOpenedInRequestTab(ActivationRequestDetailScreen);
     });
 
     testWidgets('a closed activation request opens on its steps',

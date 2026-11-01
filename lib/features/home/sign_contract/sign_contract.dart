@@ -279,7 +279,8 @@ class _SignContractScreenState extends State<SignContractScreen> {
       pillColor = AppColors.primaryColor;
       background = const Color(0xFFFAF5FF);
     } else if (_caseData?.status == 'cancelled' ||
-        _caseData?.status == 'rejected') {
+        _caseData?.status == 'rejected' ||
+        _caseData?.status == 'terminated') {
       pill = _caseData!.statusLabel;
       title = 'sign_contract.closed_title'.tr;
       desc = 'sign_contract.closed_desc'.tr;
