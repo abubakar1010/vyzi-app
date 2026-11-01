@@ -19,6 +19,8 @@ import 'package:vyzi/core/services/storage_service.dart';
 import 'package:vyzi/core/navbar/nav_helper.dart';
 import 'package:vyzi/features/activation_request/activation_request_detail_screen.dart';
 import 'package:vyzi/features/activation_request/activation_request_screen.dart';
+import 'package:vyzi/core/services/notification_router.dart';
+import 'package:vyzi/features/bills/screen/bill_detail_screen.dart';
 import 'package:vyzi/features/home/sign_contract/sign_contract.dart';
 import 'package:vyzi/features/request/replace_document/replace_document_screen.dart';
 import 'package:vyzi/features/my_utility/utility_details_screen.dart';
@@ -324,5 +326,43 @@ void main() {
     NavHelper.push(ActivationRequestDetailScreen(caseId: caseId));
     await _waitFor(tester, find.text('Terminata'));
     expect(find.byKey(const ValueKey('activation_request.view_contract')), findsNothing);
+
+    // ── A message from before it ended opens the steps, not a dead utility ──
+    NotificationRouter.openFromList(
+      type: 'activation_complete',
+      data: <String, dynamic>{'caseId': caseId},
+    );
+    await tester.pumpAndSettle();
+    await _waitFor(tester, find.text('Terminata'));
+    expect(find.byType(UtilityDetailsScreen), findsNothing);
+    expect(find.text('Riprova'), findsNothing);
+
+    // ── The contract of an ended supply reads as closed ──
+    NavHelper.push(SignContractScreen(caseId: caseId));
+    await tester.pumpAndSettle();
+    await _waitFor(tester, find.text('Contratto Chiuso'));
+    expect(find.text('Contratto in Preparazione'), findsNothing);
+    Navigator.of(tester.element(find.byType(SignContractScreen))).pop();
+    await tester.pumpAndSettle();
+
+    // ── A bill-based case still reads the same through the narrower response ──
+    final ownCases = await _api.get('/cases?limit=50', options: _auth(customerToken));
+    final billCase = (ownCases.data['data']['data'] as List)
+        .cast<Map<String, dynamic>>()
+        .firstWhere((c) => c['billId'] != null && c['selectedOfferId'] != null);
+    final billId = billCase['billId'] as String;
+    final byBill = await _api.get('/cases/by-bill/$billId', options: _auth(customerToken));
+    final offerName = byBill.data['data']['selectedOffer']['name'] as String;
+    NavHelper.push(SignContractScreen(billId: billId));
+    await tester.pumpAndSettle();
+    await _waitFor(tester, find.text(offerName));
+    Navigator.of(tester.element(find.byType(SignContractScreen))).pop();
+    await tester.pumpAndSettle();
+    NavHelper.push(BillDetailScreen(billId: billId));
+    await tester.pumpAndSettle();
+    await _waitFor(tester, find.byType(BillDetailScreen));
+    await tester.pump(const Duration(seconds: 2));
+    expect(find.text('activation_request.detail_error'), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 }
