@@ -531,11 +531,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
       // The account type chosen on the onboarding screen applies to social
       // sign-up too: without it every "Continue with Google" produced a
       // personal account, whatever the user had picked there.
+      // A friend who followed a referral link (or typed a code) and then
+      // chose Google or Apple is still a referral.
+      final referralCode = _referralCodeController.text.trim();
       await auth.socialLogin(
         provider,
         role: selectedRole,
         acceptedTerms: true,
+        referralCode: referralCode.isEmpty ? null : referralCode,
       );
+      try {
+        await Get.find<DeepLinkService>().clearPendingReferralCode();
+      } catch (_) {}
       Get.offAllNamed(AppRoutes.navbarScreen);
       // A business account created this way has no company row yet — the
       // provider hands back a name, an email and a picture, and nothing a
