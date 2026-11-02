@@ -122,8 +122,6 @@ class CaseModel {
         return 'case.status.rejected'.tr;
       case 'cancelled':
         return 'case.status.cancelled'.tr;
-      case 'terminated':
-        return 'case.status.terminated'.tr;
       default:
         return status;
     }

@@ -320,24 +320,24 @@ void main() {
     await _tapVisible(tester, find.text('Utenze').last);
     await _waitFor(tester, find.text(supplierName));
 
-    // ── A supply that ends shows as closed, with no way on ──
+    // ── A request that is called off shows as closed, with no way on ──
     await operator({'status': 'activated'});
-    await operator({'status': 'terminated'});
+    await operator({'status': 'cancelled'});
     NavHelper.push(ActivationRequestDetailScreen(caseId: caseId));
-    await _waitFor(tester, find.text('Terminata'));
+    await _waitFor(tester, find.text('Annullata'));
     expect(find.byKey(const ValueKey('activation_request.view_contract')), findsNothing);
 
-    // ── A message from before it ended opens the steps, not a dead utility ──
+    // ── A message from before it closed opens the steps, not a dead utility ──
     NotificationRouter.openFromList(
       type: 'activation_complete',
       data: <String, dynamic>{'caseId': caseId},
     );
     await tester.pumpAndSettle();
-    await _waitFor(tester, find.text('Terminata'));
+    await _waitFor(tester, find.text('Annullata'));
     expect(find.byType(UtilityDetailsScreen), findsNothing);
     expect(find.text('Riprova'), findsNothing);
 
-    // ── The contract of an ended supply reads as closed ──
+    // ── The contract of a cancelled request reads as closed ──
     NavHelper.push(SignContractScreen(caseId: caseId));
     await tester.pumpAndSettle();
     await _waitFor(tester, find.text('Contratto Chiuso'));

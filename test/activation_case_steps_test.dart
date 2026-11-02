@@ -29,11 +29,10 @@ void main() {
     test('a closed request keeps the steps it reached', () {
       expect(_request('rejected').stepsReached(contractSent: false), 1);
       expect(_request('cancelled').stepsReached(contractSent: true), 2);
-      expect(_request('terminated').stepsReached(contractSent: true), 4);
     });
 
     test('only the ended statuses count as closed', () {
-      for (final status in ['rejected', 'cancelled', 'terminated']) {
+      for (final status in ['rejected', 'cancelled']) {
         expect(_request(status).isClosed, isTrue, reason: status);
       }
       expect(_request('contract_sent').isClosed, isFalse);
@@ -47,6 +46,11 @@ void main() {
     });
   });
 
+  test('there is no terminated status: a request ends as KO or cancelled', () {
+    expect(_request('terminated').isClosed, isFalse);
+    expect(AppTranslations().keys['it_IT']!['activation_request.status.terminated'], isNull);
+  });
+
   test('every status reads in Italian, never as a raw key', () {
     final italian = AppTranslations().keys['it_IT']!;
     for (final status in [
@@ -58,11 +62,10 @@ void main() {
       'activated',
       'rejected',
       'cancelled',
-      'terminated',
     ]) {
       expect(italian['activation_request.status.$status'], isNotNull, reason: status);
     }
-    expect(italian['case.status.terminated'], isNotNull);
+    expect(italian['case.status.cancelled'], isNotNull);
   });
 
   test('the contract files are picked out of the case documents', () {

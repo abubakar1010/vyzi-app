@@ -21,7 +21,7 @@ const Color _mutedText = Color(0xFF6E6E7A);
 const Color _subtleText = Color(0xFF9A9AA6);
 
 /// How far a milestone on the submission timeline has got. `failed` is the
-/// KO / terminated stop, which only ever lands on the last row.
+/// KO / cancelled stop, which only ever lands on the last row.
 enum _StepState { done, current, pending, failed }
 
 /// One milestone of a switch, as the customer follows it.
@@ -38,7 +38,7 @@ class _Milestone {
 }
 
 /// The five milestones every switch passes through, in order. The KO /
-/// terminated stop is not one of them: it is appended, and only to the
+/// cancelled stop is not one of them: it is appended, and only to the
 /// requests that actually ended there.
 const List<_Milestone> _switchMilestones = [
   _Milestone(
@@ -443,7 +443,7 @@ class _BillDetailScreenState extends State<BillDetailScreen> {
 
   // ── Submission Card ──
   // When the request came in, and how far it has got along the five milestones
-  // of a switch — plus the KO / terminated stop, on the requests that ended
+  // of a switch — plus the KO / cancelled stop, on the requests that ended
   // there.
   Widget _submissionCard(BillModel bill) {
     final stopped = _hasStopped(bill);

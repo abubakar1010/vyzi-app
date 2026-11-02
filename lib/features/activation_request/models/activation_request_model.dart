@@ -155,9 +155,8 @@ class ActivationRequestModel {
   /// utility rather than as a request.
   bool get isLive => status == 'awaiting_activation' || status == 'activated';
 
-  /// KO, cancelled, or a supply that has ended.
-  bool get isClosed =>
-      status == 'rejected' || status == 'cancelled' || status == 'terminated';
+  /// KO or cancelled: the only two ways a request ends.
+  bool get isClosed => status == 'rejected' || status == 'cancelled';
 
   /// From here on there is an agreed contract for the customer to read.
   bool get showsContract => status == 'contract_sent' || isLive;
@@ -172,7 +171,6 @@ class ActivationRequestModel {
       case 'awaiting_activation':
         return 2;
       case 'activated':
-      case 'terminated':
         return 4;
       case 'rejected':
       case 'cancelled':
