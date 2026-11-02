@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:vyzi/core/services/referral_service.dart';
 import 'package:vyzi/core/services/storage_service.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/routes/app_routes.dart';
@@ -121,6 +122,35 @@ class DeepLinkService {
       ),
       barrierDismissible: true,
     );
+  }
+
+  /// First launch after installing from a referral link: the store install
+  /// carried no link, but the landing page told the backend about the visit.
+  /// Asks for that code once per install, and only when nothing else already
+  /// supplied one. The code only pre-fills the sign-up field, where the user
+  /// sees it and can change it.
+  Future<void> claimDeferredReferral({ReferralService? service}) async {
+    final storage = Get.find<StorageService>();
+    if (storage.getBool(StorageKeys.deferredReferralChecked) ?? false) return;
+    if (_pendingReferralCode != null && _pendingReferralCode!.isNotEmpty) {
+      await storage.setBool(StorageKeys.deferredReferralChecked, true);
+      return;
+    }
+
+    try {
+      final code = await (service ?? ReferralService())
+          .claimDeferredReferral()
+          .timeout(const Duration(seconds: 4));
+      // Asked and answered: never again, whatever the answer. A network
+      // failure leaves the flag unset, so the next launch tries again.
+      await storage.setBool(StorageKeys.deferredReferralChecked, true);
+      if (code != null) {
+        _pendingReferralCode = code.trim().toUpperCase();
+        await storeDeferredReferralCode(_pendingReferralCode!);
+      }
+    } catch (e) {
+      debugPrint('DeepLinkService: deferred referral check failed: $e');
+    }
   }
 
   /// Clear any pending referral code from memory and storage.

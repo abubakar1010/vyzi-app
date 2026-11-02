@@ -1,4 +1,5 @@
 import 'package:vyzi/core/exceptions/app_exceptions.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
@@ -34,6 +35,10 @@ class InviteController extends GetxController {
   String get earningsType => 'profile.invite.earnings_type'.tr;
   final earningsStatus = ''.obs;
   final progressAmount = formatMoney(0).obs;
+
+  // ── Invite by email ──
+  final inviteEmailController = TextEditingController();
+  final isSendingInvite = false.obs;
 
   // ── State ──
   final isLoading = false.obs;
@@ -84,6 +89,47 @@ class InviteController extends GetxController {
     } catch (_) {
       referrals.clear();
       referralsFailed.value = true;
+    }
+  }
+
+  @override
+  void onClose() {
+    inviteEmailController.dispose();
+    super.onClose();
+  }
+
+  /// Emails the friend an invite with the user's link, then shows them in the
+  /// list as invited.
+  Future<void> sendEmailInvite() async {
+    final email = inviteEmailController.text.trim();
+    if (!GetUtils.isEmail(email)) {
+      Get.snackbar(
+        'auth.validation.warning'.tr,
+        'profile.invite.email_invalid'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+    if (isSendingInvite.value) return;
+
+    isSendingInvite.value = true;
+    try {
+      await _service.createInvite(email: email);
+      inviteEmailController.clear();
+      Get.snackbar(
+        'profile.invite.email_sent_title'.tr,
+        'profile.invite.email_sent'.trParams({'email': email}),
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      await _loadReferrals();
+    } catch (e) {
+      Get.snackbar(
+        'auth.validation.warning'.tr,
+        e is AppException ? e.message : 'system.unexpected'.tr,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isSendingInvite.value = false;
     }
   }
 

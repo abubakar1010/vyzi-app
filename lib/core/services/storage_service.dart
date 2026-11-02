@@ -162,6 +162,10 @@ abstract class StorageKeys {
   // ─── Deep Linking ──────────────────────────────────────────────────────
   static const String pendingReferralCode = 'pending_referral_code';
 
+  /// Set once the backend has been asked for a referral link opened before
+  /// the app was installed, so the question is asked only on first launch.
+  static const String deferredReferralChecked = 'deferred_referral_checked';
+
   // ─── Push Notifications ───────────────────────────────────────────────
   static const String fcmToken = 'fcm_token';
 }

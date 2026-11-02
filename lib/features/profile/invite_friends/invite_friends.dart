@@ -3,6 +3,7 @@ import 'package:vyzi/core/constants/api_constants.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/core/utils/number_format.dart';
 import 'package:vyzi/core/utils/date_format.dart';
+import 'package:vyzi/core/widgets/custom_text_filled.dart';
 import 'package:vyzi/features/profile/invite_friends/models/referral_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -73,6 +74,11 @@ class InviteScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: _buildReferralCard(),
+          ),
+          SizedBox(height: 12.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: _buildEmailInviteCard(),
           ),
           SizedBox(height: 12.h),
           Padding(
@@ -313,6 +319,80 @@ class InviteScreen extends StatelessWidget {
                 backgroundColor: AppColors.primaryColor,
                 foregroundColor: AppColors.background,
                 elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.r),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────
+  //  INVITE BY EMAIL
+  // ─────────────────────────────────────────────
+
+  Widget _buildEmailInviteCard() {
+    final sending = _controller.isSendingInvite.value;
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.textPrimary.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      padding: EdgeInsets.all(16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'profile.invite.email_label'.tr,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+              height: 1.22,
+            ),
+          ),
+          SizedBox(height: 10.h),
+          CustomTextField(
+            controller: _controller.inviteEmailController,
+            keyboardType: TextInputType.emailAddress,
+            hintText: 'profile.invite.email_hint'.tr,
+            prefixIcon: Icon(Icons.mail_outline_rounded,
+                color: AppColors.textSecondary, size: 20.sp),
+          ),
+          SizedBox(height: 12.h),
+          SizedBox(
+            width: double.infinity,
+            height: 50.h,
+            child: OutlinedButton.icon(
+              onPressed: sending ? null : () => _controller.sendEmailInvite(),
+              icon: sending
+                  ? SizedBox(
+                      width: 16.w,
+                      height: 16.w,
+                      child: const CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Icon(Icons.send_rounded, size: 18.sp),
+              label: Text(
+                'profile.invite.email_send'.tr,
+                style: TextStyle(
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w800,
+                  height: 1.22,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.primaryColor,
+                side: BorderSide(color: AppColors.primaryColor),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.r),
                 ),
