@@ -71,7 +71,9 @@ class _SplashScreenState extends State<SplashScreen> {
       Get.offNamed(AppRoutes.navbarScreen);
       _handlePendingReferral(deepLinkService, loggedIn: true);
     } else {
-      // No active session
+      // No active session. On a fresh install, pick up a referral link the
+      // user opened before installing, so sign-up starts with its code.
+      await deepLinkService.claimDeferredReferral();
       _handlePendingReferral(deepLinkService, loggedIn: false);
     }
   }

@@ -46,6 +46,7 @@ class ApiConstants {
   static const String getMyReferralCode = '/api/v1/referrals/my-code';
   static const String getListMyReferral = '/api/v1/referrals/my-referrals?page=1&limit=20';
   static const String createReferral = '/api/v1/referrals/invite';
+  static const String claimDeferredReferral = '/api/v1/deep-link/referral/claim';
 
   // Reward amounts come from GET /referrals/my-code (`rewards`).
   static const double referralEarningsMilestone = 50.0;

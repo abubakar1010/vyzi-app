@@ -49,11 +49,9 @@ class ReferralService {
     }
   }
 
-  /// Creates a new referral invite.
-  Future<void> createInvite({String? email, String? phone}) async {
-    final body = <String, dynamic>{};
-    if (email != null && email.isNotEmpty) body['referredEmail'] = email;
-    if (phone != null && phone.isNotEmpty) body['referredPhone'] = phone;
+  /// Emails [email] an invite with the user's referral link.
+  Future<void> createInvite({required String email}) async {
+    final body = <String, dynamic>{'referredEmail': email.trim()};
 
     try {
       final resp = await _api.post(ApiConstants.createReferral, data: body);
@@ -67,6 +65,16 @@ class ReferralService {
     } catch (e) {
       throw ParsingException(e.toString());
     }
+  }
+
+  /// The code of a referral link opened on this network before the app was
+  /// installed, or null. Unauthenticated; the backend forgets it once claimed.
+  Future<String?> claimDeferredReferral() async {
+    final resp = await _api.post(ApiConstants.claimDeferredReferral);
+    final data = resp.data as Map<String, dynamic>;
+    if (data['success'] != true) return null;
+    final code = (data['data'] as Map<String, dynamic>?)?['referralCode'];
+    return code is String && code.isNotEmpty ? code : null;
   }
 
   String _extractMessage(Map<String, dynamic> data) {
