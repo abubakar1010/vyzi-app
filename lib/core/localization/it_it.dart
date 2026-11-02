@@ -295,7 +295,7 @@ final Map<String, String> itIT = {
   'bills.detail.timeline.in_activation_subtitle': 'Il nuovo fornitore sta completando l’attivazione.',
   'bills.detail.timeline.activated_title': 'Attivata',
   'bills.detail.timeline.activated_subtitle': 'La nuova fornitura è attiva.',
-  'bills.detail.timeline.ko_title': 'KO / Terminata',
+  'bills.detail.timeline.ko_title': 'KO / Annullata',
   'bills.detail.timeline.ko_subtitle': 'Questa richiesta è stata chiusa',
 
   // ==================== MY UTILITIES ====================
@@ -528,7 +528,7 @@ final Map<String, String> itIT = {
   'home.email_bill_received.title': 'Richiesta Creata!',
   'home.email_bill_received.subtitle': 'La tua richiesta è stata creata con successo.\nIl nostro team elaborerà la tua bolletta una volta ricevuta via email.',
   'home.email_bill_received.analysis_in_progress': 'Elaborazione della Richiesta',
-  'home.email_bill_received.analysis_time_info': 'La verifica viene completata generalmente entro 24 ore lavorative. Ti aggiorneremo non appena sarà terminata.',
+  'home.email_bill_received.analysis_time_info': 'La verifica viene completata generalmente entro 24 ore lavorative. Ti aggiorneremo non appena sarà conclusa.',
 
   // ==================== COMPLETE REQUEST FORM EXTRAS ====================
   'request.offer_details.price_formula': 'Prezzo Energia : PUN GME + \u20AC 0.01/KWh',
@@ -922,7 +922,7 @@ final Map<String, String> itIT = {
   'request.details.processing_desc': 'Stiamo lavorando al tuo passaggio. Nessuna azione\nrichiesta da parte tua al momento.',
   'request.details.submission_date': 'Data di invio',
   'request.details.in_analysis': 'In analisi',
-  'request.details.info_message': 'La verifica viene completata generalmente entro 24 ore lavorative. Ti aggiorneremo non appena sarà terminata.',
+  'request.details.info_message': 'La verifica viene completata generalmente entro 24 ore lavorative. Ti aggiorneremo non appena sarà conclusa.',
 
   // ==================== BILLS FILTERS ====================
   'bills.filter.bill_type': 'Tipo di Bolletta:',
@@ -1343,7 +1343,6 @@ final Map<String, String> itIT = {
   'activation_request.status.rejected': 'KO',
   'activation_request.status.documents_pending': 'In lavorazione',
   'activation_request.status.contract_sent': 'Contratto da firmare',
-  'activation_request.status.terminated': 'Terminata',
   'activation_request.detail_title': 'La tua richiesta',
   'activation_request.detail_error': 'Non siamo riusciti a caricare la richiesta.',
   'activation_request.retry': 'Riprova',
@@ -1358,6 +1357,5 @@ final Map<String, String> itIT = {
   'activation_request.steps.active_title': 'Attiva',
   'activation_request.steps.active_subtitle': 'La tua fornitura è attiva.',
   'activation_request.steps.closed_subtitle': 'Questa richiesta è stata chiusa. Contattaci per maggiori informazioni.',
-  'case.status.terminated': 'Fornitura terminata',
   'sign_contract.open_contract': 'Apri il contratto',
 };

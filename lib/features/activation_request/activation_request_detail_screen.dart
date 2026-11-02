@@ -17,7 +17,7 @@ enum _StepState { done, current, pending }
 /// One activation request as the customer follows it.
 ///
 /// The offer is agreed by phone, so there are only four steps and never a list
-/// of offers. KO, cancelled and terminated are stops of their own, shown only
+/// of offers. KO and cancelled are stops of their own, shown only
 /// on a request that ended there.
 class ActivationRequestDetailScreen extends StatefulWidget {
   final String caseId;

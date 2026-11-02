@@ -292,7 +292,7 @@ final Map<String, String> enUS = {
   'bills.detail.timeline.in_activation_subtitle': 'Your new supplier is completing the activation.',
   'bills.detail.timeline.activated_title': 'Activated',
   'bills.detail.timeline.activated_subtitle': 'Your new supply is active.',
-  'bills.detail.timeline.ko_title': 'KO / Terminated',
+  'bills.detail.timeline.ko_title': 'KO / Cancelled',
   'bills.detail.timeline.ko_subtitle': 'This request was closed',
 
   // ==================== MY UTILITIES ====================
@@ -1338,7 +1338,6 @@ final Map<String, String> enUS = {
   'activation_request.status.rejected': 'KO',
   'activation_request.status.documents_pending': 'In progress',
   'activation_request.status.contract_sent': 'Contract to sign',
-  'activation_request.status.terminated': 'Terminated',
   'activation_request.detail_title': 'Your request',
   'activation_request.detail_error': 'We could not load the request.',
   'activation_request.retry': 'Try again',
@@ -1353,6 +1352,5 @@ final Map<String, String> enUS = {
   'activation_request.steps.active_title': 'Active',
   'activation_request.steps.active_subtitle': 'Your supply is active.',
   'activation_request.steps.closed_subtitle': 'This request has been closed. Contact us for more information.',
-  'case.status.terminated': 'Supply terminated',
   'sign_contract.open_contract': 'Open the contract',
 };
