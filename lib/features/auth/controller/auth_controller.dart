@@ -141,6 +141,7 @@ class AuthController extends GetxController {
     String? role,
     bool allowSignUp = true,
     bool acceptedTerms = false,
+    String? referralCode,
   }) async {
     // A second tap while the provider sheet is still open starts a competing
     // request, which on Android cancels the one already in flight. Reject the
@@ -165,6 +166,7 @@ class AuthController extends GetxController {
           role: role,
           allowSignUp: allowSignUp,
           acceptedTerms: acceptedTerms,
+          referralCode: referralCode,
         );
       } catch (_) {
         // The provider leg succeeded, so the device is now signed in to

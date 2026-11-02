@@ -120,17 +120,23 @@ class AuthService {
   /// [acceptedTerms] true tells the backend the user was shown the privacy and
   /// terms consent line, so it records the current versions as accepted and
   /// the acceptance prompt does not stop the user right after signing in.
+  ///
+  /// [referralCode] is applied by the backend only when this call creates the
+  /// account, exactly like the email sign-up; it is ignored on sign-in.
   Future<Map<String, dynamic>> socialLogin({
     required String idToken,
     String? role,
     bool allowSignUp = true,
     bool acceptedTerms = false,
+    String? referralCode,
   }) async {
     final body = <String, dynamic>{
       'idToken': idToken,
       if (role != null && role.isNotEmpty) 'role': role,
       if (!allowSignUp) 'allowSignUp': false,
       if (acceptedTerms) 'acceptedTerms': true,
+      if (referralCode != null && referralCode.isNotEmpty)
+        'referralCode': referralCode,
     };
     try {
       final resp = await _api.post(ApiConstants.authSocialLogin, data: body);
