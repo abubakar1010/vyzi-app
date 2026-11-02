@@ -47,9 +47,7 @@ class ApiConstants {
   static const String getListMyReferral = '/api/v1/referrals/my-referrals?page=1&limit=20';
   static const String createReferral = '/api/v1/referrals/invite';
 
-  // Referral reward display amounts (update when backend adds settings endpoint)
-  static const String referralYouEarn = '€10';
-  static const String referralFriendGets = '€10';
+  // Reward amounts come from GET /referrals/my-code (`rewards`).
   static const double referralEarningsMilestone = 50.0;
 
 
