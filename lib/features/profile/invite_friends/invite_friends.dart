@@ -2,6 +2,8 @@ import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/constants/api_constants.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/core/utils/number_format.dart';
+import 'package:vyzi/core/utils/date_format.dart';
+import 'package:vyzi/features/profile/invite_friends/models/referral_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -61,6 +63,13 @@ class InviteScreen extends StatelessWidget {
         children: [
           _buildHeroSection(),
           SizedBox(height: 16.h),
+          if (_controller.welcomeReward.value != null) ...[
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: _buildWelcomeRewardCard(_controller.welcomeReward.value!),
+            ),
+            SizedBox(height: 12.h),
+          ],
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: _buildReferralCard(),
@@ -92,6 +101,24 @@ class InviteScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: _buildEarningsCard(),
+          ),
+          SizedBox(height: 24.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Text(
+              'profile.invite.list_title'.tr,
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w900,
+                color: AppColors.textDark,
+                height: 1.22,
+              ),
+            ),
+          ),
+          SizedBox(height: 10.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: _buildReferralList(),
           ),
           SizedBox(height: 30.h),
         ],
@@ -167,7 +194,10 @@ class InviteScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 32.w),
             child: Text(
-              'profile.invite.hero_desc'.tr,
+              'profile.invite.hero_desc'.trParams({
+                'you': _controller.youEarn.value,
+                'friend': _controller.friendGets.value,
+              }),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13.sp,
@@ -309,7 +339,7 @@ class InviteScreen extends StatelessWidget {
               iconBg: AppColors.greenAlpha10,
               iconColor: AppColors.green200,
               topLabel: 'profile.invite.you_earn'.tr,
-              amount: _controller.youEarn,
+              amount: _controller.youEarn.value,
               bottomLabel: 'profile.invite.you_earn_when'.tr,
             ),
           ),
@@ -320,7 +350,7 @@ class InviteScreen extends StatelessWidget {
               iconBg: AppColors.primary100,
               iconColor: AppColors.accentBlue,
               topLabel: 'profile.invite.friend_gets'.tr,
-              amount: _controller.friendGets,
+              amount: _controller.friendGets.value,
               bottomLabel: 'profile.invite.friend_gets_when'.tr,
             ),
           ),
@@ -442,6 +472,29 @@ class InviteScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(14.r),
             boxShadow: [
               BoxShadow(
+                color: AppColors.textPrimary.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: _buildStatRow(
+            icon: Icons.person_add_alt_1_rounded,
+            iconBg: AppColors.primary100,
+            iconColor: AppColors.accentBlue,
+            title: 'profile.invite.joined'.tr,
+            subtitle: 'profile.invite.joined_desc'.tr,
+            value: _controller.joinedInvites.value,
+            isLast: false,
+          ),
+        ),
+        SizedBox(height: 12.h),
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.background,
+            borderRadius: BorderRadius.circular(14.r),
+            boxShadow: [
+              BoxShadow(
                 color: AppColors.textPrimary.withOpacity(0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
@@ -530,6 +583,182 @@ class InviteScreen extends StatelessWidget {
                 fontWeight: FontWeight.w900,
                 color: AppColors.primaryColor,
                 height: 1.22,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────
+  //  WELCOME REWARD (the user joined with an invite)
+  // ─────────────────────────────────────────────
+
+  Widget _buildWelcomeRewardCard(WelcomeReward reward) {
+    final amount = formatMoney(reward.amount);
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.greenAlpha10,
+        borderRadius: BorderRadius.circular(14.r),
+      ),
+      padding: EdgeInsets.all(14.w),
+      child: Row(
+        children: [
+          Icon(
+            reward.isCredited
+                ? Icons.check_circle_outline_rounded
+                : Icons.card_giftcard_rounded,
+            color: AppColors.green200,
+            size: 24.sp,
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'profile.invite.welcome_title'.tr,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textDark,
+                    height: 1.22,
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                Text(
+                  (reward.isCredited
+                          ? 'profile.invite.welcome_credited'
+                          : 'profile.invite.welcome_pending')
+                      .trParams({'amount': amount}),
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                    height: 1.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ─────────────────────────────────────────────
+  //  REFERRAL LIST (friends this user referred)
+  // ─────────────────────────────────────────────
+
+  Widget _buildReferralList() {
+    if (_controller.referralsFailed.value) {
+      return _buildListMessage('profile.invite.list_failed'.tr);
+    }
+    final items = _controller.referrals;
+    if (items.isEmpty) {
+      return _buildListMessage('profile.invite.list_empty'.tr);
+    }
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(14.r),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.textPrimary.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          for (var i = 0; i < items.length; i++) ...[
+            if (i > 0) Divider(height: 1, color: AppColors.primary100),
+            _buildReferralTile(items[i]),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListMessage(String text) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(14.r),
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 13.sp,
+          color: AppColors.textSecondary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReferralTile(ReferralItem item) {
+    final name = item.displayName.isNotEmpty
+        ? item.displayName
+        : 'profile.invite.list_unknown'.tr;
+    final date = DateTime.tryParse(item.createdAt)?.toLocal();
+    final (Color bg, Color fg) = switch (item.status) {
+      'rewarded' || 'qualified' => (AppColors.greenAlpha10, AppColors.greenText),
+      'expired' => (AppColors.primary100, AppColors.textSecondary),
+      _ => (AppColors.primary100, AppColors.primaryColor),
+    };
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textDark,
+                    height: 1.22,
+                  ),
+                ),
+                if (date != null) ...[
+                  SizedBox(height: 2.h),
+                  Text(
+                    formatShortDate(date),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          SizedBox(width: 8.w),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+            decoration: BoxDecoration(
+              color: bg,
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Text(
+              'profile.invite.status_${item.status}'.tr,
+              style: TextStyle(
+                fontSize: 11.sp,
+                fontWeight: FontWeight.w800,
+                color: fg,
               ),
             ),
           ),
