@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "703974828285-a1b0j0tn3keqlpi57m8rcsdf7msjvsgg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vyzi",
+            "certificate_hash": "8da46aca05752ad1fdd03930908e8b0c0c7b7516"
+          }
+        },
+        {
           "client_id": "703974828285-g2uv6paqvddjps4v4qid8ljo7vb9isd2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

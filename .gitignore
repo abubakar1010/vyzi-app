@@ -60,3 +60,12 @@ temp_interactive_push.bat
 # Marketing and source artwork, not used by the app build
 appstore-screenshots/
 onboardning-images/
+.env
+.env.*
+!.env.example
+node_modules/
+build/
+.next/
+*.apk
+*.aab
+*.zip
