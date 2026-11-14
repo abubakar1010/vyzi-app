@@ -13,6 +13,8 @@ final Map<String, String> enUS = {
   'auth.login.divider': 'Or sign in with',
   'auth.login.apple': 'Sign in with Apple',
   'auth.login.google': 'Sign in with Google',
+  'auth.social.signing_in': 'Signing you in…',
+  'auth.social.signing_in_hint': 'This only takes a moment.',
   'auth.login.no_account': 'Don\'t have an account?',
   'auth.login.signup': 'Sign up now',
   'auth.login.social_consent_prefix': 'By continuing, you declare that you have read the ',

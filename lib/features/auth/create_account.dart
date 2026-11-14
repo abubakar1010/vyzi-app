@@ -9,6 +9,7 @@ import 'package:vyzi/core/utils/phone_utils.dart';
 import 'package:vyzi/core/widgets/custom_text_filled.dart';
 import 'package:vyzi/core/widgets/phone_filled.dart';
 import 'package:vyzi/core/widgets/primary_button.dart';
+import 'package:vyzi/core/widgets/social_auth_overlay.dart';
 import 'package:vyzi/core/widgets/social_button.dart';
 import 'package:vyzi/core/exceptions/app_exceptions.dart';
 import 'package:vyzi/core/services/social_auth_service.dart';
@@ -53,6 +54,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _partitaIvaController = TextEditingController();
 
   bool _agreeToTerms = false;
+
+  /// True from a Google/Apple tap until the app leaves this screen, or until
+  /// the sign-up is cancelled or fails. Drives [SocialAuthOverlay].
+  bool _socialBusy = false;
   late String selectedRole;
   String _selectedDialCode = '+39';
 
@@ -151,6 +156,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        _buildScaffold(context),
+        Positioned.fill(child: SocialAuthOverlay(visible: _socialBusy)),
+      ],
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: _buildAppBar(),
@@ -528,8 +542,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
       return;
     }
+    if (_socialBusy) return;
 
     final auth = Get.put(AuthController());
+    setState(() => _socialBusy = true);
+    var signedIn = false;
     try {
       // The account type chosen on the onboarding screen applies to social
       // sign-up too: without it every "Continue with Google" produced a
@@ -546,6 +563,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       try {
         await Get.find<DeepLinkService>().clearPendingReferralCode();
       } catch (_) {}
+      // Keep the overlay up while the home screen replaces this one.
+      signedIn = true;
       Get.offAllNamed(AppRoutes.navbarScreen);
       // A business account created this way has no company row yet — the
       // provider hands back a name, an email and a picture, and nothing a
@@ -571,6 +590,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ? rawError
               : 'auth.login.error.social_failed'.tr;
       Get.snackbar('auth.validation.error'.tr, errorMessage);
+    } finally {
+      if (!signedIn && mounted) setState(() => _socialBusy = false);
     }
   }
 

@@ -7,6 +7,7 @@ import 'package:vyzi/core/utils/app_styles.dart';
 import 'package:vyzi/core/utils/app_colors.dart';
 import 'package:vyzi/core/widgets/custom_text_filled.dart';
 import 'package:vyzi/core/widgets/primary_button.dart';
+import 'package:vyzi/core/widgets/social_auth_overlay.dart';
 import 'package:vyzi/core/widgets/social_button.dart';
 import 'package:vyzi/core/services/social_auth_service.dart';
 import 'package:vyzi/routes/app_routes.dart';
@@ -36,6 +37,10 @@ class _SignInScreenState extends State<SignInScreen> {
   /// build is never disposed.
   final _privacyRecognizer = TapGestureRecognizer();
   final _termsRecognizer = TapGestureRecognizer();
+
+  /// True from a Google/Apple tap until the app leaves this screen, or until
+  /// the sign-in is cancelled or fails. Drives [SocialAuthOverlay].
+  bool _socialBusy = false;
 
   @override
   void initState() {
@@ -101,6 +106,15 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        _buildScaffold(context),
+        Positioned.fill(child: SocialAuthOverlay(visible: _socialBusy)),
+      ],
+    );
+  }
+
+  Widget _buildScaffold(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: CustomAppBar(
@@ -320,7 +334,10 @@ class _SignInScreenState extends State<SignInScreen> {
 
 
   Future<void> _handleSocialLogin(SocialProvider provider) async {
+    if (_socialBusy) return;
     final auth = Get.put(AuthController());
+    setState(() => _socialBusy = true);
+    var signedIn = false;
     try {
       // `allowSignUp: false` — this is a login screen, and it has no account
       // type to send. The endpoint would otherwise create an account for a
@@ -338,6 +355,8 @@ class _SignInScreenState extends State<SignInScreen> {
         allowSignUp: false,
         acceptedTerms: true,
       );
+      // Keep the overlay up while the home screen replaces this one.
+      signedIn = true;
       Get.offAllNamed(AppRoutes.navbarScreen);
     } on SocialAuthCancelledException {
       // Android also reports a misconfigured build as a cancellation, so the
@@ -361,6 +380,8 @@ class _SignInScreenState extends State<SignInScreen> {
       _showSocialError(auth);
     } catch (_) {
       _showSocialError(auth);
+    } finally {
+      if (!signedIn && mounted) setState(() => _socialBusy = false);
     }
   }
 

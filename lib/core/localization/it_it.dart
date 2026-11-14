@@ -13,6 +13,8 @@ final Map<String, String> itIT = {
   'auth.login.divider': 'Oppure accedi con',
   'auth.login.apple': 'Accedi con Apple',
   'auth.login.google': 'Accedi con Google',
+  'auth.social.signing_in': 'Accesso in corso…',
+  'auth.social.signing_in_hint': 'Ci vorrà solo un momento.',
   'auth.login.no_account': 'Non hai un account?',
   'auth.login.signup': 'Registrati ora',
   'auth.login.social_consent_prefix': 'Continuando, dichiari di aver letto ',
