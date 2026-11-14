@@ -1,13 +1,9 @@
-import 'dart:convert';
 import 'dart:developer' as developer;
 import 'dart:io' show Platform;
-import 'dart:math';
 
-import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../exceptions/app_exceptions.dart';
 
@@ -241,20 +237,22 @@ class SocialAuthService {
   /// Codes firebase_auth uses when the user closes Apple's sheet.
   static const _appleCancelCodes = {'canceled', 'web-context-canceled'};
 
-  Future<UserCredential> _signInWithApple() async {
-    if (Platform.isIOS || Platform.isMacOS) return _signInWithAppleNative();
-    return _signInWithAppleCredential();
-  }
-
-  /// iOS/macOS: firebase_auth runs Apple's native sheet and builds the Firebase
-  /// credential itself.
+  /// Apple sign-in is offered on iOS only (the button is hidden elsewhere).
   ///
-  /// Do not go back to fetching the Apple token with `sign_in_with_apple` and
-  /// passing it through `OAuthProvider('apple.com').credential(...)` here.
-  /// On iOS that path was rejected by Firebase with
-  /// `invalid-credential: Invalid OAuth response from apple.com`, even though
-  /// the same token was accepted when sent to Firebase's REST API directly.
-  Future<UserCredential> _signInWithAppleNative() async {
+  /// firebase_auth runs Apple's native sheet and builds the Firebase
+  /// credential itself. Do not switch back to fetching the Apple token with
+  /// `sign_in_with_apple` and passing it through
+  /// `OAuthProvider('apple.com').credential(...)`: on iOS Firebase rejected
+  /// that with `invalid-credential: Invalid OAuth response from apple.com`,
+  /// although it accepted the same token sent to its REST API directly.
+  Future<UserCredential> _signInWithApple() async {
+    if (!Platform.isIOS) {
+      throw SocialAuthException(
+        'auth.social.error.generic'.tr,
+        'apple:unsupported-platform',
+      );
+    }
+
     final provider = AppleAuthProvider()
       ..addScope('email')
       ..addScope('name');
@@ -270,63 +268,6 @@ class SocialAuthService {
       }
       rethrow;
     }
-  }
-
-  /// Other platforms: fetch the Apple ID token with `sign_in_with_apple` and
-  /// exchange it with Firebase. Android additionally needs
-  /// `webAuthenticationOptions` (Services ID + redirect URI) before this works.
-  Future<UserCredential> _signInWithAppleCredential() async {
-    final rawNonce = _generateNonce();
-    final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
-
-    final AuthorizationCredentialAppleID appleCredential;
-    try {
-      appleCredential = await SignInWithApple.getAppleIDCredential(
-        scopes: [
-          AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName,
-        ],
-        nonce: hashedNonce,
-      );
-    } on SignInWithAppleAuthorizationException catch (e) {
-      _log('SignInWithAppleAuthorizationException code=${e.code} '
-          'message=${e.message}');
-      if (e.code == AuthorizationErrorCode.canceled) {
-        throw SocialAuthCancelledException(
-          'auth.social.error.cancelled'.tr,
-          'apple:canceled',
-        );
-      }
-      throw SocialAuthException(
-        'auth.social.error.generic'.tr,
-        'apple:${e.code.name}: ${e.message}',
-      );
-    }
-
-    final idToken = appleCredential.identityToken;
-    if (idToken == null || idToken.isEmpty) {
-      _log('Apple returned no identity token');
-      throw SocialAuthException(
-        'auth.social.error.configuration'.tr,
-        'apple:missing-identity-token',
-      );
-    }
-
-    final oauthCredential = OAuthProvider('apple.com').credential(
-      idToken: idToken,
-      rawNonce: rawNonce,
-    );
-    return _firebaseAuth.signInWithCredential(oauthCredential);
-  }
-
-  String _generateNonce([int length = 32]) {
-    const charset =
-        '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-._';
-    final random = Random.secure();
-    return List.generate(
-      length,
-      (_) => charset[random.nextInt(charset.length)],
-    ).join();
   }
 
   static void _log(String message) =>
