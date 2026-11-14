@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
+import 'dart:io' show Platform;
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
@@ -237,7 +238,44 @@ class SocialAuthService {
 
   // ── Apple ───────────────────────────────────────────────
 
+  /// Codes firebase_auth uses when the user closes Apple's sheet.
+  static const _appleCancelCodes = {'canceled', 'web-context-canceled'};
+
   Future<UserCredential> _signInWithApple() async {
+    if (Platform.isIOS || Platform.isMacOS) return _signInWithAppleNative();
+    return _signInWithAppleCredential();
+  }
+
+  /// iOS/macOS: firebase_auth runs Apple's native sheet and builds the Firebase
+  /// credential itself.
+  ///
+  /// Do not go back to fetching the Apple token with `sign_in_with_apple` and
+  /// passing it through `OAuthProvider('apple.com').credential(...)` here.
+  /// On iOS that path was rejected by Firebase with
+  /// `invalid-credential: Invalid OAuth response from apple.com`, even though
+  /// the same token was accepted when sent to Firebase's REST API directly.
+  Future<UserCredential> _signInWithAppleNative() async {
+    final provider = AppleAuthProvider()
+      ..addScope('email')
+      ..addScope('name');
+    try {
+      return await _firebaseAuth.signInWithProvider(provider);
+    } on FirebaseAuthException catch (e) {
+      if (_appleCancelCodes.contains(e.code)) {
+        _log('Apple sign-in cancelled: code=${e.code}');
+        throw SocialAuthCancelledException(
+          'auth.social.error.cancelled'.tr,
+          'apple:${e.code}',
+        );
+      }
+      rethrow;
+    }
+  }
+
+  /// Other platforms: fetch the Apple ID token with `sign_in_with_apple` and
+  /// exchange it with Firebase. Android additionally needs
+  /// `webAuthenticationOptions` (Services ID + redirect URI) before this works.
+  Future<UserCredential> _signInWithAppleCredential() async {
     final rawNonce = _generateNonce();
     final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
 
@@ -265,8 +303,17 @@ class SocialAuthService {
       );
     }
 
+    final idToken = appleCredential.identityToken;
+    if (idToken == null || idToken.isEmpty) {
+      _log('Apple returned no identity token');
+      throw SocialAuthException(
+        'auth.social.error.configuration'.tr,
+        'apple:missing-identity-token',
+      );
+    }
+
     final oauthCredential = OAuthProvider('apple.com').credential(
-      idToken: appleCredential.identityToken,
+      idToken: idToken,
       rawNonce: rawNonce,
     );
     return _firebaseAuth.signInWithCredential(oauthCredential);
@@ -274,7 +321,7 @@ class SocialAuthService {
 
   String _generateNonce([int length = 32]) {
     const charset =
-        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-._';
     final random = Random.secure();
     return List.generate(
       length,
