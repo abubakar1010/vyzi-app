@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:vyzi/core/appbar/custom_appbar.dart';
 import 'package:vyzi/core/utils/app_assets.dart';
@@ -255,14 +257,15 @@ class _SignInScreenState extends State<SignInScreen> {
 
                 SizedBox(height: 16.h),
 
-                // ── Apple ──────────────────────────
-                SocialButton(
-                  label: 'auth.login.apple'.tr,
-                  logo: _appleLogo(),
-                  onPress: () => _handleSocialLogin(SocialProvider.apple),
-                ),
-
-                SizedBox(height: 10.h),
+                // ── Apple (iOS only) ───────────────
+                if (Platform.isIOS) ...[
+                  SocialButton(
+                    label: 'auth.login.apple'.tr,
+                    logo: _appleLogo(),
+                    onPress: () => _handleSocialLogin(SocialProvider.apple),
+                  ),
+                  SizedBox(height: 10.h),
+                ],
 
                 // ── Google ─────────────────────────
                 SocialButton(

@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:vyzi/core/layout/adaptive.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:get/get.dart';
@@ -457,14 +459,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 SizedBox(height: 16.h),
 
-                // ── Apple ──────────────────────────
-                SocialButton(
-                  label: 'auth.login.apple'.tr,
-                  logo: _appleLogo(),
-                  onPress: () => _handleSocialLogin(SocialProvider.apple),
-                ),
-
-                SizedBox(height: 10.h),
+                // ── Apple (iOS only) ───────────────
+                if (Platform.isIOS) ...[
+                  SocialButton(
+                    label: 'auth.login.apple'.tr,
+                    logo: _appleLogo(),
+                    onPress: () => _handleSocialLogin(SocialProvider.apple),
+                  ),
+                  SizedBox(height: 10.h),
+                ],
 
                 // ── Google ─────────────────────────
                 SocialButton(
